@@ -17,7 +17,6 @@ export const users: User[] = [
     posts: [
       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d', caption: 'Recent UI/UX Design project' },
       { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2', caption: 'My current workspace setup' },
-      { id: 'v1', type: 'video', url: 'https://images.unsplash.com/photo-1551434678-e076c223a692', caption: 'A quick look at how I build websites' },
       { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97', caption: 'Code, code, and more code.' },
     ]
   },
@@ -69,8 +68,9 @@ export const users: User[] = [
       { name: 'Bob Williams', username: 'bobw', avatar: 'https://images.unsplash.com/photo-1603415526960-fb0bdd25e347' },
     ],
     orders: [
-        { id: 'order-1', serviceTitle: 'Custom Website Development', providerName: 'Alice Johnson', date: '2023-10-15', price: 450 },
-        { id: 'order-2', serviceTitle: 'Professional Logo Design', providerName: 'Bob Williams', date: '2023-09-01', price: 150 },
+        { id: 'order-1', serviceTitle: 'Custom Website Development', providerName: 'Alice Johnson', providerUsername: 'alicej', date: '2023-10-15', price: 450, status: 'Completed' },
+        { id: 'order-2', serviceTitle: 'Professional Logo Design', providerName: 'Bob Williams', providerUsername: 'bobw', date: '2023-09-01', price: 150, status: 'Completed' },
+        { id: 'order-3', serviceTitle: 'SEO Blog Post Writing', providerName: 'Charlie Brown', providerUsername: 'charlieb', date: '2023-11-20', price: 80, status: 'In Progress' },
     ]
   },
 ];

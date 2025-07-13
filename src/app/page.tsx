@@ -13,13 +13,14 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Filter, SlidersHorizontal } from 'lucide-react';
+import { Filter, SlidersHorizontal, Search } from 'lucide-react';
 import PromoCard from '@/components/promo-card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import HorizontalServiceCard from '@/components/horizontal-service-card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SearchBar from '@/components/search-bar';
 
 
 export default function Home() {
@@ -138,115 +139,121 @@ export default function Home() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Promo Section */}
-      <section className="mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <PromoCard
-                image="https://images.unsplash.com/photo-1557800636-894a64c1696f"
-                title="Special Offer"
-                description="Get 20% off on all web development services this month!"
-                ctaText="Learn More"
-                ctaLink="#"
-                className="lg:col-span-2 min-h-[20rem] md:min-h-[26rem]"
-                data-ai-hint="special offer"
-            />
-            {services.slice(0, 2).map(service => (
-                <ServiceCard key={service.id} service={service} />
-            ))}
-        </div>
+    <div className="flex flex-col">
+       {/* Hero Section */}
+       <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-center bg-gradient-to-br from-primary/20 to-background">
+          <div className="absolute inset-0 z-0">
+               <PromoCard
+                  image="https://images.unsplash.com/photo-1516321497487-e288fb19713f"
+                  title=""
+                  description=""
+                  ctaText=""
+                  ctaLink="#"
+                  className="h-full w-full opacity-30"
+                />
+          </div>
+          <div className="relative z-10 container mx-auto px-4 text-foreground">
+              <h1 className="text-4xl md:text-6xl font-extrabold font-headline mb-4 text-balance">Find & Hire Expert Talent</h1>
+              <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto mb-8">The premier marketplace to connect with skilled professionals and bring your ideas to life.</p>
+              <div className="max-w-xl mx-auto">
+                  <SearchBar />
+              </div>
+          </div>
       </section>
 
-      {/* Trending Section */}
-      <section className="mb-16">
-          <h2 className="text-3xl font-bold font-headline mb-6">Trending Services</h2>
-          <Carousel
-              opts={{ align: "start", loop: true, }}
-              className="w-full"
-          >
-              <CarouselContent>
-                  {services.map((service) => (
-                      <CarouselItem key={service.id} className="md:basis-1/2 lg:basis-1/3">
-                          <div className="p-1">
-                              <ServiceCard service={service} />
-                          </div>
-                      </CarouselItem>
-                  ))}
-              </CarouselContent>
-              <CarouselPrevious className="ml-12" />
-              <CarouselNext className="mr-12" />
-          </Carousel>
-      </section>
-
-      {/* Main Content with Filters */}
-      <section className="mb-16">
-        <div className="flex justify-between items-center mb-6">
-            <h1 className="text-4xl font-bold font-headline">Explore Services</h1>
-            {isMobile ? (
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="outline"><Filter className="mr-2 h-4 w-4" /> Filters</Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <SheetHeader>
-                            <SheetTitle>Filters</SheetTitle>
-                        </SheetHeader>
-                        <div className="py-4">
-                            <FilterContent />
-                        </div>
-                    </SheetContent>
-                </Sheet>
-            ) : (
-                <Collapsible>
-                    <CollapsibleTrigger asChild>
-                        <Button variant="outline"><SlidersHorizontal className="mr-2 h-4 w-4" /> Filters</Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="absolute z-20 right-0 mt-2">
-                        <div className="w-80 bg-card p-6 rounded-xl shadow-lg border">
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+           {/* Filters */}
+           <aside className="w-full lg:w-1/4">
+               <div className="sticky top-24">
+                   {isMobile ? (
+                       <Sheet>
+                           <SheetTrigger asChild>
+                               <Button variant="outline" className="w-full justify-start"><SlidersHorizontal className="mr-2 h-4 w-4" /> Filters</Button>
+                           </SheetTrigger>
+                           <SheetContent>
+                               <SheetHeader>
+                                   <SheetTitle className="font-headline">Filters</SheetTitle>
+                               </SheetHeader>
+                               <div className="py-4">
+                                   <FilterContent />
+                               </div>
+                           </SheetContent>
+                       </Sheet>
+                   ) : (
+                       <>
+                           <h2 className="text-2xl font-bold font-headline mb-4 flex items-center gap-2"><SlidersHorizontal className="h-5 w-5"/> Filters</h2>
                            <FilterContent />
-                        </div>
-                    </CollapsibleContent>
-                </Collapsible>
-            )}
-        </div>
+                       </>
+                   )}
+               </div>
+           </aside>
 
-        {filteredServices.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredServices.map(service => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-card rounded-xl">
-              <p className="text-muted-foreground text-lg">No services found matching your criteria.</p>
-              <Button onClick={resetFilters} className="mt-4">Clear filters</Button>
-          </div>
-        )}
-      </section>
-      
-      {/* Recommended for you */}
-      <section className="mb-16">
-          <h2 className="text-3xl font-bold font-headline mb-6">Recommended For You</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {services.slice(2, 6).map(service => (
-                  <HorizontalServiceCard key={service.id} service={service} />
-              ))}
-          </div>
-      </section>
-      
-      {/* Popular Categories */}
-      <section>
-          <h2 className="text-3xl font-bold font-headline mb-6">Popular Categories</h2>
-          <div className="flex flex-wrap gap-4">
-              {categories.map(category => (
-                <Link href="#" key={category.id}>
-                    <Badge variant="secondary" className="text-lg px-6 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
-                        {category.name}
-                    </Badge>
-                </Link>
-              ))}
-          </div>
-      </section>
+           {/* Service Listings */}
+            <main className="w-full lg:w-3/4">
+                <section className="mb-16">
+                    <h2 className="text-3xl font-bold font-headline mb-6">Trending Services</h2>
+                    <Carousel opts={{ align: "start", loop: true, }} className="w-full">
+                        <CarouselContent>
+                            {services.map((service) => (
+                                <CarouselItem key={service.id} className="md:basis-1/2 xl:basis-1/3">
+                                    <div className="p-1">
+                                        <ServiceCard service={service} />
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="ml-12" />
+                        <CarouselNext className="mr-12" />
+                    </Carousel>
+                </section>
+                
+                <section className="mb-16">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-3xl font-bold font-headline">Explore All Services</h2>
+                    </div>
+
+                    {filteredServices.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                            {filteredServices.map(service => (
+                            <ServiceCard key={service.id} service={service} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20 bg-card rounded-xl">
+                            <Search className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                            <p className="text-muted-foreground text-lg font-semibold">No services found</p>
+                            <p className="text-muted-foreground">Try adjusting your filters.</p>
+                            <Button onClick={resetFilters} className="mt-4">Clear filters</Button>
+                        </div>
+                    )}
+                </section>
+
+                <section className="mb-16">
+                    <h2 className="text-3xl font-bold font-headline mb-6">Recommended For You</h2>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        {services.slice(2, 6).map(service => (
+                            <HorizontalServiceCard key={service.id} service={service} />
+                        ))}
+                    </div>
+                </section>
+                
+                <section>
+                    <h2 className="text-3xl font-bold font-headline mb-6">Popular Categories</h2>
+                    <div className="flex flex-wrap gap-4">
+                        {categories.map(category => (
+                            <Link href="#" key={category.id}>
+                                <Badge variant="secondary" className="text-lg px-6 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
+                                    {category.name}
+                                </Badge>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+            </main>
+        </div>
+      </div>
     </div>
   );
 }

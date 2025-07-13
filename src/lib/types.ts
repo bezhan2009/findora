@@ -13,8 +13,10 @@ export interface Order {
   id: string;
   serviceTitle: string;
   providerName: string;
+  providerUsername: string;
   date: string;
   price: number;
+  status: 'Pending' | 'In Progress' | 'Completed' | 'Cancelled';
 }
 
 export interface Service {
@@ -43,10 +45,10 @@ export interface User {
   avatar: string;
   location: string;
   bio: string;
-  services: string[];
-  reviews: Review[];
+  services?: string[];
+  reviews?: Review[];
   followers: number;
-  following: UserStub[];
+  following?: UserStub[];
   posts?: Post[];
   orders?: Order[];
 }
