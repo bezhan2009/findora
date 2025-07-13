@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -20,11 +21,17 @@ export default function ServiceCard({ service }: ServiceCardProps) {
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     favorite ? removeFavorite(service.id) : addFavorite(service.id);
   };
 
+  const handleProviderClick = (e: React.MouseEvent) => {
+    // Prevent the outer card link from firing when the provider link is clicked
+    e.stopPropagation();
+  };
+
   return (
-    <Link href={`/services/${service.id}`} className="group">
+    <Link href={`/services/${service.id}`} className="group block">
       <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
         <CardHeader className="p-0 relative">
           <Image
@@ -51,21 +58,23 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         </CardHeader>
 
         <CardContent className="p-4 flex-grow">
-          <Link
-            href={`/profile/${service.provider.username}`}
-            className="flex items-center gap-2 mb-2 group-hover:text-primary transition-colors"
-          >
-            <Avatar className="h-6 w-6">
-              <AvatarImage
-                src={service.provider.avatar}
-                alt={service.provider.name}
-              />
-              <AvatarFallback>{service.provider.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <p className="text-sm font-medium text-muted-foreground group-hover:text-primary">
-              {service.provider.name}
-            </p>
-          </Link>
+          <div className="flex items-center gap-2 mb-2" onClick={handleProviderClick}>
+            <Link
+              href={`/profile/${service.provider.username}`}
+              className="flex items-center gap-2 group-hover:text-primary transition-colors"
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage
+                  src={service.provider.avatar}
+                  alt={service.provider.name}
+                />
+                <AvatarFallback>{service.provider.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <p className="text-sm font-medium text-muted-foreground group-hover:text-primary">
+                {service.provider.name}
+              </p>
+            </Link>
+          </div>
           <CardTitle className="text-lg font-headline leading-tight h-12">
             {service.title}
           </CardTitle>
