@@ -13,9 +13,10 @@ interface PromoCardProps {
   ctaText: string;
   ctaLink: string;
   className?: string;
+  'data-ai-hint'?: string;
 }
 
-export default function PromoCard({ image, title, description, ctaText, ctaLink, className }: PromoCardProps) {
+export default function PromoCard({ image, title, description, ctaText, ctaLink, className, 'data-ai-hint': dataAiHint }: PromoCardProps) {
   return (
     <Card className={cn("overflow-hidden relative group w-full h-full min-h-[26rem]", className)}>
         <Image
@@ -23,6 +24,7 @@ export default function PromoCard({ image, title, description, ctaText, ctaLink,
             alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
+            data-ai-hint={dataAiHint}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         <CardContent className="relative z-10 flex flex-col justify-end h-full p-6 text-white">
