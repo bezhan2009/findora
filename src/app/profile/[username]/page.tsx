@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { users, services as allServices, reviews as allReviewsData } from '@/lib/data';
@@ -121,9 +121,10 @@ function OrdersList({ orders }: { orders: Order[] }) {
 }
 
 
-export default function ProfilePage({ params }: { params: { username: string } }) {
+export default function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { user: authUser } = useAuth();
-  const user = users.find((u) => u.username === params.username);
+  const { username } = use(params);
+  const user = users.find((u) => u.username === username);
 
   if (!user) {
     notFound();

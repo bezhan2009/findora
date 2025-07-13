@@ -22,7 +22,11 @@ export default function ServiceCard({ service }: ServiceCardProps) {
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    favorite ? removeFavorite(service.id) : addFavorite(service.id);
+    if (favorite) {
+      removeFavorite(service.id);
+    } else {
+      addFavorite(service.id);
+    }
   };
 
   const handleProviderClick = (e: React.MouseEvent) => {
@@ -31,53 +35,55 @@ export default function ServiceCard({ service }: ServiceCardProps) {
   };
 
   return (
-    <Link href={`/services/${service.id}`} className="group block">
-      <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-        <CardHeader className="p-0 relative">
-          <Image
-            src={service.images[0]}
-            alt={service.title}
-            width={400}
-            height={400}
-            className="w-full h-auto aspect-square object-cover"
-          />
-          {service.featured && (
-            <Badge className="absolute top-2 left-2" variant="default">
-              <Award className="h-3 w-3 mr-1" />
-              Featured
-            </Badge>
-          )}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-2 right-2 bg-white/70 hover:bg-white rounded-full text-rose-500"
-            onClick={handleFavoriteClick}
-          >
-            <Heart className={`h-5 w-5 ${favorite ? 'fill-current' : ''}`} />
-          </Button>
-        </CardHeader>
-
-        <CardContent className="p-4 flex-grow">
-          <div className="flex items-center gap-2 mb-2" onClick={handleProviderClick}>
-            <Link
-              href={`/profile/${service.provider.username}`}
-              className="flex items-center gap-2 group-hover:text-primary transition-colors"
-            >
-              <Avatar className="h-6 w-6">
-                <AvatarImage
-                  src={service.provider.avatar}
-                  alt={service.provider.name}
+    <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
+        <Link href={`/services/${service.id}`} className="block">
+            <CardHeader className="p-0 relative">
+                <Image
+                    src={service.images[0]}
+                    alt={service.title}
+                    width={400}
+                    height={400}
+                    className="w-full h-auto aspect-square object-cover"
                 />
-                <AvatarFallback>{service.provider.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <p className="text-sm font-medium text-muted-foreground group-hover:text-primary">
-                {service.provider.name}
-              </p>
+                {service.featured && (
+                    <Badge className="absolute top-2 left-2" variant="default">
+                    <Award className="h-3 w-3 mr-1" />
+                    Featured
+                    </Badge>
+                )}
+                <Button
+                    size="icon"
+                    variant="ghost"
+                    className="absolute top-2 right-2 bg-white/70 hover:bg-white rounded-full text-rose-500"
+                    onClick={handleFavoriteClick}
+                >
+                    <Heart className={`h-5 w-5 ${favorite ? 'fill-current' : ''}`} />
+                </Button>
+            </CardHeader>
+        </Link>
+        <CardContent className="p-4 flex-grow">
+            <div className="flex items-center gap-2 mb-2" onClick={handleProviderClick}>
+                <Link
+                href={`/profile/${service.provider.username}`}
+                className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                >
+                <Avatar className="h-6 w-6">
+                    <AvatarImage
+                    src={service.provider.avatar}
+                    alt={service.provider.name}
+                    />
+                    <AvatarFallback>{service.provider.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <p className="text-sm font-medium">
+                    {service.provider.name}
+                </p>
+                </Link>
+            </div>
+            <Link href={`/services/${service.id}`} className="block">
+                <CardTitle className="text-lg font-headline leading-tight h-12 group-hover:text-primary transition-colors">
+                    {service.title}
+                </CardTitle>
             </Link>
-          </div>
-          <CardTitle className="text-lg font-headline leading-tight h-12">
-            {service.title}
-          </CardTitle>
         </CardContent>
 
         <CardFooter className="p-4 pt-0 flex justify-between items-center border-t mt-auto">
@@ -93,7 +99,6 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             {service.price}
           </div>
         </CardFooter>
-      </Card>
-    </Link>
+    </Card>
   );
 }
