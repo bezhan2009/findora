@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard } from 'lucide-react';
+import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, LayoutGrid } from 'lucide-react';
 import Logo from './logo';
 import SearchBar from './search-bar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -16,13 +16,14 @@ const navLinks = [
   { href: '/favorites', label: 'Favorites', icon: Heart, roles: ['customer', 'provider'] },
   { href: '/chat', label: 'Messages', icon: MessageSquare, roles: ['customer', 'provider'] },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['provider'] },
+  { href: '/layouts', label: 'Layouts', icon: LayoutGrid, roles: ['customer', 'provider'] },
 ];
 
 export default function Header() {
   const { user, logout, role } = useAuth();
 
   const getNavLinks = () => {
-      if (!user) return [];
+      if (!user) return [{ href: '/layouts', label: 'Layouts', icon: LayoutGrid, roles: ['customer', 'provider'] }];
       return navLinks.filter(link => link.roles.includes(role || 'customer'));
   }
 
@@ -45,7 +46,7 @@ export default function Header() {
               <div className="flex flex-col gap-6 p-4">
                 <Logo />
                 <nav className="flex flex-col gap-4">
-                  {user && getNavLinks().map(({ href, label, icon: Icon }) => (
+                  {getNavLinks().map(({ href, label, icon: Icon }) => (
                     <Link
                       key={href}
                       href={href}
@@ -73,7 +74,7 @@ export default function Header() {
           </Sheet>
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-4 md:flex">
-            {user && getNavLinks().map(({ href, label }) => (
+            {getNavLinks().map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
@@ -115,7 +116,7 @@ export default function Header() {
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
-                 {getNavLinks().map((link) => (
+                 {getNavLinks().filter(l => l.href !== '/layouts').map((link) => (
                    <DropdownMenuItem key={link.href} asChild>
                      <Link href={link.href}>
                        <link.icon className="mr-2 h-4 w-4" />
