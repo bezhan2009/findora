@@ -10,10 +10,9 @@ import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Filter, SlidersHorizontal, Search } from 'lucide-react';
+import { SlidersHorizontal, Search } from 'lucide-react';
 import PromoCard from '@/components/promo-card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import HorizontalServiceCard from '@/components/horizontal-service-card';
@@ -141,19 +140,9 @@ export default function Home() {
   return (
     <div className="flex flex-col">
        {/* Hero Section */}
-       <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-center bg-gradient-to-br from-primary/20 to-background">
-          <div className="absolute inset-0 z-0">
-               <PromoCard
-                  image="https://images.unsplash.com/photo-1516321497487-e288fb19713f"
-                  title=""
-                  description=""
-                  ctaText=""
-                  ctaLink="#"
-                  className="h-full w-full opacity-30"
-                />
-          </div>
-          <div className="relative z-10 container mx-auto px-4 text-foreground">
-              <h1 className="text-4xl md:text-6xl font-extrabold font-headline mb-4 text-balance">Find & Hire Expert Talent</h1>
+       <section className="relative bg-background">
+          <div className="container mx-auto px-4 py-16 md:py-24 text-center">
+              <h1 className="text-4xl md:text-6xl font-extrabold font-headline mb-4 text-balance bg-clip-text text-transparent bg-gradient-to-r from-primary to-foreground/70">Find & Hire Expert Talent</h1>
               <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto mb-8">The premier marketplace to connect with skilled professionals and bring your ideas to life.</p>
               <div className="max-w-xl mx-auto">
                   <SearchBar />
@@ -196,7 +185,7 @@ export default function Home() {
                     <h2 className="text-3xl font-bold font-headline mb-6">Trending Services</h2>
                     <Carousel opts={{ align: "start", loop: true, }} className="w-full">
                         <CarouselContent>
-                            {services.map((service) => (
+                            {services.filter(s => s.featured).map((service) => (
                                 <CarouselItem key={service.id} className="md:basis-1/2 xl:basis-1/3">
                                     <div className="p-1">
                                         <ServiceCard service={service} />

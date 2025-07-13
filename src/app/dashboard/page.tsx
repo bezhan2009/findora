@@ -4,10 +4,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { services } from "@/lib/data";
-import { BarChart, Eye, Heart, DollarSign, Users, LineChart, Activity } from "lucide-react";
+import { BarChart, Eye, Heart, DollarSign, Users, LineChart as LineChartIcon, Activity } from "lucide-react";
 import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 const chartData = [
   { name: 'Jan', views: 4000, likes: 2400, revenue: 2400 },
@@ -45,10 +46,17 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-4 mb-8">
-        <BarChart className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">Provider Dashboard</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex items-center gap-4">
+            <BarChart className="h-8 w-8 text-primary" />
+            <h1 className="text-4xl font-bold font-headline">Provider Dashboard</h1>
+        </div>
+        <div className="flex gap-2">
+            <Button>+ Add New Service</Button>
+            <Button variant="outline">+ Create New Post</Button>
+        </div>
       </div>
+
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
@@ -93,11 +101,11 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <Card className="col-span-full">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
+        <Card className="col-span-full lg:col-span-3">
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
-                    <LineChart className="h-5 w-5"/>
+                    <LineChartIcon className="h-5 w-5"/>
                     Monthly Performance
                 </CardTitle>
             </CardHeader>
@@ -116,9 +124,55 @@ export default function DashboardPage() {
                         />
                         <Legend />
                         <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" activeDot={{ r: 8 }} />
-                        <Line type="monotone" dataKey="views" stroke="hsl(var(--secondary-foreground))" />
+                        <Line type="monotone" dataKey="views" stroke="hsl(var(--accent))" />
                     </RechartsLineChart>
                 </ResponsiveContainer>
+            </CardContent>
+        </Card>
+
+        <Card className="col-span-full lg:col-span-2">
+            <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-2">
+                    <Activity className="h-5 w-5"/>
+                    Recent Activity
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    <div className="flex items-center">
+                        <Avatar className="h-9 w-9">
+                            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" />
+                            <AvatarFallback>DP</AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4 space-y-1">
+                            <p className="text-sm font-medium leading-none">Diana Prince placed an order.</p>
+                            <p className="text-sm text-muted-foreground">For "Custom Website Development".</p>
+                        </div>
+                        <div className="ml-auto font-medium text-xs text-muted-foreground">5m ago</div>
+                    </div>
+                    <div className="flex items-center">
+                        <Avatar className="h-9 w-9">
+                           <AvatarImage src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e" />
+                            <AvatarFallback>CC</AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4 space-y-1">
+                            <p className="text-sm font-medium leading-none">Client C left a 5-star review.</p>
+                            <p className="text-sm text-muted-foreground">On "Professional Logo Design".</p>
+                        </div>
+                        <div className="ml-auto font-medium text-xs text-muted-foreground">2h ago</div>
+                    </div>
+                    <div className="flex items-center">
+                        <Avatar className="h-9 w-9">
+                            <AvatarImage src="https://images.unsplash.com/photo-1552058544-f2b08422138a" />
+                            <AvatarFallback>CB</AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4 space-y-1">
+                            <p className="text-sm font-medium leading-none">Client B liked your service.</p>
+                            <p className="text-sm text-muted-foreground">"E-commerce Store Setup".</p>
+                        </div>
+                        <div className="ml-auto font-medium text-xs text-muted-foreground">1d ago</div>
+                    </div>
+                </div>
             </CardContent>
         </Card>
       </div>

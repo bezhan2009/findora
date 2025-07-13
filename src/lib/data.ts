@@ -33,7 +33,7 @@ export const users: User[] = [
     followers: 840,
     following: [],
     posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d', caption: 'Logo branding project' },
+       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d', caption: 'Logo branding project' },
     ]
   },
   {
@@ -117,7 +117,7 @@ export const services: Service[] = [
     price: 150,
     rating: 5.0,
     reviewsCount: 25,
-    images: ['https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d'],
+    images: ['https://images.unsplash.com/photo-1626785774573-4b799315345d'],
     provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
     analytics: { views: 2100, likes: 450, revenue: 6750 }
   },

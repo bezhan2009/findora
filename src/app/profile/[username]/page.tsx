@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { users, services as allServices, reviews as allReviewsData } from '@/lib/data';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/use-auth';
 import type { User, Post, Order, UserStub } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 function PostsGrid({ posts }: { posts: Post[] }) {
     if (!posts || posts.length === 0) {
@@ -61,7 +62,7 @@ function FollowingList({ following }: { following: UserStub[] }) {
     }
 
     return (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {following.map(user => (
                 <Card key={user.username}>
                     <CardContent className="p-4 flex items-center gap-4">
@@ -110,7 +111,7 @@ function OrdersList({ orders }: { orders: Order[] }) {
                             <span>${order.price}</span>
                         </div>
                         <div className="md:col-span-1 flex justify-start md:justify-end">
-                            <Badge variant={order.status === 'Completed' ? 'default' : 'secondary'}>{order.status}</Badge>
+                             <Badge variant={order.status === 'Completed' ? 'default' : (order.status === 'In Progress' ? 'secondary' : 'outline')}>{order.status}</Badge>
                         </div>
                     </CardContent>
                 </Card>
@@ -264,3 +265,4 @@ export default function ProfilePage({ params }: { params: { username: string } }
     </div>
   );
 }
+
