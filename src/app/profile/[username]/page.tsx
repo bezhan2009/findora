@@ -1,21 +1,23 @@
 
+
 "use client";
 
-import { useState, use } from 'react';
+import { use, Suspense } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { users, services as allServices, reviews as allReviewsData } from '@/lib/data';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase } from 'lucide-react';
+import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase, Instagram, Linkedin, Globe, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/hooks/use-auth';
-import type { User, Post, Order, UserStub } from '@/lib/types';
+import type { User, Post, Order, UserStub, UserSocials } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
 
 function PostsGrid({ posts }: { posts: Post[] }) {
     if (!posts || posts.length === 0) {
@@ -120,10 +122,47 @@ function OrdersList({ orders }: { orders: Order[] }) {
     )
 }
 
+function SocialLinks({ socials }: { socials: UserSocials }) {
+    const hasSocials = Object.values(socials).some(link => !!link);
 
-export default function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
+    if (!hasSocials) {
+        return null;
+    }
+
+    return (
+        <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
+            {socials.instagram && (
+                <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+                    <Instagram className="h-5 w-5" />
+                </a>
+            )}
+             {socials.linkedin && (
+                <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+                    <Linkedin className="h-5 w-5" />
+                </a>
+            )}
+            {socials.website && (
+                <a href={socials.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+                    <Globe className="h-5 w-5" />
+                </a>
+            )}
+            {socials.email && (
+                <a href={`mailto:${socials.email}`} className="text-muted-foreground hover:text-primary">
+                    <Mail className="h-5 w-5" />
+                </a>
+            )}
+            {socials.phone && (
+                <a href={`tel:${socials.phone}`} className="text-muted-foreground hover:text-primary">
+                    <Phone className="h-5 w-5" />
+                </a>
+            )}
+        </div>
+    )
+}
+
+function ProfilePageContent({ params }: { params: { username: string } }) {
   const { user: authUser } = useAuth();
-  const { username } = use(params);
+  const { username } = params;
   const user = users.find((u) => u.username === username);
 
   if (!user) {
@@ -227,6 +266,7 @@ export default function ProfilePage({ params }: { params: Promise<{ username: st
                         <span>{user.location}</span>
                     </div>
                     <p className="text-foreground/80 max-w-2xl mx-auto md:mx-0">{user.bio}</p>
+                    {user.socials && <SocialLinks socials={user.socials} />}
                 </div>
 
                 <div className="flex items-center justify-center md:justify-end gap-6 w-full md:w-auto shrink-0">
@@ -264,5 +304,16 @@ export default function ProfilePage({ params }: { params: Promise<{ username: st
         {user.role === 'provider' ? renderProviderProfile(user) : renderCustomerProfile(user)}
       </main>
     </div>
+  );
+}
+
+
+export default function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
+  const resolvedParams = use(params);
+  
+  return (
+    <Suspense fallback={<div>Loading profile...</div>}>
+      <ProfilePageContent params={resolvedParams} />
+    </Suspense>
   );
 }

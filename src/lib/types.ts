@@ -37,6 +37,15 @@ export interface Service {
   }
 }
 
+export interface UserSocials {
+    instagram?: string;
+    facebook?: string;
+    linkedin?: string;
+    website?: string;
+    phone?: string;
+    email?: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -45,6 +54,7 @@ export interface User {
   avatar: string;
   location: string;
   bio: string;
+  socials?: UserSocials;
   services?: string[];
   reviews?: Review[];
   followers: number;

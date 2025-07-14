@@ -1,4 +1,5 @@
 
+
 import type { User, Service, Review, Category, Conversation } from './types';
 
 export const users: User[] = [
@@ -18,7 +19,13 @@ export const users: User[] = [
       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d', caption: 'Recent UI/UX Design project' },
       { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2', caption: 'My current workspace setup' },
       { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97', caption: 'Code, code, and more code.' },
-    ]
+    ],
+    socials: {
+        instagram: "https://instagram.com/bizmart",
+        linkedin: "https://linkedin.com/in/bizmart",
+        website: "https://bizmart.com",
+        email: "contact@bizmart.com"
+    }
   },
   {
     id: 'user-2',
@@ -71,7 +78,12 @@ export const users: User[] = [
         { id: 'order-1', serviceTitle: 'Custom Website Development', providerName: 'Alice Johnson', providerUsername: 'alicej', date: '2023-10-15', price: 450, status: 'Completed' },
         { id: 'order-2', serviceTitle: 'Professional Logo Design', providerName: 'Bob Williams', providerUsername: 'bobw', date: '2023-09-01', price: 150, status: 'Completed' },
         { id: 'order-3', serviceTitle: 'SEO Blog Post Writing', providerName: 'Charlie Brown', providerUsername: 'charlieb', date: '2023-11-20', price: 80, status: 'In Progress' },
-    ]
+    ],
+    socials: {
+        instagram: "https://instagram.com/diana.prince",
+        email: "diana.prince@example.com",
+        phone: "+1234567890"
+    }
   },
 ];
 

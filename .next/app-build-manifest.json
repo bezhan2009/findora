@@ -16,15 +16,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
     ],
-    "/services/[id]/page": [
+    "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/services/[id]/page.js"
-    ],
-    "/profile/[username]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/profile/[username]/page.js"
+      "static/chunks/app/dashboard/page.js"
     ],
     "/chat/page": [
       "static/chunks/webpack.js",
@@ -36,10 +31,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/favorites/page.js"
     ],
-    "/dashboard/page": [
+    "/services/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/dashboard/page.js"
+      "static/chunks/app/services/[id]/page.js"
+    ],
+    "/profile/[username]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/profile/[username]/page.js"
     ]
   }
 }
