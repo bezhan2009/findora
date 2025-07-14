@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { SlidersHorizontal, Search } from 'lucide-react';
-import PromoCard from '@/components/promo-card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import HorizontalServiceCard from '@/components/horizontal-service-card';
 import { Badge } from '@/components/ui/badge';
@@ -140,9 +139,10 @@ export default function Home() {
   return (
     <div className="flex flex-col">
        {/* Hero Section */}
-       <section className="relative bg-background">
+       <section className="relative bg-background overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 dark:from-primary/5 dark:to-background -z-10"/>
           <div className="container mx-auto px-4 py-16 md:py-24 text-center">
-              <h1 className="text-4xl md:text-6xl font-extrabold font-headline mb-4 text-balance bg-clip-text text-transparent bg-gradient-to-r from-primary to-foreground/70">Find & Hire Expert Talent</h1>
+              <h1 className="text-4xl md:text-5xl font-extrabold font-headline mb-4 text-balance">Find & Hire Expert Talent</h1>
               <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto mb-8">The premier marketplace to connect with skilled professionals and bring your ideas to life.</p>
               <div className="max-w-xl mx-auto">
                   <SearchBar />
