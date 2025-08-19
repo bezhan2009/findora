@@ -1,7 +1,4 @@
 {
   "/page": "app/page.js",
-  "/favorites/page": "app/favorites/page.js",
-  "/services/[id]/page": "app/services/[id]/page.js",
-  "/profile/[username]/page": "app/profile/[username]/page.js",
   "/login/page": "app/login/page.js"
 }
