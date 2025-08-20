@@ -316,5 +316,3 @@ export default function ProfilePage({ params }: { params: Promise<{ username: st
     </Suspense>
   );
 }
-
-    

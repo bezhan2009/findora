@@ -70,8 +70,8 @@ export const users: User[] = [
     reviews: [],
     followers: 50,
     following: [
-      { name: 'Alice Johnson', username: 'alicej', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2' },
-      { name: 'Bob Williams', username: 'bobw', avatar: 'https://images.unsplash.com/photo-1603415526960-fb0bdd25e347' },
+      { name: 'Alice Johnson', username: 'alicej', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop' },
+      { name: 'Bob Williams', username: 'bobw', avatar: 'https://images.unsplash.com/photo-1603415526960-fb0bdd25e347?w=100&h=100&fit=crop' },
     ],
     orders: [
         { id: 'order-1', serviceTitle: 'Custom Website Development', providerName: 'Alice Johnson', providerUsername: 'alicej', date: '2023-10-15', price: 450, status: 'Completed' },
@@ -206,5 +206,3 @@ export const conversations: Conversation[] = [
 
 export const getUserByUsername = (username: string) => users.find(u => u.username === username);
 export const getServicesByUserId = (userId: string) => services.filter(s => s.provider.name === users.find(u => u.id === userId)?.name);
-
-    
