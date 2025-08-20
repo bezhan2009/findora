@@ -1,5 +1,4 @@
 
-
 export type UserRole = 'customer' | 'provider';
 
 export interface Post {
@@ -103,3 +102,5 @@ export interface Category {
   id: string;
   name: string;
 }
+
+    

@@ -1,5 +1,4 @@
 
-
 import type { User, Service, Review, Category, Conversation } from './types';
 
 export const users: User[] = [
@@ -8,7 +7,7 @@ export const users: User[] = [
     name: 'Alice Johnson',
     username: 'alicej',
     role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=500&fit=crop',
     location: 'San Francisco, CA',
     bio: 'Experienced web developer specializing in React and Next.js. I create beautiful and performant websites for businesses of all sizes.',
     services: ['service-1', 'service-2'],
@@ -16,9 +15,9 @@ export const users: User[] = [
     followers: 1250,
     following: [],
     posts: [
-      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d', caption: 'Recent UI/UX Design project' },
-      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2', caption: 'My current workspace setup' },
-      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97', caption: 'Code, code, and more code.' },
+      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Recent UI/UX Design project' },
+      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'My current workspace setup' },
+      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Code, code, and more code.' },
     ],
     socials: {
         instagram: "https://instagram.com/bizmart",
@@ -32,7 +31,7 @@ export const users: User[] = [
     name: 'Bob Williams',
     username: 'bobw',
     role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1603415526960-fb0bdd25e347',
+    avatar: 'https://images.unsplash.com/photo-1603415526960-fb0bdd25e347?w=500&h=500&fit=crop',
     location: 'New York, NY',
     bio: 'Graphic designer with a passion for creating stunning logos and branding materials. Let\'s make your brand stand out!',
     services: ['service-3'],
@@ -40,7 +39,7 @@ export const users: User[] = [
     followers: 840,
     following: [],
     posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d', caption: 'Logo branding project' },
+       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Logo branding project' },
     ]
   },
   {
@@ -48,7 +47,7 @@ export const users: User[] = [
     name: 'Charlie Brown',
     username: 'charlieb',
     role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a9',
+    avatar: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a9?w=500&h=500&fit=crop',
     location: 'Austin, TX',
     bio: 'I write compelling copy that converts. From blog posts to website content, I can help you communicate your message effectively.',
     services: ['service-4'],
@@ -56,7 +55,7 @@ export const users: User[] = [
     followers: 530,
     following: [],
     posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643', caption: 'The power of good content.' },
+       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'The power of good content.' },
     ]
   },
    {
@@ -64,7 +63,7 @@ export const users: User[] = [
     name: 'Diana Prince',
     username: 'dianap',
     role: 'customer',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop',
     location: 'Chicago, IL',
     bio: 'Looking for the best creative talent for my upcoming projects.',
     services: [],
@@ -88,11 +87,11 @@ export const users: User[] = [
 ];
 
 export const reviews: Review[] = [
-    { id: 'rev-1', providerId: 'user-1', author: { name: 'Client A', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2' }, rating: 5, comment: 'Amazing work, delivered on time!', date: '2023-10-01' },
-    { id: 'rev-2', providerId: 'user-1', author: { name: 'Client B', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a' }, rating: 4, comment: 'Great communication and high-quality results.', date: '2023-09-22' },
-    { id: 'rev-3', providerId: 'user-2', author: { name: 'Client C', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e' }, rating: 5, comment: 'Exceeded my expectations. Highly recommended.', date: '2023-11-05' },
-    { id: 'rev-4', providerId: 'user-3', author: { name: 'Client D', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80' }, rating: 3, comment: 'Good work, but took a bit longer than expected.', date: '2023-10-15' },
-    { id: 'rev-5', providerId: 'user-1', author: { name: 'Client E', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956' }, rating: 5, comment: 'Alice is a true professional. Will hire again!', date: '2023-11-10' },
+    { id: 'rev-1', providerId: 'user-1', author: { name: 'Client A', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' }, rating: 5, comment: 'Amazing work, delivered on time!', date: '2023-10-01' },
+    { id: 'rev-2', providerId: 'user-1', author: { name: 'Client B', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop' }, rating: 4, comment: 'Great communication and high-quality results.', date: '2023-09-22' },
+    { id: 'rev-3', providerId: 'user-2', author: { name: 'Client C', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' }, rating: 5, comment: 'Exceeded my expectations. Highly recommended.', date: '2023-11-05' },
+    { id: 'rev-4', providerId: 'user-3', author: { name: 'Client D', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, rating: 3, comment: 'Good work, but took a bit longer than expected.', date: '2023-10-15' },
+    { id: 'rev-5', providerId: 'user-1', author: { name: 'Client E', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop' }, rating: 5, comment: 'Alice is a true professional. Will hire again!', date: '2023-11-10' },
 ];
 
 export const services: Service[] = [
@@ -104,7 +103,7 @@ export const services: Service[] = [
     price: 450,
     rating: 4.9,
     reviewsCount: 8,
-    images: ['https://images.unsplash.com/photo-1521791136064-7986c2920216', 'https://images.unsplash.com/photo-1551434678-e076c223a692', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97'],
+    images: ['https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop'],
     provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
     featured: true,
     analytics: { views: 1250, likes: 230, revenue: 4500 }
@@ -117,7 +116,7 @@ export const services: Service[] = [
     price: 380,
     rating: 4.8,
     reviewsCount: 12,
-    images: ['https://images.unsplash.com/photo-1557800636-894a64c1696f', 'https://images.unsplash.com/photo-1563013544-824ae1b704d3'],
+    images: ['https://images.unsplash.com/photo-1557800636-894a64c1696f?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=500&fit=crop'],
     provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
     analytics: { views: 890, likes: 180, revenue: 3800 }
   },
@@ -129,7 +128,7 @@ export const services: Service[] = [
     price: 150,
     rating: 5.0,
     reviewsCount: 25,
-    images: ['https://images.unsplash.com/photo-1626785774573-4b799315345d'],
+    images: ['https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&h=500&fit=crop'],
     provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
     analytics: { views: 2100, likes: 450, revenue: 6750 }
   },
@@ -141,7 +140,7 @@ export const services: Service[] = [
     price: 80,
     rating: 4.7,
     reviewsCount: 42,
-    images: ['https://images.unsplash.com/photo-1515378791036-0648a3ef77b2', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643'],
+    images: ['https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=500&fit=crop'],
     provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
     analytics: { views: 3500, likes: 600, revenue: 3360 }
   },
@@ -153,7 +152,7 @@ export const services: Service[] = [
     price: 300,
     rating: 4.9,
     reviewsCount: 15,
-    images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c'],
+    images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=500&fit=crop'],
     provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
     featured: true,
     analytics: { views: 1800, likes: 320, revenue: 4500 }
@@ -166,7 +165,7 @@ export const services: Service[] = [
     price: 500,
     rating: 4.9,
     reviewsCount: 9,
-    images: ['https://images.unsplash.com/photo-1519241047957-be31d7379a5d', 'https://images.unsplash.com/photo-1555774698-0b77e0abfe3d'],
+    images: ['https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?w=800&h=500&fit=crop'],
     provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
      analytics: { views: 1100, likes: 200, revenue: 4000 }
   },
@@ -207,3 +206,5 @@ export const conversations: Conversation[] = [
 
 export const getUserByUsername = (username: string) => users.find(u => u.username === username);
 export const getServicesByUserId = (userId: string) => services.filter(s => s.provider.name === users.find(u => u.id === userId)?.name);
+
+    

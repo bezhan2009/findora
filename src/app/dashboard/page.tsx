@@ -142,7 +142,7 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                     <div className="flex items-center">
                         <Avatar className="h-9 w-9">
-                            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" />
+                            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" data-ai-hint="person" />
                             <AvatarFallback>DP</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
@@ -153,7 +153,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center">
                         <Avatar className="h-9 w-9">
-                           <AvatarImage src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e" />
+                           <AvatarImage src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e" data-ai-hint="person" />
                             <AvatarFallback>CC</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
@@ -164,7 +164,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center">
                         <Avatar className="h-9 w-9">
-                            <AvatarImage src="https://images.unsplash.com/photo-1552058544-f2b08422138a" />
+                            <AvatarImage src="https://images.unsplash.com/photo-1552058544-f2b08422138a" data-ai-hint="person" />
                             <AvatarFallback>CB</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
@@ -180,3 +180,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

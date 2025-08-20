@@ -44,6 +44,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
                     width={400}
                     height={400}
                     className="w-full h-auto aspect-square object-cover"
+                    data-ai-hint="product image"
                 />
                 {service.featured && (
                     <Badge className="absolute top-3 left-3 bg-primary/80 backdrop-blur-sm text-primary-foreground border-none" variant="default">
@@ -105,3 +106,5 @@ export default function ServiceCard({ service }: ServiceCardProps) {
     </Card>
   );
 }
+
+    

@@ -1,8 +1,7 @@
 
-
 "use client";
 
-import { use, Suspense } from 'react';
+import { use, Suspense, useState } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { users, services as allServices, reviews as allReviewsData } from '@/lib/data';
@@ -17,7 +16,6 @@ import type { User, Post, Order, UserStub, UserSocials } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
 
 function PostsGrid({ posts }: { posts: Post[] }) {
     if (!posts || posts.length === 0) {
@@ -40,6 +38,7 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                         alt={post.caption}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
                         <p className="text-white text-center text-sm">{post.caption}</p>
@@ -317,3 +316,5 @@ export default function ProfilePage({ params }: { params: Promise<{ username: st
     </Suspense>
   );
 }
+
+    
