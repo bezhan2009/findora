@@ -166,6 +166,12 @@ export default function Header() {
                      </Link>
                    </DropdownMenuItem>
                  ))}
+                 <DropdownMenuItem asChild>
+                   <Link href="/ai-chat">
+                     <Sparkles className="mr-2 h-4 w-4" />
+                     <span>AI Assistant</span>
+                   </Link>
+                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" />

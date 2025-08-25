@@ -4,7 +4,6 @@
 import { usePathname } from 'next/navigation';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import AIChatWidget from './ai-chat-widget';
 
 export default function PageWrapper({
   children,
@@ -13,7 +12,7 @@ export default function PageWrapper({
 }) {
   const pathname = usePathname();
 
-  const showFooter = pathname !== '/chat';
+  const showFooter = pathname !== '/chat' && pathname !== '/ai-chat';
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -22,7 +21,6 @@ export default function PageWrapper({
         {children}
       </main>
       {showFooter && <Footer />}
-      <AIChatWidget />
     </div>
   );
 }
