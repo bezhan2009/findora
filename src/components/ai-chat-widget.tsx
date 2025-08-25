@@ -84,7 +84,7 @@ export default function AIChatWidget() {
                 AI Assistant
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex-grow p-0 flex flex-col">
+            <CardContent className="p-0 flex flex-col flex-grow overflow-hidden">
                 <ScrollArea className="flex-grow p-6" viewportRef={scrollViewportRef}>
                     <div className="space-y-6">
                     {messages.map((msg, index) => (
