@@ -16,7 +16,7 @@ export default function ChatPage() {
   const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(conversations[0] || null);
 
   return (
-    <div className="container mx-auto px-4 py-8 h-[calc(100vh-12rem)]">
+    <div className="container mx-auto px-4 py-8 h-[calc(100vh-8rem)]">
       <div className="flex items-center gap-4 mb-8">
         <MessageSquare className="h-8 w-8 text-primary" />
         <h1 className="text-4xl font-bold font-headline">Messages</h1>

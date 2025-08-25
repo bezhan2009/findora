@@ -13,13 +13,15 @@ export default function PageWrapper({
 }) {
   const pathname = usePathname();
 
+  const showFooter = pathname !== '/chat';
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow">
         {children}
       </main>
-      <Footer />
+      {showFooter && <Footer />}
       <AIChatWidget />
     </div>
   );
