@@ -10,6 +10,18 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, MessageSquare, Heart } from 'lucide-react';
 import { useFavorites } from '@/hooks/use-favorites';
+import { useEffect, useState } from 'react';
+
+function ClientFormattedDate({ dateString }: { dateString: string }) {
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    setFormattedDate(new Date(dateString).toLocaleDateString());
+  }, [dateString]);
+
+  return <>{formattedDate}</>;
+}
+
 
 export default function ServicePage({ params }: { params: { id: string } }) {
   const service = services.find((s) => s.id === params.id);
@@ -89,7 +101,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{review.author.name}</p>
-                                <p className="text-sm text-muted-foreground">{new Date(review.date).toLocaleDateString()}</p>
+                                <p className="text-sm text-muted-foreground"><ClientFormattedDate dateString={review.date} /></p>
                             </div>
                         </div>
                         <div className="flex items-center gap-1">
