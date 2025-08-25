@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
+import PageSearchInput from '@/components/page-search-input';
 
 function SearchResults({ services, query }: { services: Service[], query: string }) {
   return (
@@ -86,14 +87,7 @@ export default function Home() {
             BizMart is your premier marketplace for discovering and booking high-quality services from trusted professionals.
           </p>
           <div className="w-full max-w-2xl">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search for services like 'logo design' or 'website development'..."
-                className="w-full h-14 pl-12 pr-4 text-base rounded-full shadow-lg text-foreground"
-              />
-            </div>
+            <PageSearchInput />
           </div>
         </div>
       </section>
