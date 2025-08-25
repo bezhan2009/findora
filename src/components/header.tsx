@@ -15,7 +15,6 @@ import SearchBar from './search-bar';
 const navLinks = [
   { href: '/favorites', label: 'Favorites', icon: Heart, roles: ['customer', 'provider'] },
   { href: '/chat', label: 'Messages', icon: MessageSquare, roles: ['customer', 'provider'] },
-  { href: '/ai-chat', label: 'AI Chat', icon: Sparkles, roles: ['customer', 'provider'] },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['provider'] },
 ];
 

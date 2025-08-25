@@ -4,6 +4,7 @@
 import { usePathname } from 'next/navigation';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import AIChatWidget from './ai-chat-widget';
 
 export default function PageWrapper({
   children,
@@ -11,7 +12,6 @@ export default function PageWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isChatPage = pathname === '/ai-chat';
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -19,7 +19,8 @@ export default function PageWrapper({
       <main className="flex-grow">
         {children}
       </main>
-      {!isChatPage && <Footer />}
+      <Footer />
+      <AIChatWidget />
     </div>
   );
 }
