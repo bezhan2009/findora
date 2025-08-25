@@ -1,3 +1,4 @@
+
 "use client";
 
 import { usePathname } from 'next/navigation';
@@ -14,7 +15,7 @@ export default function PageWrapper({
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {!isChatPage && <Header />}
+      <Header />
       <main className="flex-grow">
         {children}
       </main>

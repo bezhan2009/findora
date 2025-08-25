@@ -54,8 +54,8 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="container mx-auto p-0 h-screen flex justify-center items-center">
-      <Card className="h-full w-full max-w-4xl flex flex-col shadow-2xl rounded-none">
+    <div className="container mx-auto p-4 flex flex-col h-[calc(100vh-8rem)]">
+      <Card className="h-full w-full max-w-4xl mx-auto flex flex-col shadow-2xl rounded-xl">
         <CardHeader className="border-b">
           <CardTitle className="flex items-center gap-3 font-headline text-2xl">
             <Sparkles className="h-6 w-6 text-primary" />
