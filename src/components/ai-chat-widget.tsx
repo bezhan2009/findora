@@ -24,20 +24,19 @@ export default function AIChatWidget() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollViewportRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    if (scrollAreaRef.current) {
-        const scrollViewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-        if (scrollViewport) {
-            scrollViewport.scrollTop = scrollViewport.scrollHeight;
-        }
+    if (scrollViewportRef.current) {
+        scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
     }
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
+    if (isOpen) {
+      setTimeout(scrollToBottom, 100);
+    }
+  }, [messages, isLoading, isOpen]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +85,7 @@ export default function AIChatWidget() {
               </CardTitle>
             </CardHeader>
             <CardContent className="flex-grow p-0 flex flex-col">
-                <ScrollArea className="flex-grow p-6" ref={scrollAreaRef}>
+                <ScrollArea className="flex-grow p-6" viewportRef={scrollViewportRef}>
                     <div className="space-y-6">
                     {messages.map((msg, index) => (
                         <div
