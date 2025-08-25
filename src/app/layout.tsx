@@ -3,9 +3,9 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { FavoritesProvider } from '@/context/favorites-provider';
 import Header from '@/components/header';
-import Footer from '@/components/footer';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/auth-provider';
+import PageWrapper from '@/components/page-wrapper';
 
 export const metadata: Metadata = {
   title: 'BizMart',
@@ -34,13 +34,9 @@ export default function RootLayout({
         >
           <AuthProvider>
             <FavoritesProvider>
-              <div className="flex flex-col min-h-screen bg-background">
-                <Header />
-                <main className="flex-grow">
-                  {children}
-                </main>
-                <Footer />
-              </div>
+              <PageWrapper>
+                {children}
+              </PageWrapper>
               <Toaster />
             </FavoritesProvider>
           </AuthProvider>
