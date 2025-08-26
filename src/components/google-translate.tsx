@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import Script from 'next/script';
 import { Globe } from 'lucide-react';
 import GoogleTranslateScript from './google-translate-script';
 
@@ -19,12 +18,15 @@ const GoogleTranslate = () => {
         const select = translateDiv.querySelector('select');
         if (select) {
             select.style.border = 'none';
-            select.style.padding = '0';
+            select.style.padding = '0.5rem';
             select.style.margin = '0';
             select.style.fontWeight = '500';
             select.style.position = 'relative';
             select.style.top = '-1px';
             select.style.cursor = 'pointer';
+            select.style.backgroundColor = 'transparent';
+            select.style.color = 'hsl(var(--foreground))';
+            select.classList.add('hover:text-primary');
         }
         
         const iframe = document.querySelector('.goog-te-menu-frame');
