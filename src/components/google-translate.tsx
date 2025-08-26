@@ -27,6 +27,8 @@ const GoogleTranslate = () => {
             select.style.backgroundColor = 'transparent';
             select.style.color = 'hsl(var(--foreground))';
             select.classList.add('hover:text-primary');
+            // Stop the interval once styling is applied
+            clearInterval(interval);
         }
         
         const iframe = document.querySelector('.goog-te-menu-frame');
