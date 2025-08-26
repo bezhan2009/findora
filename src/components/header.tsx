@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import { ThemeToggle } from './theme-toggle';
 import SearchBar from './search-bar';
+import { useLanguage } from '@/hooks/use-language';
 
 const navLinks = [
   { href: '/favorites', label: 'Favorites', icon: Heart, roles: ['customer', 'provider'] },
@@ -20,6 +21,7 @@ const navLinks = [
 
 export default function Header() {
   const { user, logout, role } = useAuth();
+  const { setLanguage } = useLanguage();
 
   const getNavLinks = () => {
       if (!user) return [];
@@ -106,9 +108,9 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Русский</DropdownMenuItem>
-                <DropdownMenuItem>Тоҷикӣ</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('English')}>English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('Russian')}>Русский</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('Tajik')}>Тоҷикӣ</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           {user ? (
