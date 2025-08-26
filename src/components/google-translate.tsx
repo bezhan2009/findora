@@ -17,16 +17,19 @@ const GoogleTranslate = () => {
       if (translateDiv) {
         const select = translateDiv.querySelector('select');
         if (select) {
-            select.style.border = 'none';
-            select.style.padding = '0.5rem';
+            select.style.border = '1px solid hsl(var(--border))';
+            select.style.padding = '0.25rem 0.5rem';
+            select.style.borderRadius = 'var(--radius)';
             select.style.margin = '0';
             select.style.fontWeight = '500';
             select.style.position = 'relative';
-            select.style.top = '-1px';
+            select.style.top = '0px';
             select.style.cursor = 'pointer';
-            select.style.backgroundColor = 'transparent';
-            select.style.color = 'hsl(var(--foreground))';
-            select.classList.add('hover:text-primary');
+            select.style.backgroundColor = 'hsl(var(--muted))';
+            select.style.color = 'hsl(var(--muted-foreground))';
+            select.classList.add('hover:bg-accent');
+            select.classList.add('hover:text-accent-foreground');
+            
             // Stop the interval once styling is applied
             clearInterval(interval);
         }
