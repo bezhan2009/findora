@@ -1,12 +1,17 @@
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { Globe } from 'lucide-react';
+import GoogleTranslateScript from './google-translate-script';
 
 const GoogleTranslate = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
+
     // This is to forcefully restyle the widget to fit the navbar
     const interval = setInterval(() => {
       const translateDiv = document.getElementById('google_translate_element');
@@ -48,25 +53,12 @@ const GoogleTranslate = () => {
 
   return (
     <>
-      <Script
-        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="afterInteractive"
-      />
-      <Script id="google-translate-init" strategy="afterInteractive">
-        {`
-          function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-              pageLanguage: 'en',
-              includedLanguages: 'en,ru,tg',
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-              autoDisplay: false
-            }, 'google_translate_element');
-          }
-        `}
-      </Script>
-      <div id="google_translate_element" className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer">
-          <Globe className="h-5 w-5 mr-1" />
-      </div>
+      <GoogleTranslateScript />
+      {isMounted && (
+        <div id="google_translate_element" className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer">
+            <Globe className="h-5 w-5 mr-1" />
+        </div>
+      )}
     </>
   );
 };
