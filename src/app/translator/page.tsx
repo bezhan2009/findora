@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -9,24 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { translateText, type TranslatorInput } from '@/ai/flows/translator-flow';
 import { Languages, Loader2 } from 'lucide-react';
-import { useLanguage } from '@/hooks/use-language';
-import type { Language } from '@/context/language-provider';
 
 export default function TranslatorPage() {
-  const { language, setLanguage } = useLanguage();
   const [textToTranslate, setTextToTranslate] = useState('');
-  const [targetLanguage, setTargetLanguage] = useState<Language>(language);
+  const [targetLanguage, setTargetLanguage] = useState<'English' | 'Russian' | 'Tajik'>('English');
   const [translatedText, setTranslatedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    setTargetLanguage(language);
-  }, [language]);
-
   const handleLanguageChange = (value: string) => {
-    const newLang = value as Language;
-    setTargetLanguage(newLang);
-    setLanguage(newLang);
+    setTargetLanguage(value as 'English' | 'Russian' | 'Tajik');
   };
 
   const handleTranslate = async () => {
