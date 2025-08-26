@@ -65,12 +65,4 @@
   body {
     @apply bg-background text-foreground;
   }
-  
-  /* Hide the Google Translate banner */
-  .goog-te-banner-frame.skiptranslate {
-    display: none !important;
-  } 
-  body { 
-    top: 0px !important; 
-  }
 }
