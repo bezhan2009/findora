@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, Bell, Sparkles } from 'lucide-react';
+import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, Bell, Sparkles, Languages } from 'lucide-react';
 import Logo from './logo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -170,6 +170,12 @@ export default function Header() {
                    <Link href="/ai-chat">
                      <Sparkles className="mr-2 h-4 w-4" />
                      <span>AI Assistant</span>
+                   </Link>
+                 </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                   <Link href="/translator">
+                     <Languages className="mr-2 h-4 w-4" />
+                     <span>Translator</span>
                    </Link>
                  </DropdownMenuItem>
                 <DropdownMenuSeparator />
