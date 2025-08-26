@@ -275,7 +275,7 @@ export const services: Service[] = [
     price: 250,
     rating: 5.0,
     reviewsCount: 18,
-    images: ['https://images.unsplash.com/photo-1527236438218-d82077ae1638?w=800&h=500&fit=crop'],
+    images: ['https://images.unsplash.com/photo-1580910051074-3c4b2da5d58e?w=800&h=500&fit=crop'],
     provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
     featured: true,
     analytics: { views: 2500, likes: 550, revenue: 7500 }
