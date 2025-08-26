@@ -11,6 +11,7 @@ import type { Service } from '@/lib/types';
 import { useFavorites } from '@/hooks/use-favorites';
 import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 interface ServiceCardProps {
   service: Service;
@@ -19,6 +20,7 @@ interface ServiceCardProps {
 export default function ServiceCard({ service }: ServiceCardProps) {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const favorite = isFavorite(service.id);
+  const [imageSrc, setImageSrc] = useState(service.images[0]);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -34,18 +36,23 @@ export default function ServiceCard({ service }: ServiceCardProps) {
     // This prevents the card's link from being triggered when clicking the provider
     e.stopPropagation();
   };
+  
+  const handleImageError = () => {
+    setImageSrc('https://placehold.co/400x400/F9F9F9/333333?text=Image+Not+Found');
+  };
 
   return (
     <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group bg-card">
       <Link href={`/services/${service.id}`} className="block">
         <CardHeader className="p-0 relative">
           <Image
-            src={service.images[0]}
+            src={imageSrc}
             alt={service.title}
             width={400}
             height={400}
             className="w-full h-auto aspect-square object-cover"
             data-ai-hint="product image"
+            onError={handleImageError}
           />
           {service.featured && (
             <Badge className="absolute top-3 left-3 bg-primary/80 backdrop-blur-sm text-primary-foreground border-none" variant="default">
