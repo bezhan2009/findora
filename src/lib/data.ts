@@ -84,6 +84,59 @@ export const users: User[] = [
         phone: "+1234567890"
     }
   },
+  {
+    id: 'user-5',
+    name: 'Eva Martinez',
+    username: 'evam',
+    role: 'provider',
+    avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=500&h=500&fit=crop',
+    location: 'Miami, FL',
+    bio: 'Results-driven marketing strategist with over 8 years of experience helping brands grow their online presence and drive revenue.',
+    services: ['service-5', 'service-8'],
+    reviews: [],
+    followers: 2100,
+    following: [],
+    posts: [
+       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Brainstorming the next big campaign.' },
+       { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Analyzing the latest market trends.' },
+    ],
+    socials: {
+        linkedin: "https://linkedin.com/in/evamartinez",
+        website: "https://evadigital.co"
+    }
+  },
+  {
+    id: 'user-6',
+    name: 'Frank Miller',
+    username: 'frankm',
+    role: 'provider',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&h=500&fit=crop',
+    location: 'Los Angeles, CA',
+    bio: 'Creative video editor and motion graphics artist. Bringing stories to life through compelling visuals and sound.',
+    services: ['service-7'],
+    reviews: [],
+    followers: 1600,
+    following: [],
+    posts: [
+       { id: 'p1', type: 'video', url: 'https://images.unsplash.com/photo-1527236438218-d82077ae1638?w=400&h=400&fit=crop', caption: 'A still from my latest short film project.' },
+    ]
+  },
+   {
+    id: 'user-7',
+    name: 'Grace Lee',
+    username: 'gracel',
+    role: 'provider',
+    avatar: 'https://images.unsplash.com/photo-1622281938263-af1399397686?w=500&h=500&fit=crop',
+    location: 'Seattle, WA',
+    bio: 'Business consultant focused on helping startups scale and optimize their operations for sustainable growth.',
+    services: ['service-9'],
+    reviews: [],
+    followers: 3200,
+    following: [],
+    posts: [
+       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Leading a workshop on agile methodologies.' },
+    ]
+  },
 ];
 
 export const reviews: Review[] = [
@@ -92,6 +145,9 @@ export const reviews: Review[] = [
     { id: 'rev-3', providerId: 'user-2', author: { name: 'Client C', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' }, rating: 5, comment: 'Exceeded my expectations. Highly recommended.', date: '2023-11-05' },
     { id: 'rev-4', providerId: 'user-3', author: { name: 'Client D', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, rating: 3, comment: 'Good work, but took a bit longer than expected.', date: '2023-10-15' },
     { id: 'rev-5', providerId: 'user-1', author: { name: 'Client E', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop' }, rating: 5, comment: 'Alice is a true professional. Will hire again!', date: '2023-11-10' },
+    { id: 'rev-6', providerId: 'user-5', author: { name: 'Startup Founder', avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop' }, rating: 5, comment: 'Eva\'s marketing strategy doubled our leads in one quarter. Incredible!', date: '2023-11-15' },
+    { id: 'rev-7', providerId: 'user-6', author: { name: 'Film Director', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop' }, rating: 5, comment: 'Frank is a master of his craft. The final edit was breathtaking.', date: '2023-11-18' },
+    { id: 'rev-8', providerId: 'user-7', author: { name: 'CEO of TechCorp', avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100&h=100&fit=crop' }, rating: 5, comment: 'Grace provided invaluable insights that helped us streamline our entire workflow.', date: '2023-11-20' },
 ];
 
 export const services: Service[] = [
@@ -153,7 +209,7 @@ export const services: Service[] = [
     rating: 4.9,
     reviewsCount: 15,
     images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
+    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
     featured: true,
     analytics: { views: 1800, likes: 320, revenue: 4500 }
   },
@@ -169,6 +225,55 @@ export const services: Service[] = [
     provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
      analytics: { views: 1100, likes: 200, revenue: 4000 }
   },
+  {
+    id: 'service-7',
+    title: 'Professional Video Editing',
+    description: 'High-quality video editing for commercials, YouTube content, and corporate videos. Service includes color grading, sound design, and motion graphics to make your video stand out.',
+    category: 'Video Production',
+    price: 250,
+    rating: 5.0,
+    reviewsCount: 18,
+    images: ['https://images.unsplash.com/photo-1574717024633-6005c48e6864?w=800&h=500&fit=crop'],
+    provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
+    featured: true,
+    analytics: { views: 2500, likes: 550, revenue: 7500 }
+  },
+  {
+    id: 'service-8',
+    title: 'Content Creation & Copywriting',
+    description: 'Crafting compelling narratives for your brand. From website copy to email newsletters, I create content that engages your audience and drives action.',
+    category: 'Writing',
+    price: 120,
+    rating: 4.8,
+    reviewsCount: 30,
+    images: ['https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=500&fit=crop'],
+    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
+    analytics: { views: 2800, likes: 400, revenue: 3600 }
+  },
+  {
+    id: 'service-9',
+    title: 'Business Growth Consulting',
+    description: 'Strategic consulting to help your business identify growth opportunities, optimize funnels, and improve customer retention. I provide actionable plans based on data-driven insights.',
+    category: 'Business',
+    price: 480,
+    rating: 5.0,
+    reviewsCount: 11,
+    images: ['https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=500&fit=crop'],
+    provider: { name: users[6].name, username: users[6].username, avatar: users[6].avatar },
+    analytics: { views: 1500, likes: 350, revenue: 5280 }
+  },
+   {
+    id: 'service-10',
+    title: 'Full Stack App Development',
+    description: 'End-to-end application development, from backend architecture to frontend implementation. Specializing in Node.js, Python, and modern JavaScript frameworks.',
+    category: 'Web Development',
+    price: 500,
+    rating: 5.0,
+    reviewsCount: 7,
+    images: ['https://images.unsplash.com/photo-1593720213428-28a5b9e94613?w=800&h=500&fit=crop'],
+    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
+    analytics: { views: 950, likes: 150, revenue: 3500 }
+  }
 ];
 
 export const categories: Category[] = [
@@ -176,6 +281,8 @@ export const categories: Category[] = [
     { id: 'cat-2', name: 'Graphic Design' },
     { id: 'cat-3', name: 'Writing' },
     { id: 'cat-4', name: 'Marketing' },
+    { id: 'cat-5', name: 'Video Production' },
+    { id: 'cat-6', name: 'Business' },
 ];
 
 export const conversations: Conversation[] = [
