@@ -102,3 +102,12 @@ export interface Category {
   id: string;
   name: string;
 }
+
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  variant?: string;
+}

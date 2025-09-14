@@ -6,6 +6,7 @@ import Header from '@/components/header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/auth-provider';
 import PageWrapper from '@/components/page-wrapper';
+import { CartProvider } from '@/context/cart-provider';
 
 export const metadata: Metadata = {
   title: 'BizMart',
@@ -34,10 +35,12 @@ export default function RootLayout({
         >
           <AuthProvider>
             <FavoritesProvider>
-              <PageWrapper>
-                {children}
-              </PageWrapper>
-              <Toaster />
+              <CartProvider>
+                <PageWrapper>
+                  {children}
+                </PageWrapper>
+                <Toaster />
+              </CartProvider>
             </FavoritesProvider>
           </AuthProvider>
         </ThemeProvider>

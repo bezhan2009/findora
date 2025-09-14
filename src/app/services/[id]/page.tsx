@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, MessageSquare, Heart } from 'lucide-react';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useEffect, useState } from 'react';
+import AddToCartButton from '@/components/add-to-cart-button';
 
 function ClientFormattedDate({ dateString }: { dateString: string }) {
   const [formattedDate, setFormattedDate] = useState('');
@@ -128,12 +129,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
             <CardContent className="p-0">
               <p className="text-muted-foreground mb-6">Starting price for a standard project.</p>
               <div className="flex flex-col gap-3">
-                <Button size="lg" asChild>
-                  <Link href="/chat">
-                    <MessageSquare className="mr-2 h-5 w-5" />
-                    Message Provider
-                  </Link>
-                </Button>
+                <AddToCartButton service={service} />
                 <Button size="lg" variant="outline" onClick={handleFavoriteClick}>
                   <Heart className={`mr-2 h-5 w-5 ${favorite ? 'text-rose-500 fill-current' : ''}`} />
                   {favorite ? 'Saved to Favorites' : 'Save to Favorites'}
