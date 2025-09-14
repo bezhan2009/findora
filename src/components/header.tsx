@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import { ThemeToggle } from './theme-toggle';
 import SearchBar from './search-bar';
-import GoogleTranslate from './google-translate';
 
 
 const navLinks = [
@@ -100,7 +99,6 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <GoogleTranslate />
           {user ? (
             <>
             <DropdownMenu>
