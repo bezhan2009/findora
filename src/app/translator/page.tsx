@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -8,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { translateText, type TranslatorInput } from '@/ai/flows/translator-flow';
-import { Languages, Loader2 } from 'lucide-react';
+import { Languages, Loader2, ChevronDown, Check } from 'lucide-react';
 
 export default function TranslatorPage() {
   const [textToTranslate, setTextToTranslate] = useState('');
@@ -68,18 +67,61 @@ export default function TranslatorPage() {
               value={targetLanguage}
               onValueChange={handleLanguageChange}
             >
-              <SelectTrigger id="target-language">
-                <SelectValue placeholder="Select a language" />
+              <SelectTrigger
+                id="target-language"
+                className="relative group transition-all duration-300 hover:border-primary/70 hover:shadow-md"
+              >
+                <SelectValue
+                  placeholder="Select a language"
+                  className="text-foreground"
+                />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="English">English</SelectItem>
-                <SelectItem value="Russian">Russian</SelectItem>
-                <SelectItem value="Tajik">Tajik</SelectItem>
+              <SelectContent className="border-0 shadow-lg bg-background animate-in fade-in-80">
+                <SelectItem
+                  value="English"
+                  className="relative cursor-pointer transition-all duration-200
+                           data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary
+                           data-[state=checked]:bg-primary/20 data-[state=checked]:text-primary
+                           hover:bg-primary/5 rounded-md py-2 pl-8 pr-2"
+                >
+                  <span className="absolute left-2 flex items-center justify-center">
+                    <Check className="h-4 w-4 opacity-0 data-[state=checked]:opacity-100 transition-opacity duration-200" />
+                  </span>
+                  English
+                </SelectItem>
+                <SelectItem
+                  value="Russian"
+                  className="relative cursor-pointer transition-all duration-200
+                           data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary
+                           data-[state=checked]:bg-primary/20 data-[state=checked]:text-primary
+                           hover:bg-primary/5 rounded-md py-2 pl-8 pr-2"
+                >
+                  <span className="absolute left-2 flex items-center justify-center">
+                    <Check className="h-4 w-4 opacity-0 data-[state=checked]:opacity-100 transition-opacity duration-200" />
+                  </span>
+                  Russian
+                </SelectItem>
+                <SelectItem
+                  value="Tajik"
+                  className="relative cursor-pointer transition-all duration-200
+                           data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary
+                           data-[state=checked]:bg-primary/20 data-[state=checked]:text-primary
+                           hover:bg-primary/5 rounded-md py-2 pl-8 pr-2"
+                >
+                  <span className="absolute left-2 flex items-center justify-center">
+                    <Check className="h-4 w-4 opacity-0 data-[state=checked]:opacity-100 transition-opacity duration-200" />
+                  </span>
+                  Tajik
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <Button onClick={handleTranslate} disabled={isLoading || !textToTranslate.trim()}>
+          <Button
+            onClick={handleTranslate}
+            disabled={isLoading || !textToTranslate.trim()}
+            className="transition-all duration-300 hover:scale-105 disabled:hover:scale-100"
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -91,17 +133,47 @@ export default function TranslatorPage() {
           </Button>
 
           {translatedText && (
-            <Card className="bg-muted">
+            <Card className="bg-muted border-0 shadow-lg transition-all duration-500 animate-in fade-in-500 slide-in-from-bottom-10">
               <CardHeader>
                 <CardTitle className="text-lg">Translation Result</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>{translatedText}</p>
+                <p className="text-foreground/90 leading-relaxed">{translatedText}</p>
               </CardContent>
             </Card>
           )}
         </CardContent>
       </Card>
+
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-select-content {
+          animation: slideIn 0.2s ease-out;
+        }
+
+        .select-item {
+          transition: all 0.2s ease;
+        }
+
+        .select-item:hover {
+          background-color: hsl(var(--primary) / 0.05);
+        }
+
+        .select-trigger:hover {
+          border-color: hsl(var(--primary) / 0.7);
+          box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
+        }
+      `}</style>
     </div>
   );
 }
