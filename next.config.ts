@@ -33,6 +33,12 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.mos.cms.futurecdn.net',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tse2.mm.bing.net',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
