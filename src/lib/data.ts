@@ -275,7 +275,7 @@ export const services: Service[] = [
     price: 250,
     rating: 5.0,
     reviewsCount: 18,
-    images: ['https://images.unsplash.com/photo-1580910051074-3c4b2da5d58e?w=800&h=500&fit=crop'],
+    images: ['https://cdn.mos.cms.futurecdn.net/y27kBjXzhQmFkofj4i8tfV-1200-80.jpg'],
     provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
     featured: true,
     analytics: { views: 2500, likes: 550, revenue: 7500 }
@@ -409,7 +409,7 @@ export const services: Service[] = [
     price: 480,
     rating: 4.9,
     reviewsCount: 14,
-    images: ['https://images.unsplash.com/photo-1513708925886-bb3e4e7d6a2d?w=800&h=500&fit=crop'],
+    images: ['https://tse2.mm.bing.net/th/id/OIP.kv_EnCYKjwCfi60dGBwqtwHaEv?rs=1&pid=ImgDetMain&o=7&rm=3'],
     provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
     analytics: { views: 2200, likes: 480, revenue: 6720 }
   },

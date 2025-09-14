@@ -1,55 +1,25 @@
 {
   "node": {
-    "406575a517f32f2a759902cdc9dc178820181a3ce9": {
-      "workers": {
-        "app/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        },
-        "app/_not-found/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        },
-        "app/services/[id]/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        },
-        "app/cart/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/page": "action-browser",
-        "app/_not-found/page": "action-browser",
-        "app/services/[id]/page": "action-browser",
-        "app/cart/page": "action-browser"
-      }
-    },
     "4014d7c3a6c13cebfe1e2a244bf21fd680172b605f": {
       "workers": {
         "app/page": {
           "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
           "async": false
-        },
-        "app/_not-found/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        },
-        "app/services/[id]/page": {
-          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        },
-        "app/cart/page": {
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    },
+    "406575a517f32f2a759902cdc9dc178820181a3ce9": {
+      "workers": {
+        "app/page": {
           "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fsmart-search-assistant.ts%22%2C%5B%7B%22id%22%3A%224014d7c3a6c13cebfe1e2a244bf21fd680172b605f%22%2C%22exportedName%22%3A%22smartSearchSuggestions%22%7D%5D%5D%2C%5B%22%2Fhome%2Fuser%2Fstudio%2Fsrc%2Fai%2Fflows%2Fai-chat.ts%22%2C%5B%7B%22id%22%3A%22406575a517f32f2a759902cdc9dc178820181a3ce9%22%2C%22exportedName%22%3A%22aiChat%22%7D%5D%5D%5D&__client_imported__=true!",
           "async": false
         }
       },
       "layer": {
-        "app/page": "action-browser",
-        "app/_not-found/page": "action-browser",
-        "app/services/[id]/page": "action-browser",
-        "app/cart/page": "action-browser"
+        "app/page": "action-browser"
       }
     }
   },
