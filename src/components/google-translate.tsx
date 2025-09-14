@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Globe, ChevronDown } from 'lucide-react';
 import GoogleTranslateScript from './google-translate-script';
 
 const GoogleTranslate = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -34,9 +32,8 @@ const GoogleTranslate = () => {
           select.style.appearance = 'none';
           select.style.backgroundImage = 'none';
           
-          // Создаем кастомную стрелку
-          const parentNode = select.parentNode as HTMLElement;
-          if (parentNode && !parentNode.querySelector('.custom-arrow')) {
+          if (!select.parentNode?.querySelector('.custom-arrow')) {
+            // Создаем кастомную стрелку
             const arrow = document.createElement('div');
             arrow.className = 'custom-arrow';
             arrow.innerHTML = `
@@ -53,8 +50,8 @@ const GoogleTranslate = () => {
                 </svg>
               </div>
             `;
-            parentNode.style.position = 'relative';
-            parentNode.appendChild(arrow);
+            (select.parentNode as HTMLElement).style.position = 'relative';
+            select.parentNode?.appendChild(arrow);
           }
 
 
@@ -88,124 +85,174 @@ const GoogleTranslate = () => {
             }, 150);
           });
         }
-        
-        // Стилизация выпадающего меню
+
+        // Функция для стилизации выпадающего меню с анимациями
         const styleDropdown = () => {
           const iframe = document.querySelector('.goog-te-menu-frame') as HTMLIFrameElement;
-          if (iframe) {
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-            if (iframeDoc) {
-              // Стилизация элементов меню
-              const menuItems = iframeDoc.querySelectorAll('.goog-te-menu2-item');
-              menuItems.forEach(item => {
-                const htmlItem = item as HTMLElement;
-                htmlItem.style.padding = '0.5rem 1rem';
-                htmlItem.style.fontSize = '0.875rem';
-                htmlItem.style.transition = 'all 0.15s ease-in-out';
-                htmlItem.style.cursor = 'pointer';
-                htmlItem.style.borderRadius = '4px';
-                htmlItem.style.margin = '2px 0';
+          if (iframe && iframe.style.display !== 'none') {
+            try {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+              if (iframeDoc && iframeDoc.readyState === 'complete') {
                 
-                // Hover эффекты
-                item.addEventListener('mouseenter', () => {
-                  htmlItem.style.backgroundColor = 'hsl(var(--primary) / 0.1)';
-                  htmlItem.style.color = 'hsl(var(--primary))';
-                });
-                
-                item.addEventListener('mouseleave', () => {
-                  htmlItem.style.backgroundColor = 'transparent';
-                  htmlItem.style.color = 'hsl(var(--foreground))';
-                });
-              });
+                // Добавляем анимацию появления для всего меню
+                const menu = iframeDoc.querySelector('.goog-te-menu2') as HTMLElement | null;
+                if (menu) {
+                  menu.style.animation = 'slideDown 0.3s ease-out';
+                  menu.style.transformOrigin = 'top center';
+                }
 
-              // Стилизация активного элемента
-              const activeItems = iframeDoc.querySelectorAll('.goog-te-menu2-item-selected');
-              activeItems.forEach(item => {
-                (item as HTMLElement).style.backgroundColor = 'hsl(var(--primary))';
-                (item as HTMLElement).style.color = 'white';
-              });
+                // Стилизация элементов меню
+                const menuItems = iframeDoc.querySelectorAll('.goog-te-menu2-item');
+                menuItems.forEach((item, index) => {
+                  const htmlItem = item as HTMLElement;
+                  htmlItem.style.padding = '0.75rem 1rem';
+                  htmlItem.style.fontSize = '0.875rem';
+                  htmlItem.style.transition = 'all 0.2s ease-in-out';
+                  htmlItem.style.cursor = 'pointer';
+                  htmlItem.style.borderRadius = '6px';
+                  htmlItem.style.margin = '3px 0';
+                  htmlItem.style.opacity = '0';
+                  htmlItem.style.transform = 'translateY(-10px)';
+                  
+                  // Анимация появления элементов с задержкой
+                  setTimeout(() => {
+                    htmlItem.style.opacity = '1';
+                    htmlItem.style.transform = 'translateY(0)';
+                  }, index * 50);
 
-              // Стилизация скроллбара
-              if (!iframeDoc.querySelector('.custom-scrollbar-styles')) {
-                const style = iframeDoc.createElement('style');
-                style.className = 'custom-scrollbar-styles';
-                style.textContent = `
-                  ::-webkit-scrollbar {
-                    width: 6px;
-                  }
-                  ::-webkit-scrollbar-track {
-                    background: hsl(var(--muted));
-                    border-radius: 3px;
-                  }
-                  ::-webkit-scrollbar-thumb {
-                    background: hsl(var(--muted-foreground) / 0.5);
-                    border-radius: 3px;
-                  }
-                  ::-webkit-scrollbar-thumb:hover {
-                    background: hsl(var(--muted-foreground));
-                  }
-                `;
-                iframeDoc.head.appendChild(style);
+                  // Hover эффекты
+                  item.addEventListener('mouseenter', () => {
+                    htmlItem.style.backgroundColor = 'hsl(var(--primary) / 0.1)';
+                    htmlItem.style.color = 'hsl(var(--primary))';
+                    htmlItem.style.transform = 'translateX(4px)';
+                  });
+                  
+                  item.addEventListener('mouseleave', () => {
+                    htmlItem.style.backgroundColor = 'transparent';
+                    htmlItem.style.color = 'hsl(var(--foreground))';
+                    htmlItem.style.transform = 'translateX(0)';
+                  });
+                });
+
+                // Стилизация активного элемента
+                const activeItems = iframeDoc.querySelectorAll('.goog-te-menu2-item-selected');
+                activeItems.forEach(item => {
+                  const htmlItem = item as HTMLElement;
+                  htmlItem.style.backgroundColor = 'hsl(var(--primary))';
+                  htmlItem.style.color = 'white';
+                  htmlItem.style.fontWeight = '600';
+                });
+
+                // Добавляем CSS анимации в iframe
+                if (!iframeDoc.head.querySelector('style[data-custom-animations]')) {
+                  const style = iframeDoc.createElement('style');
+                  style.setAttribute('data-custom-animations', 'true');
+                  style.textContent = `
+                    @keyframes slideDown {
+                      from {
+                        opacity: 0;
+                        transform: translateY(-10px) scale(0.95);
+                      }
+                      to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                      }
+                    }
+                    
+                    @keyframes itemSlideIn {
+                      from {
+                        opacity: 0;
+                        transform: translateY(-8px);
+                      }
+                      to {
+                        opacity: 1;
+                        transform: translateY(0);
+                      }
+                    }
+                    
+                    .goog-te-menu2 {
+                      animation: slideDown 0.3s ease-out !important;
+                      transform-origin: top center;
+                    }
+                    
+                    .goog-te-menu2-item {
+                      animation: itemSlideIn 0.3s ease-out forwards;
+                    }
+                    
+                    ::-webkit-scrollbar {
+                      width: 8px;
+                    }
+                    ::-webkit-scrollbar-track {
+                      background: hsl(var(--muted));
+                      border-radius: 4px;
+                      margin: 4px 0;
+                    }
+                    ::-webkit-scrollbar-thumb {
+                      background: hsl(var(--muted-foreground) / 0.5);
+                      border-radius: 4px;
+                      transition: background 0.2s ease;
+                    }
+                    ::-webkit-scrollbar-thumb:hover {
+                      background: hsl(var(--muted-foreground));
+                    }
+                    
+                    body {
+                      background: transparent !important;
+                      padding: 0.5rem 0;
+                    }
+                  `;
+                  iframeDoc.head.appendChild(style);
+                }
               }
+            } catch (error) {
+              // Error styling dropdown
             }
           }
 
+          // Стилизация контейнера меню
           if (iframe?.parentElement) {
-            iframe.parentElement.style.boxShadow = '0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)';
+            iframe.parentElement.style.boxShadow = '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)';
             iframe.parentElement.style.border = '1px solid hsl(var(--border))';
-            iframe.parentElement.style.borderRadius = '8px';
-            iframe.parentElement.style.padding = '0.5rem';
+            iframe.parentElement.style.borderRadius = '12px';
+            iframe.parentElement.style.padding = '0.75rem';
             iframe.parentElement.style.backgroundColor = 'hsl(var(--popover))';
-            iframe.parentElement.style.animation = 'slideIn 0.2s ease-out';
-            iframe.parentElement.style.maxHeight = '300px';
+            iframe.parentElement.style.animation = 'popIn 0.3s ease-out';
+            iframe.parentElement.style.maxHeight = '400px';
             iframe.parentElement.style.overflow = 'hidden';
+            iframe.parentElement.style.backdropFilter = 'blur(8px)';
           }
         };
 
-        // Периодически проверяем и стилизуем выпадающее меню
+        // Постоянно проверяем и обновляем стили меню
         const dropdownInterval = setInterval(styleDropdown, 100);
 
         const font = translateDiv.querySelector('font');
         if (font) {
-            font.style.display = 'none'; // Скрываем стандартный текст
+            (font as HTMLElement).style.display = 'none';
         }
 
         const icon = translateDiv.querySelector('.goog-te-gadget-icon');
         if (icon) {
             (icon as HTMLElement).style.display = 'none';
         }
-
-        // Добавляем кастомные стили для анимаций
-        if (!document.querySelector('[data-custom-animations]')) {
-          const styleElement = document.createElement('style');
-          styleElement.setAttribute('data-custom-animations', 'true');
-          styleElement.textContent = `
-            @keyframes slideIn {
-              from {
-                opacity: 0;
-                transform: translateY(-8px) scale(0.95);
+        
+        // Добавляем глобальные стили для анимаций
+        if(!document.head.querySelector('style[data-google-translate-animations]')) {
+            const styleElement = document.createElement('style');
+            styleElement.setAttribute('data-google-translate-animations', 'true');
+            styleElement.textContent = `
+              @keyframes popIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(-8px) scale(0.95);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
               }
-              to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-              }
-            }
-            
-            @keyframes pulse {
-              0% { transform: scale(1); }
-              50% { transform: scale(1.02); }
-              100% { transform: scale(1); }
-            }
-            
-            .google-translate-select {
-              transition: all 0.2s ease-in-out;
-            }
-            
-            .google-translate-select:hover {
-              border-color: hsl(var(--primary)) !important;
-            }
-          `;
-          document.head.appendChild(styleElement);
+            `;
+            document.head.appendChild(styleElement);
         }
 
         return () => {
@@ -215,10 +262,10 @@ const GoogleTranslate = () => {
       return undefined;
     };
 
-    const interval = setInterval(styleWidget, 200);
+    const intervalId = setInterval(styleWidget, 200);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(intervalId);
     };
   }, []);
 
@@ -231,9 +278,6 @@ const GoogleTranslate = () => {
             id="google_translate_element" 
             className="flex items-center text-sm font-medium text-foreground transition-all duration-200 hover:text-primary cursor-pointer"
           />
-          <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="absolute -inset-2 bg-primary/10 rounded-lg blur-sm" />
-          </div>
         </div>
       )}
     </>
