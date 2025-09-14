@@ -1,26 +1,28 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Award, Star, Zap } from 'lucide-react';
+import { Award, Star, Zap, Search as SearchIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ServiceCard from '@/components/service-card';
 import HorizontalServiceCard from '@/components/horizontal-service-card';
 import PromoCard from '@/components/promo-card';
 import { services, categories } from '@/lib/data';
-import type { Service, Category } from '@/lib/types';
+import type { Service } from '@/lib/types';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Link from 'next/link';
 import PageSearchInput from '@/components/page-search-input';
 import FilterSidebar, { type FilterState } from '@/components/filter-sidebar';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function SearchResults({ services, query }: { services: Service[], query: string }) {
   if (services.length === 0) {
     return (
         <div className="text-center py-20 bg-card rounded-xl">
+            <SearchIcon className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-2xl font-semibold mb-2 font-headline">No services found for &quot;{query}&quot;</h3>
             <p className="text-muted-foreground">Try a different search term or adjust your filters.</p>
         </div>
@@ -36,7 +38,7 @@ function SearchResults({ services, query }: { services: Service[], query: string
   );
 }
 
-export default function Home() {
+function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('q');
@@ -83,7 +85,6 @@ export default function Home() {
     if(activeFilters.topRated) {
         results = results.filter(service => service.rating >= 4.8);
     }
-
 
     setFilteredServices(results);
   }, [searchQuery, categoryQuery, allServices, activeFilters]);
@@ -265,4 +266,27 @@ export default function Home() {
   );
 }
 
+function PageFallback() {
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <div className="lg:col-span-3 space-y-12">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-96 w-full" />
+        </div>
+        <aside className="lg:col-span-1">
+            <Skeleton className="h-screen w-full" />
+        </aside>
+      </div>
+    </div>
+  )
+}
+
+export default function Home() {
+    return (
+        <Suspense fallback={<PageFallback />}>
+            <HomePageContent />
+        </Suspense>
+    )
+}
     
