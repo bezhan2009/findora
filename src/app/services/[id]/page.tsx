@@ -1,5 +1,7 @@
+
 "use client";
 
+import { use, Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, MessageSquare, Heart } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useEffect, useState } from 'react';
 import AddToCartButton from '@/components/add-to-cart-button';
@@ -24,7 +26,7 @@ function ClientFormattedDate({ dateString }: { dateString: string }) {
 }
 
 
-export default function ServicePage({ params }: { params: { id: string } }) {
+function ServicePageContent({ params }: { params: { id: string } }) {
   const service = services.find((s) => s.id === params.id);
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
 
@@ -140,5 +142,16 @@ export default function ServicePage({ params }: { params: { id: string } }) {
         </div>
       </div>
     </div>
+  );
+}
+
+
+export default function ServicePage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  
+  return (
+    <Suspense fallback={<div>Loading service...</div>}>
+      <ServicePageContent params={resolvedParams} />
+    </Suspense>
   );
 }
