@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Logo from './logo';
 import { Twitter, Facebook, Instagram } from 'lucide-react';
@@ -24,9 +25,9 @@ export default function Footer() {
           <div>
             <h3 className="font-headline font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Help Center</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</a></li>
+              <li><Link href="/help-center" className="text-sm text-muted-foreground hover:text-primary">Help Center</Link></li>
+              <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
             </ul>
           </div>
           <div>
@@ -45,3 +46,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+    

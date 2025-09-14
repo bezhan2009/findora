@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A simple AI chat flow.
@@ -39,6 +40,8 @@ const chatPrompt = ai.definePrompt(
     prompt: `You are a friendly and helpful AI assistant for BizMart, a marketplace for services.
 Your goal is to help users find services, answer their questions about the platform, and provide recommendations.
 
+You can communicate in multiple languages. If a user messages you in Tajik (тоҷикӣ), you MUST respond in Tajik.
+
 Keep your responses concise and friendly.
 
 Here is the conversation history:
@@ -66,3 +69,5 @@ const aiChatFlow = ai.defineFlow(
     return { response: output.response };
   }
 );
+
+    

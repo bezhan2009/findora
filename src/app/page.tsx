@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Award, Star, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ServiceCard from '@/components/service-card';
@@ -15,6 +15,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Link from 'next/link';
 import PageSearchInput from '@/components/page-search-input';
 import FilterSidebar, { type FilterState } from '@/components/filter-sidebar';
+import { cn } from '@/lib/utils';
 
 function SearchResults({ services, query }: { services: Service[], query: string }) {
   if (services.length === 0) {
@@ -36,13 +37,15 @@ function SearchResults({ services, query }: { services: Service[], query: string
 }
 
 export default function Home() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('q');
+  const categoryQuery = searchParams.get('category');
   
   const [allServices] = useState<Service[]>(services);
   const [filteredServices, setFilteredServices] = useState<Service[]>(services);
   const [activeFilters, setActiveFilters] = useState<FilterState>({
-    category: 'all',
+    category: categoryQuery || 'all',
     priceRange: [0, 500],
     rating: 0,
     featured: false,
@@ -62,8 +65,9 @@ export default function Home() {
     }
     
     // Apply filters
-    if (activeFilters.category !== 'all') {
-      results = results.filter(service => service.category === activeFilters.category);
+    const currentCategory = categoryQuery || activeFilters.category;
+    if (currentCategory !== 'all') {
+      results = results.filter(service => service.category === currentCategory);
     }
 
     results = results.filter(service => service.price >= activeFilters.priceRange[0] && service.price <= activeFilters.priceRange[1]);
@@ -82,7 +86,7 @@ export default function Home() {
 
 
     setFilteredServices(results);
-  }, [searchQuery, allServices, activeFilters]);
+  }, [searchQuery, categoryQuery, allServices, activeFilters]);
 
   const featuredServices = services.filter(s => s.featured);
   const trendingServices = services.slice(0, 4);
@@ -90,7 +94,24 @@ export default function Home() {
 
   const handleApplyFilters = (filters: FilterState) => {
     setActiveFilters(filters);
+    const params = new URLSearchParams(window.location.search);
+    if (filters.category && filters.category !== 'all') {
+      params.set('category', filters.category);
+    } else {
+      params.delete('category');
+    }
+    router.push(`?${params.toString()}`);
   };
+
+  const handleCategoryClick = (categoryName: string) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('category', categoryName);
+    params.delete('q'); // Clear search query when a category is clicked
+    router.push(`?${params.toString()}`);
+    setActiveFilters(prev => ({...prev, category: categoryName}));
+  };
+
+  const isFiltering = searchQuery || (categoryQuery && categoryQuery !== 'all');
 
   return (
     <>
@@ -121,12 +142,12 @@ export default function Home() {
       <main className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-3">
-             {searchQuery ? (
+             {isFiltering ? (
                 <div>
                     <h2 className="text-3xl font-bold font-headline mb-6">
-                        Results for &quot;{searchQuery}&quot;
+                        Results {searchQuery && `for "${searchQuery}"`} {categoryQuery && `in ${categoryQuery}`}
                     </h2>
-                    <SearchResults services={filteredServices} query={searchQuery} />
+                    <SearchResults services={filteredServices} query={searchQuery || categoryQuery || ""} />
                 </div>
             ) : (
               <>
@@ -202,11 +223,16 @@ export default function Home() {
                     </div>
                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {categories.map(category => (
-                            <Link key={category.id} href="#" className="block">
-                                <div className="p-6 bg-card rounded-xl text-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                                    <p className="font-semibold">{category.name}</p>
-                                </div>
-                            </Link>
+                            <button
+                                key={category.id}
+                                onClick={() => handleCategoryClick(category.name)}
+                                className={cn(
+                                    "p-6 bg-card rounded-xl text-center font-semibold hover:bg-accent hover:text-accent-foreground transition-colors",
+                                    categoryQuery === category.name && "bg-primary text-primary-foreground"
+                                )}
+                            >
+                                {category.name}
+                            </button>
                         ))}
                     </div>
                 </section>
@@ -238,3 +264,5 @@ export default function Home() {
     </>
   );
 }
+
+    
