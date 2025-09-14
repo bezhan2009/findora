@@ -14,7 +14,7 @@ const GoogleTranslate = () => {
       if (translateDiv) {
         const select = translateDiv.querySelector('select');
         if (select) {
-          // Стилизация основного селекта
+          // Style the main select element
           select.style.border = '1px solid hsl(var(--border))';
           select.style.padding = '0.5rem 2.5rem 0.5rem 0.75rem';
           select.style.borderRadius = '6px';
@@ -32,8 +32,8 @@ const GoogleTranslate = () => {
           select.style.appearance = 'none';
           select.style.backgroundImage = 'none';
           
-          if (!select.parentNode?.querySelector('.custom-arrow')) {
-            // Создаем кастомную стрелку
+          if (!translateDiv.querySelector('.custom-arrow')) {
+            // Create a custom arrow
             const arrow = document.createElement('div');
             arrow.className = 'custom-arrow';
             arrow.innerHTML = `
@@ -55,7 +55,7 @@ const GoogleTranslate = () => {
           }
 
 
-          // Hover эффекты
+          // Hover effects
           select.addEventListener('mouseenter', () => {
             select.style.borderColor = 'hsl(var(--primary))';
             select.style.boxShadow = '0 0 0 3px hsl(var(--primary) / 0.1)';
@@ -78,7 +78,7 @@ const GoogleTranslate = () => {
           });
 
           select.addEventListener('change', () => {
-            // Анимация при изменении языка
+            // Animation on language change
             select.style.transform = 'scale(0.98)';
             setTimeout(() => {
               select.style.transform = 'scale(1)';
@@ -86,7 +86,7 @@ const GoogleTranslate = () => {
           });
         }
 
-        // Функция для стилизации выпадающего меню с анимациями
+        // Function to style the dropdown menu with animations
         const styleDropdown = () => {
           const iframe = document.querySelector('.goog-te-menu-frame') as HTMLIFrameElement;
           if (iframe && iframe.style.display !== 'none') {
@@ -94,14 +94,14 @@ const GoogleTranslate = () => {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
               if (iframeDoc && iframeDoc.readyState === 'complete') {
                 
-                // Добавляем анимацию появления для всего меню
+                // Add animation to the menu itself
                 const menu = iframeDoc.querySelector('.goog-te-menu2') as HTMLElement | null;
                 if (menu) {
                   menu.style.animation = 'slideDown 0.3s ease-out';
                   menu.style.transformOrigin = 'top center';
                 }
 
-                // Стилизация элементов меню
+                // Style menu items
                 const menuItems = iframeDoc.querySelectorAll('.goog-te-menu2-item');
                 menuItems.forEach((item, index) => {
                   const htmlItem = item as HTMLElement;
@@ -114,13 +114,13 @@ const GoogleTranslate = () => {
                   htmlItem.style.opacity = '0';
                   htmlItem.style.transform = 'translateY(-10px)';
                   
-                  // Анимация появления элементов с задержкой
+                  // Staggered animation for item appearance
                   setTimeout(() => {
                     htmlItem.style.opacity = '1';
                     htmlItem.style.transform = 'translateY(0)';
                   }, index * 50);
 
-                  // Hover эффекты
+                  // Hover effects
                   item.addEventListener('mouseenter', () => {
                     htmlItem.style.backgroundColor = 'hsl(var(--primary) / 0.1)';
                     htmlItem.style.color = 'hsl(var(--primary))';
@@ -134,7 +134,7 @@ const GoogleTranslate = () => {
                   });
                 });
 
-                // Стилизация активного элемента
+                // Style active item
                 const activeItems = iframeDoc.querySelectorAll('.goog-te-menu2-item-selected');
                 activeItems.forEach(item => {
                   const htmlItem = item as HTMLElement;
@@ -143,7 +143,7 @@ const GoogleTranslate = () => {
                   htmlItem.style.fontWeight = '600';
                 });
 
-                // Добавляем CSS анимации в iframe
+                // Add CSS animations to iframe
                 if (!iframeDoc.head.querySelector('style[data-custom-animations]')) {
                   const style = iframeDoc.createElement('style');
                   style.setAttribute('data-custom-animations', 'true');
@@ -209,7 +209,7 @@ const GoogleTranslate = () => {
             }
           }
 
-          // Стилизация контейнера меню
+          // Style menu container
           if (iframe?.parentElement) {
             iframe.parentElement.style.boxShadow = '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)';
             iframe.parentElement.style.border = '1px solid hsl(var(--border))';
@@ -223,7 +223,7 @@ const GoogleTranslate = () => {
           }
         };
 
-        // Постоянно проверяем и обновляем стили меню
+        // Constantly check and update menu styles
         const dropdownInterval = setInterval(styleDropdown, 100);
 
         const font = translateDiv.querySelector('font');
@@ -236,7 +236,7 @@ const GoogleTranslate = () => {
             (icon as HTMLElement).style.display = 'none';
         }
         
-        // Добавляем глобальные стили для анимаций
+        // Add global styles for animations
         if(!document.head.querySelector('style[data-google-translate-animations]')) {
             const styleElement = document.createElement('style');
             styleElement.setAttribute('data-google-translate-animations', 'true');
