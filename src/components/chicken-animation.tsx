@@ -9,29 +9,42 @@ export default function ChickenAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const chickenElement = containerRef.current?.querySelector<HTMLDivElement>(`.${styles.chicken}`);
+    if (!chickenElement) return;
+
+    let timeout: NodeJS.Timeout;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        // Check if rect is valid to avoid errors when element is not in view
         if (rect.width === 0 || rect.height === 0) return;
         
-        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20; // Increased sensitivity
-        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20; // Increased sensitivity
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
         
-        // Use requestAnimationFrame for smoother updates
+        clearTimeout(timeout);
+        
         requestAnimationFrame(() => {
-          if (containerRef.current) {
-            const chickenElement = containerRef.current.querySelector<HTMLDivElement>(`.${styles.chicken}`);
-            if(chickenElement) {
-               chickenElement.style.transform = `rotateX(65deg) rotateZ(calc(-135deg + ${x}deg)) translateY(${y}px)`;
-            }
+          if (chickenElement) {
+            chickenElement.style.animation = 'none'; // Disable CSS animation during interaction
+            chickenElement.style.transform = `rotateX(65deg) rotateZ(calc(-135deg + ${x}deg)) translateY(${y}px)`;
           }
         });
+
+        timeout = setTimeout(() => {
+          if (chickenElement) {
+            chickenElement.style.animation = ''; // Restore CSS animation
+          }
+        }, 200);
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        clearTimeout(timeout);
+    };
   }, []);
 
   return (

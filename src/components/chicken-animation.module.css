@@ -11,7 +11,7 @@
 	content: '';
 	position: absolute;
 	transform-style: preserve-3d;
-	transform-origin: top left;
+	transform-origin: center center;
 }
 
 .chicken {
@@ -23,14 +23,10 @@
 	font-size: min(4vmin, 4vmax, 20px);
 	position: relative;
 
-	transform-origin: 3em 2em;
+	transform-origin: center center;
 	transform: rotateX(65deg) rotateZ(-135deg);
-	animation: chicken-bob 3s ease-in-out infinite, chicken-walk 10s linear infinite;
-  transition: transform 0.1s linear;
-}
-
-@keyframes chicken-walk {
-	to { transform: rotateX(65deg) rotateZ(calc(-135deg + 1turn)); }
+	animation: chicken-bob 3s ease-in-out infinite;
+    will-change: transform;
 }
 
 @keyframes chicken-bob {
