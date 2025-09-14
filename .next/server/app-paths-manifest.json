@@ -1,8 +1,7 @@
 {
-  "/help-center/page": "app/help-center/page.js",
-  "/terms/page": "app/terms/page.js",
   "/translator/page": "app/translator/page.js",
   "/services/[id]/page": "app/services/[id]/page.js",
   "/page": "app/page.js",
-  "/login/page": "app/login/page.js"
+  "/login/page": "app/login/page.js",
+  "/chat/page": "app/chat/page.js"
 }

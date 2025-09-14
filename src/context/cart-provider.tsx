@@ -1,17 +1,19 @@
 
 "use client";
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import type { CartItem } from '@/lib/types';
+import type { CartItem, Service } from '@/lib/types';
+import { useAuth } from '@/hooks/use-auth';
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
+  addToCart: (service: Service) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   cartCount: number;
+  totalPrice: number;
 }
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -19,38 +21,54 @@ export const CartContext = createContext<CartContextType | undefined>(undefined)
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  const getStorageKey = useCallback(() => {
+    return user ? `bizmart-cart-${user.id}` : 'bizmart-cart-guest';
+  }, [user]);
 
   useEffect(() => {
     try {
-      const storedCart = localStorage.getItem('bizmart-cart');
+      const storedCart = localStorage.getItem(getStorageKey());
       if (storedCart) {
         setCartItems(JSON.parse(storedCart));
+      } else {
+        setCartItems([]);
       }
     } catch (error) {
       console.error("Could not read cart from localStorage", error);
+      setCartItems([]);
     }
-  }, []);
+  }, [getStorageKey]);
 
   const updateLocalStorage = (items: CartItem[]) => {
     try {
-      localStorage.setItem('bizmart-cart', JSON.stringify(items));
+      localStorage.setItem(getStorageKey(), JSON.stringify(items));
     } catch (error) {
       console.error("Could not save cart to localStorage", error);
     }
   };
 
-  const addToCart = (item: CartItem) => {
+  const addToCart = (service: Service) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((i) => i.id === item.id);
+      const existingItem = prevItems.find((i) => i.id === service.id);
       let newItems;
       if (existingItem) {
         newItems = prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === service.id ? { ...i, quantity: i.quantity + 1 } : i
         );
       } else {
-        newItems = [...prevItems, { ...item, quantity: 1 }];
+        const newItem: CartItem = {
+          id: service.id,
+          name: service.title,
+          price: service.price,
+          quantity: 1,
+          image: service.images[0],
+        };
+        newItems = [...prevItems, newItem];
       }
       updateLocalStorage(newItems);
+      toast({ title: 'Added to cart!', description: service.title });
       return newItems;
     });
   };
@@ -81,9 +99,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const clearCart = () => {
     setCartItems([]);
     updateLocalStorage([]);
+    toast({ title: 'Cart cleared' });
   };
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -93,7 +113,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
-        cartCount
+        cartCount,
+        totalPrice
       }}
     >
       {children}

@@ -4,13 +4,15 @@
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, Bell, Sparkles, Languages } from 'lucide-react';
+import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, Bell, Sparkles, Languages, ShoppingCart } from 'lucide-react';
 import Logo from './logo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import { ThemeToggle } from './theme-toggle';
 import SearchBar from './search-bar';
+import { useCart } from '@/hooks/use-cart';
+import { Badge } from './ui/badge';
 
 
 const navLinks = [
@@ -21,6 +23,7 @@ const navLinks = [
 
 export default function Header() {
   const { user, logout, role } = useAuth();
+  const { cartCount } = useCart();
 
   const getNavLinks = () => {
       if (!user) return [];
@@ -99,6 +102,17 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+           <Button asChild variant="ghost" size="icon" className="relative">
+              <Link href="/cart">
+                <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
+                   <Badge variant="destructive" className="absolute -top-1 -right-1 h-4 w-4 min-w-0 p-0 flex items-center justify-center text-xs">
+                    {cartCount > 9 ? '9+' : cartCount}
+                  </Badge>
+                )}
+                <span className="sr-only">Shopping Cart</span>
+              </Link>
+            </Button>
           {user ? (
             <>
             <DropdownMenu>

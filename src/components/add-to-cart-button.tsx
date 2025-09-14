@@ -16,13 +16,7 @@ export default function AddToCartButton({ service }: AddToCartButtonProps) {
   const [isAdded, setIsAdded] = useState(false);
 
   const handleAddToCart = () => {
-    addToCart({
-      id: service.id,
-      name: service.title,
-      price: service.price,
-      quantity: 1,
-      image: service.images[0],
-    });
+    addToCart(service);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
