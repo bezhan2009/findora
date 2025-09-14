@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
@@ -37,6 +38,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
   const addFavorite = (id: string) => {
     setFavoriteIds((prevIds) => {
+      if (prevIds.includes(id)) return prevIds;
       const newIds = [...prevIds, id];
       updateLocalStorage(newIds);
       toast({ title: 'Added to favorites!' });
@@ -46,6 +48,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
   const removeFavorite = (id: string) => {
     setFavoriteIds((prevIds) => {
+      if (!prevIds.includes(id)) return prevIds;
       const newIds = prevIds.filter((favId) => favId !== id);
       updateLocalStorage(newIds);
       toast({ title: 'Removed from favorites' });
