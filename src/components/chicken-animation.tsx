@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -6,44 +5,52 @@ import styles from './chicken-animation.module.css';
 import { cn } from '@/lib/utils';
 
 export default function ChickenAnimation() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    const chickenElement = containerRef.current?.querySelector<HTMLDivElement>(`.${styles.chicken}`);
-    if (!chickenElement) return;
+    let animationFrame;
+    let startTime;
 
-    let timeout: NodeJS.Timeout;
+    const animate = (time) => {
+      if (!startTime) startTime = time;
+      const elapsed = (time - startTime) / 1000;
 
-    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const chickenElement = containerRef.current.querySelector(`.${styles.chicken}`);
+        if (chickenElement) {
+          const walkAngle = 45 + (elapsed % 5) * 72; // 360deg за 5 секунд
+          chickenElement.style.transform = `rotateX(65deg) rotateZ(${walkAngle}deg)`;
+        }
+      }
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    const handleMouseMove = (e) => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) return;
-        
+
         const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
         const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
-        
-        clearTimeout(timeout);
-        
+
+        cancelAnimationFrame(animationFrame);
         requestAnimationFrame(() => {
-          if (chickenElement) {
-            chickenElement.style.animation = 'none'; // Disable CSS animation during interaction
-            chickenElement.style.transform = `rotateX(65deg) rotateZ(calc(-135deg + ${x}deg)) translateY(${y}px)`;
+          if (containerRef.current) {
+            const chickenElement = containerRef.current.querySelector(`.${styles.chicken}`);
+            if (chickenElement) {
+              chickenElement.style.transform = `rotateX(65deg) rotateZ(calc(45deg + ${x}deg)) translateY(${y}px)`;
+            }
           }
         });
-
-        timeout = setTimeout(() => {
-          if (chickenElement) {
-            chickenElement.style.animation = ''; // Restore CSS animation
-          }
-        }, 200);
       }
     };
 
+    animationFrame = requestAnimationFrame(animate);
     window.addEventListener('mousemove', handleMouseMove);
-    
+
     return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-        clearTimeout(timeout);
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrame);
     };
   }, []);
 
@@ -118,6 +125,36 @@ export default function ChickenAnimation() {
 
         {/* shadow */}
         <div className={styles['chicken__shadow']}></div>
+
+        {/* light source */}
+        <div className={styles.lightsource}>
+          <div className={styles['lightsource-0']}>
+            <div className={styles['lightsource-1']}>
+              <div className={styles['lightsource-1-1']}>
+                <div className={styles['lightsource-1-1-1']}>
+                  <div className={styles['lightsource-1-1-1-1']}></div>
+                </div>
+              </div>
+            </div>
+            <div className={styles['lightsource-2']}>
+              <div className={styles['lightsource-2-1']}>
+                <div className={styles['lightsource-2-1-1']}>
+                  <div className={styles['lightsource-2-1-1-1']}>
+                    <div className={styles['lightsource-2-1-1-1-1']}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles['lightsource-3']}>
+              <div className={styles['lightsource-3-1']}>
+                <div className={styles['lightsource-3-1-1']}></div>
+              </div>
+              <div className={styles['lightsource-3-2']}>
+                <div className={styles['lightsource-3-2-1']}></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
