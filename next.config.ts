@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
         hostname: 'tse2.mm.bing.net',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'motioncue.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
