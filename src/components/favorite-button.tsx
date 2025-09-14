@@ -33,7 +33,11 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
     });
      gsap.set('.heart__fill', {
         transformOrigin: '50% 100%',
+        display: 'none'
     });
+    gsap.set('.heart__stroke', {
+        fill: 'currentColor'
+    })
 
 
     const handleAnimate = () => {
@@ -56,6 +60,7 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
         onComplete: () => {
           gsap.set([SEGMENTS, '.heart__fragments'], { display: 'none' });
           gsap.set('.heart__stroke', { display: 'block' });
+          gsap.set('.heart__fill', { display: 'block' });
         },
       });
 
@@ -122,6 +127,7 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
     try {
       if (favorited) {
         removeFavorite(service.id);
+        gsap.set('.heart__fill', { display: 'none' });
       } else {
         addFavorite(service.id);
         if (svgRef.current) {
@@ -142,73 +148,93 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
                 ref={svgRef}
                 className={cn('heart h-6 w-6 mr-2', favorited && 'text-rose-500')}
                 viewBox="0 0 40 40"
-                fill="currentColor"
             >
-                 <path className="heart__stroke" d="M20 35.04c-4.16 0-16-10.752-16-20.928C4 9.248 8.032 4.96 12.576 4.96c3.648 0 6.144 2.56 7.424 4.352 1.28-1.856 3.776-4.352 7.424-4.352C31.968 4.96 36 9.248 36 14.112c0 10.176-11.84 20.864-16 20.928zM12.576 7.328c-3.264 0-6.208 3.2-6.208 6.784 0 9.152 11.2 18.496 13.632 18.56 2.432-.064 13.632-9.408 13.632-18.56 0-3.584-2.944-6.784-6.208-6.784-4.032 0-6.272 4.672-6.336 4.736-.32.896-1.792.896-2.176 0 0 0-2.304-4.736-6.336-4.736z"/>
-                <path className="heart__fill" d="M20 35.052c-4.148-.119-16-10.785-16-20.919 0-4.918 4.03-9.185 8.593-9.185 3.674 0 6.103 2.548 7.407 4.385 1.304-1.837 3.733-4.385 7.407-4.385C31.97 4.948 36 9.215 36 14.133c0 10.074-11.852 20.8-16 20.919z"/>
-            </svg>
-            {favorited ? 'Saved to Favorites' : 'Save to Favorites'}
-        </Button>
-    )
-  }
-
-  return (
-    <button
-      onClick={handleFavoriteToggle}
-      disabled={isAnimating}
-      className={cn(
-        "relative h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300",
-        "bg-card/60 hover:bg-card text-rose-500 backdrop-blur-sm",
-        "disabled:opacity-50 disabled:cursor-not-allowed",
-        favorited ? "text-rose-500" : "text-white",
-        className
-      )}
-      aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
-    >
-      <svg
-        ref={svgRef}
-        className={cn('heart h-5 w-5 transition-all duration-300', favorited && 'fill-current')}
-        viewBox="0 0 40 40"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <g className="heart__fragments" style={{display: 'none'}}>
-          {[...Array(40)].map((_, i) => (
-            <circle key={i} cx="20" cy="20" r="2" className="heart__fragment" />
-          ))}
-        </g>
-        <g className="heart__beat" style={{'--hue': 0, display: 'none'}}>
-            <path d="M10.682 36.832a2.453 2.453 0 001.595-3.128 2.453 2.453 0 00-3.067-1.656 2.453 2.453 0 00-1.656 3.066 2.453 2.453 0 003.067 1.718z" className="heart__segment heart__segment--start"/>
-            <path d="M7.418 35.88a2.3 2.3 0 002.328-2.328 2.3 2.3 0 00-2.328-2.328 2.3 2.3 0 00-2.328 2.328 2.3 2.3 0 002.328 2.328z" className="heart__segment heart__segment--start" style={{'--lightness': 65}}/>
-            <path d="M6.027 32.223a2.32 2.32 0 002.042-1.034 2.32 2.32 0 00-1.034-2.042 2.32 2.32 0 00-2.042 1.034 2.32 2.32 0 001.034 2.042z" className="heart__segment heart__segment--middle" style={{'--lightness': 65}}/>
-            <path d="M4.14 26.965a2.224 2.224 0 100-4.448 2.224 2.224 0 000 4.448z" className="heart__segment heart__segment--middle" style={{'--lightness': 65}}/>
-            <path d="M3.77 21.03c-1.12 0-2.028.908-2.028 2.028s.908 2.028 2.028 2.028 2.028-.908 2.028-2.028-.908-2.028-2.028-2.028z" className="heart__segment heart__segment--middle"/>
-            <path d="M4.385 16.63a1.595 1.595 0 100-3.19 1.595 1.595 0 000 3.19z" className="heart__segment heart__segment--middle"/>
-            <path d="M6.16 12.336a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z" className="heart__segment heart__segment--middle" style={{'--lightness': 65}}/>
-            <path d="M8.567 9.17a.9.9 0 100-1.8.9.9 0 000 1.8z" className="heart__segment heart__segment--middle" style={{'--lightness': 35}}/>
-            <path d="M12.062 6.84a.83.83 0 100-1.66.83.83 0 000 1.66z" className="heart__segment heart__segment--middle"/>
-            <path d="M16.14 5.38a.6.6 0 100-1.2.6.6 0 000 1.2z" className="heart__segment heart__segment--middle" style={{'--lightness': 35}}/>
-            <path d="M20 4.96a.545.545 0 100-1.09.545.545 0 000 1.09z" className="heart__segment heart__segment--end" style={{'--lightness': 65}}/>
-            <path d="M23.86 5.38a.6.6 0 100-1.2.6.6 0 000 1.2z" className="heart__segment heart__segment--end" style={{'--lightness': 35}}/>
-            <path d="M27.938 6.84a.83.83 0 100-1.66.83.83 0 000 1.66z" className="heart__segment heart__segment--end"/>
-            <path d="M31.433 9.17a.9.9 0 100-1.8.9.9 0 000 1.8z" className="heart__segment heart__segment--end" style={{'--lightness': 35}}/>
-            <path d="M33.84 12.336a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z" className="heart__segment heart__segment--end" style={{'--lightness': 65}}/>
-            <path d="M35.615 16.63a1.595 1.595 0 100-3.19 1.595 1.595 0 000 3.19z" className="heart__segment heart__segment--end"/>
-            <path d="M36.23 21.03c1.12 0 2.028.908 2.028 2.028s-.908 2.028-2.028 2.028-2.028-.908-2.028-2.028.908-2.028 2.028-2.028z" className="heart__segment heart__segment--end"/>
-            <path d="M35.86 26.965a2.224 2.224 0 100-4.448 2.224 2.224 0 000 4.448z" className="heart__segment heart__segment--end" style={{'--lightness': 65}}/>
-            <path d="M33.973 32.223a2.32 2.32 0 00-1.034 2.042 2.32 2.32 0 002.042 1.034 2.32 2.32 0 001.034-2.042 2.32 2.32 0 00-2.042-1.034z" className="heart__segment heart__segment--end" style={{'--lightness': 65}}/>
-            <path d="M32.582 35.88a2.3 2.3 0 00-2.328-2.328 2.3 2.3 0 00-2.328 2.328 2.3 2.3 0 002.328 2.328 2.3 2.3 0 002.328-2.328z" className="heart__segment heart__segment--end" style={{'--lightness': 65}}/>
-            <path d="M29.318 36.832a2.453 2.453 0 003.067-1.718 2.453 2.453 0 00-1.656-3.066 2.453 2.453 0 00-3.067 1.656 2.453 2.453 0 001.656 3.128z" className="heart__segment heart__segment--end"/>
-        </g>
-        <path className="heart__stroke" d="M20 35.04c-4.16 0-16-10.752-16-20.928C4 9.248 8.032 4.96 12.576 4.96c3.648 0 6.144 2.56 7.424 4.352 1.28-1.856 3.776-4.352 7.424-4.352C31.968 4.96 36 9.248 36 14.112c0 10.176-11.84 20.864-16 20.928zM12.576 7.328c-3.264 0-6.208 3.2-6.208 6.784 0 9.152 11.2 18.496 13.632 18.56 2.432-.064 13.632-9.408 13.632-18.56 0-3.584-2.944-6.784-6.208-6.784-4.032 0-6.272 4.672-6.336 4.736-.32.896-1.792.896-2.176 0 0 0-2.304-4.736-6.336-4.736z"/>
-        <path className="heart__fill" fill="currentColor" d="M20 35.052c-4.148-.119-16-10.785-16-20.919 0-4.918 4.03-9.185 8.593-9.185 3.674 0 6.103 2.548 7.407 4.385 1.304-1.837 3.733-4.385 7.407-4.385C31.97 4.948 36 9.215 36 14.133c0 10.074-11.852 20.8-16 20.919z"/>
-      </svg>
-      {isAnimating && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
-    </button>
-  );
-}
+                <g className="heart__fragments">
+                    {[...Array(40)].map((_, i) => (
+                        <circle key={i} cx="20" cy="20" r="2" className="heart__fragment" />
+                    ))}
+                </g>
+                <g className="heart__beat">
+                    <path d="M10.682 36.832a2.453 2.453 0 001.595-3.128 2.453 2.453 0 00-3.067-1.656 2.453 2.453 0 00-1.656 3.066 2.453 2.453 0 003.067 1.718z" className="heart__segment heart__segment--start"/>
+                    <path d="M12.297 30.225c1.073.975 2.682.975 3.706-.146.976-1.025.976-2.683-.097-3.658-1.073-.976-2.683-.976-3.707.097-.975 1.073-.975 2.683.098 3.707z" className="heart__segment heart__segment--middle"/>
+                    <path d="M11.224 29.103c.975 1.024 2.585 1.122 3.658.098 1.072-.976 1.121-2.585.146-3.658a2.585 2.585 0 00-3.707-.146 2.585 2.585 0 00-.146 3.706z" className="heart__segment heart__segment--middle"/>
+                    <path d="M10.151 27.884c.975 1.122 2.536 1.268 3.658.293 1.121-.976 1.268-2.536.341-3.658a2.585 2.585 0 00-3.706-.293 2.585 2.585 0 00-.293 3.658z" className="heart__segment heart__segment--middle"/>
+                    <path d="M9.127 26.665a2.585 2.585 0 003.706.439 2.585 2.585 0 00.39-3.707 2.585 2.585 0 00-3.657-.39 2.585 2.585 0 00-.44 3.658z" className="heart__segment heart__segment--middle"/>
+                    <path d="M8.2 25.445c.83 1.17 2.439 1.415 3.658.488 1.17-.829 1.414-2.438.536-3.609a2.585 2.585 0 00-3.657-.536c-1.17.878-1.463 2.438-.537 3.657z" className="heart__segment heart__segment--middle"/>
+                    <path d="M7.322 24.129c.78 1.219 2.341 1.56 3.56.731 1.22-.829 1.561-2.438.732-3.609a2.585 2.585 0 00-3.609-.731 2.585 2.585 0 00-.731 3.609z" className="heart__segment heart__segment--middle"/>
+                    <path d="M6.445 22.812a2.585 2.585 0 003.56.927 2.585 2.585 0 00.975-3.61 2.585 2.585 0 00-3.609-.926 2.585 2.585 0 00-.975 3.609z" className="heart__segment heart__segment--middle"/>
+                    <path d="M5.664 21.446a2.585 2.585 0 003.512 1.122 2.585 2.585 0 001.17-3.511 2.585 2.585 0 00-3.463-1.17 2.585 2.585 0 00-1.219 3.51z" className="heart__segment heart__segment--middle"/>
+                    <path d="M5.03 19.983c.537 1.317 2.049 1.951 3.414 1.463a2.585 2.585 0 001.463-3.413 2.585 2.585 0 00-3.414-1.463 2.585 2.585 0 00-1.463 3.413z" className="heart__segment heart__segment--middle"/>
+                    <path d="M4.543 18.472a2.585 2.585 0 003.218 1.755 2.585 2.585 0 001.805-3.218 2.585 2.585 0 00-3.268-1.805 2.585 2.585 0 00-1.804 3.268z" className="heart__segment heart__segment--middle"/>
+                    <path d="M4.152 16.911c.244 1.463 1.561 2.39 3.024 2.146a2.602 2.602 0 002.146-3.024 2.602 2.602 0 00-3.024-2.146c-1.463.244-2.39 1.56-2.146 3.024z" className="heart__segment heart__segment--middle"/>
+                    <path d="M4.006 15.35c0 1.463 1.22 2.536 2.731 2.439 1.463 0 2.536-1.22 2.439-2.682 0-1.464-1.22-2.585-2.683-2.488-1.463.05-2.584 1.22-2.487 2.731z" className="heart__segment heart__segment--middle"/>
+                    <path d="M4.006 13.741a2.587 2.587 0 002.439 2.78 2.512 2.512 0 002.78-2.341c.146-1.463-.976-2.731-2.39-2.829-1.463-.146-2.683.927-2.829 2.39z" className="heart__segment heart__segment--middle"/>
+                    <path d="M4.25 12.18c-.293 1.415.585 2.78 2 3.073 1.463.292 2.828-.537 3.12-1.95.293-1.464-.585-2.83-1.999-3.122-1.463-.341-2.828.536-3.121 1.95z" className="heart__segment heart__segment--middle"/>
+                    <path d="M4.689 10.62c-.488 1.365.146 2.828 1.512 3.414 1.365.487 2.877-.195 3.414-1.512.487-1.415-.196-2.878-1.512-3.414-1.415-.488-2.878.146-3.414 1.512z" className="heart__segment heart__segment--middle"/>
+                    <path d="M5.372 9.206a2.585 2.585 0 00.975 3.56 2.578 2.578 0 003.56-.927c.732-1.268.342-2.829-.975-3.56a2.585 2.585 0 00-3.56.927z" className="heart__segment heart__segment--middle"/>
+                    <path d="M6.347 7.889c-.975 1.121-.878 2.73.244 3.657 1.122.976 2.73.878 3.706-.243.976-1.073.83-2.731-.292-3.658a2.585 2.585 0 00-3.658.244z" className="heart__segment heart__segment--middle"/>
+                    <path d="M7.469 6.816a2.585 2.585 0 00-.39 3.609 2.585 2.585 0 003.657.487 2.585 2.585 0 00.44-3.706 2.585 2.585 0 00-3.707-.439z" className="heart__segment heart__segment--middle"/>
+                    <path d="M8.834 5.89a2.585 2.585 0 00-1.121 3.56 2.585 2.585 0 003.56 1.121 2.585 2.585 0 001.073-3.56 2.585 2.585 0 00-3.512-1.122z" className="heart__segment heart__segment--middle"/>
+                    <path d="M10.297 5.304A2.585 2.585 0 008.59 8.572a2.585 2.585 0 003.268 1.755 2.585 2.585 0 001.707-3.267 2.585 2.585 0 00-3.268-1.756z" className="heart__segment heart__segment--middle"/>
+                    <path d="M11.907 4.963c-1.463.195-2.439 1.463-2.341 2.926.195 1.463 1.463 2.438 2.926 2.292 1.463-.146 2.438-1.463 2.292-2.926-.195-1.463-1.463-2.439-2.926-2.292z" className="heart__segment heart__segment--middle"/>
+                    <path d="M13.467 4.963c-1.463-.098-2.633.975-2.78 2.438a2.587 2.587 0 002.439 2.78 2.587 2.587 0 002.78-2.439 2.587 2.587 0 00-2.439-2.78z" className="heart__segment heart__segment--middle"/>
+                    <path d="M15.077 5.206c-1.463-.34-2.78.488-3.122 1.951-.34 1.415.488 2.78 1.951 3.121 1.414.342 2.78-.487 3.121-1.95.342-1.463-.487-2.78-1.95-3.122z" className="heart__segment heart__segment--middle"/>
+                    <path d="M16.588 5.645c-1.365-.487-2.828.147-3.365 1.512-.487 1.366.147 2.878 1.463 3.414 1.415.488 2.927-.146 3.414-1.512.488-1.365-.146-2.877-1.463-3.414z" className="heart__segment heart__segment--middle"/>
+                    <path d="M18.052 6.328a2.585 2.585 0 00-3.56 1.073 2.585 2.585 0 001.072 3.56c1.317.683 2.878.195 3.56-1.073.683-1.316.196-2.877-1.072-3.56z" className="heart__segment heart__segment--middle"/>
+                    <path d="M19.417 7.157a2.585 2.585 0 00-3.658.683 2.585 2.585 0 00.683 3.658c1.22.829 2.829.487 3.658-.732.829-1.17.487-2.78-.683-3.609z" className="heart__segment heart__segment--middle"/>
+                    <path d="M20.636 8.133a2.585 2.585 0 00-3.657.292c-.976 1.122-.83 2.731.292 3.658 1.122.975 2.78.829 3.707-.293.975-1.121.829-2.73-.342-3.657z" className="heart__segment heart__segment--middle"/>
+                    <path d="M21.807 9.206a2.585 2.585 0 00-3.658-.05 2.585 2.585 0 00-.097 3.658c.975 1.073 2.633 1.073 3.706.098 1.024-1.024 1.073-2.634.049-3.706z" className="heart__segment heart__segment--middle"/>
+                    <path d="M22.83 10.425a2.585 2.585 0 00-3.657-.488 2.585 2.585 0 00-.487 3.658 2.585 2.585 0 003.657.487 2.585 2.585 0 00.488-3.657z" className="heart__segment heart__segment--middle"/>
+                    <path d="M23.757 11.693a2.585 2.585 0 00-3.56-.927 2.585 2.585 0 00-.975 3.56 2.585 2.585 0 003.56.976 2.585 2.585 0 00.975-3.56z" className="heart__segment heart__segment--middle"/>
+                    <path d="M24.391 13.156c-.487-1.366-1.95-2-3.316-1.512a2.6 2.6 0 101.805 4.877c1.365-.488 2.048-1.95 1.56-3.365z" className="heart__segment heart__segment--middle"/>
+                    <path d="M24.83 14.765c-.195-1.463-1.463-2.487-2.926-2.34-1.463.146-2.438 1.462-2.292 2.877.146 1.463 1.463 2.438 2.877 2.34 1.464-.195 2.439-1.463 2.341-2.926z" className="heart__segment heart__segment--middle"/>
+                    <path d="M24.782 16.375c.195-1.464-.78-2.732-2.244-2.927-1.463-.243-2.73.732-2.926 2.146a2.541 2.541 0 002.195 2.975c1.463.195 2.73-.731 2.926-2.194z" className="heart__segment heart__segment--middle"/>
+                    <path d="M24.343 17.935c.585-1.365 0-2.877-1.366-3.414a2.585 2.585 0 00-3.414 1.317 2.585 2.585 0 001.317 3.414c1.366.585 2.877 0 3.414-1.317z" className="heart__segment heart__segment--middle"/>
+                    <path d="M23.465 19.3c.975-1.121.878-2.73-.244-3.706a2.585 2.585 0 00-3.658.244c-.975 1.073-.877 2.731.195 3.658 1.122.975 2.731.878 3.707-.195z" className="heart__segment heart__segment--middle"/>
+                    <path d="M22.197 20.325a2.585 2.585 0 00.975-3.56 2.585 2.585 0 00-3.511-1.024 2.585 2.585 0 00-1.024 3.56 2.585 2.585 0 003.56.975z" className="heart__segment heart__segment--middle"/>
+                    <path d="M20.636 20.861c1.463-.244 2.439-1.56 2.146-3.023-.244-1.463-1.56-2.39-2.975-2.146-1.463.244-2.438 1.56-2.146 3.023.244 1.463 1.561 2.39 3.024 2.146z" className="heart__segment heart__segment--middle"/>
+                    <path d="M19.027 20.861c1.463.244 2.78-.683 3.024-2.146.243-1.414-.683-2.78-2.097-3.023-1.464-.244-2.78.683-3.024 2.097-.293 1.463.634 2.78 2.097 3.072z" className="heart__segment heart__segment--middle"/>
+                    <path d="M17.515 20.276a2.553 2.553 0 003.56-.975c.732-1.22.342-2.78-.926-3.512a2.585 2.585 0 00-3.56.927 2.585 2.585 0 00.926 3.56z" className="heart__segment heart__segment--middle"/>
+                    <path d="M16.247 19.203a2.585 2.585 0 003.707.341 2.585 2.585 0 00.34-3.657 2.585 2.585 0 00-3.657-.342 2.585 2.585 0 00-.39 3.658z" className="heart__segment heart__segment--middle"/>
+                    <path d="M15.418 17.838a2.708 2.708 0 003.414 1.463 2.585 2.585 0 001.463-3.414 2.585 2.585 0 00-3.414-1.463 2.585 2.585 0 00-1.463 3.414z" className="heart__segment heart__segment--middle"/>
+                    <path d="M15.028 16.277c.195 1.463 1.463 2.438 2.926 2.195 1.463-.196 2.438-1.463 2.243-2.927-.195-1.463-1.463-2.438-2.926-2.243-1.463.195-2.438 1.463-2.243 2.926z" className="heart__segment heart__segment--middle"/>
+                    <path d="M14.98 14.619c-.147 1.463.877 2.73 2.34 2.926 1.463.098 2.682-.878 2.829-2.34.195-1.464-.878-2.732-2.293-2.878-1.463-.147-2.73.878-2.926 2.34z" className="heart__segment heart__segment--middle"/>
+                    <path d="M15.37 13.107c-.488 1.317.097 2.829 1.462 3.365 1.366.488 2.926-.146 3.414-1.463a2.585 2.585 0 00-1.463-3.414 2.585 2.585 0 00-3.414 1.463z" className="heart__segment heart__segment--middle"/>
+                    <path d="M16.1 11.693a2.585 2.585 0 00.879 3.56c1.268.731 2.828.341 3.608-.927.732-1.268.342-2.828-.926-3.56a2.585 2.585 0 00-3.609.878z" className="heart__segment heart__segment--middle"/>
+                    <path d="M16.979 10.327a2.585 2.585 0 00.487 3.658 2.585 2.585 0 003.61-.39 2.585 2.585 0 00-.44-3.707 2.585 2.585 0 00-3.657.488z" className="heart__segment heart__segment--middle"/>
+                    <path d="M18.052 9.157c-1.025 1.024-1.025 2.633 0 3.706 1.072.976 2.682.976 3.706-.049a2.665 2.665 0 000-3.706 2.585 2.585 0 00-3.706 0z" className="heart__segment heart__segment--middle"/>
+                    <path d="M19.222 8.084a2.585 2.585 0 00-.341 3.657c.926 1.122 2.536 1.317 3.657.342a2.572 2.572 0 00.342-3.658 2.585 2.585 0 00-3.658-.341z" className="heart__segment heart__segment--middle"/>
+                    <path d="M20.49 7.108a2.585 2.585 0 00-.732 3.658c.83 1.17 2.439 1.512 3.61.732 1.219-.83 1.56-2.439.73-3.658a2.585 2.585 0 00-3.608-.732z" className="heart__segment heart__segment--middle"/>
+                    <path d="M21.855 6.328a2.585 2.585 0 00-1.121 3.512 2.585 2.585 0 003.511 1.121 2.585 2.585 0 001.122-3.511 2.585 2.585 0 00-3.512-1.122z" className="heart__segment heart__segment--middle"/>
+                    <path d="M23.319 5.694a2.609 2.609 0 101.853 4.877c1.317-.488 2-2 1.463-3.365-.488-1.366-1.95-2.048-3.316-1.512z" class="heart__segment heart__segment--middle"/>
+                    <path d="M24.83 5.206a2.585 2.585 0 00-1.95 3.122c.341 1.463 1.707 2.292 3.12 1.95 1.464-.292 2.293-1.706 1.952-3.12-.342-1.415-1.707-2.293-3.122-1.952z" class="heart__segment heart__segment--middle"/>
+                    <path d="M26.391 4.963c-1.463.097-2.487 1.365-2.39 2.828.147 1.463 1.366 2.487 2.829 2.39a2.561 2.561 0 002.39-2.829c-.098-1.463-1.366-2.487-2.829-2.39z" class="heart__segment heart__segment--middle"/>
+                    <path d="M28 4.963c-1.463-.147-2.73.877-2.877 2.34-.146 1.464.878 2.732 2.292 2.878 1.463.146 2.731-.878 2.926-2.341.147-1.463-.878-2.731-2.34-2.877z" class="heart__segment heart__segment--middle"/>
+                    <path d="M29.56 5.304c-1.365-.488-2.828.293-3.267 1.707-.487 1.365.293 2.829 1.659 3.267 1.463.488 2.877-.292 3.316-1.658.488-1.463-.293-2.877-1.707-3.316z" class="heart__segment heart__segment--middle"/>
+                    <path d="M31.073 5.938a2.585 2.585 0 00-3.56 1.073 2.585 2.585 0 001.073 3.511c1.268.732 2.828.244 3.51-1.024.732-1.317.245-2.877-1.072-3.56z" class="heart__segment heart__segment--middle"/>
+                    <path d="M32.39 6.816a2.585 2.585 0 00-3.658.439 2.585 2.585 0 00.439 3.657 2.585 2.585 0 003.657-.438 2.585 2.585 0 00-.438-3.658z" class="heart__segment heart__segment--middle"/>
+                    <path d="M33.56 7.889a2.585 2.585 0 00-3.706-.195 2.585 2.585 0 00-.196 3.706c.976 1.073 2.585 1.17 3.658.195 1.122-.975 1.22-2.585.244-3.706z" class="heart__segment heart__segment--middle"/>
+                    <path d="M34.535 9.206a2.585 2.585 0 00-3.609-.878 2.585 2.585 0 00-.877 3.609 2.585 2.585 0 003.609.829 2.585 2.585 0 00.877-3.56z" class="heart__segment heart__segment--middle"/>
+                    <path d="M35.218 10.62a2.585 2.585 0 00-3.414-1.463 2.585 2.585 0 00-1.463 3.414 2.682 2.682 0 003.414 1.463 2.585 2.585 0 001.463-3.414z" class="heart__segment heart__segment--middle"/>
+                    <path d="M35.706 12.18c-.293-1.463-1.707-2.34-3.121-1.95-1.463.292-2.293 1.658-1.951 3.072.292 1.463 1.658 2.292 3.121 1.95 1.414-.292 2.292-1.657 1.95-3.12z" class="heart__segment heart__segment--middle"/>
+                    <path d="M35.95 13.741c-.098-1.463-1.366-2.536-2.829-2.438-1.463.146-2.487 1.365-2.39 2.828.098 1.463 1.366 2.536 2.829 2.439 1.463-.147 2.487-1.366 2.39-2.829z" class="heart__segment heart__segment--middle"/>
+                    <path d="M35.998 15.302c.05-1.463-1.024-2.634-2.487-2.731a2.587 2.587 0 00-2.78 2.438c-.048 1.463 1.025 2.682 2.439 2.78 1.512.097 2.73-.976 2.828-2.439z" class="heart__segment heart__segment--middle"/>
+                    <path d="M35.755 16.911c.292-1.463-.634-2.78-2.049-3.072-1.463-.244-2.828.682-3.072 2.097-.293 1.463.634 2.78 2.097 3.023 1.463.293 2.78-.634 3.024-2.048z" class="heart__segment heart__segment--middle"/>
+                    <path d="M35.413 18.423c.39-1.366-.39-2.78-1.755-3.219-1.415-.439-2.83.341-3.268 1.756a2.532 2.532 0 001.756 3.218c1.414.44 2.828-.34 3.267-1.755z" class="heart__segment heart__segment--middle"/>
+                    <path d="M34.877 19.935a2.585 2.585 0 00-1.463-3.414A2.585 2.585 0 0030 17.984a2.585 2.585 0 001.463 3.414 2.585 2.585 0 003.414-1.463z" class="heart__segment heart__segment--middle"/>
+                    <path d="M34.243 21.398c.634-1.317.097-2.829-1.22-3.512a2.585 2.585 0 00-3.51 1.22 2.585 2.585 0 001.218 3.51c1.366.635 2.878.098 3.512-1.218z" class="heart__segment heart__segment--middle"/>
+                    <path d="M33.511 22.763c.732-1.268.293-2.78-.975-3.511a2.585 2.585 0 00-3.61.975 2.585 2.585 0 001.025 3.56c1.268.732 2.829.293 3.56-.975z" class="heart__segment heart__segment--middle"/>
+                    <path d="M32.682 24.129c.78-1.22.488-2.78-.78-3.56a2.585 2.585 0 00-3.609.78 2.585 2.585 0 00.78 3.609c1.268.78 2.829.439 3.61-.83z" class="heart__segment heart__segment--middle"/>
+      <path d="M31.804 25.445a2.585 2.585 0 00-.634-3.608 2.585 2.585 0 00-3.609.585 2.585 2.585 0 00.634 3.657 2.585 2.585 0 003.61-.634z" class="heart__segment heart__segment--middle"/>
+      <path d="M30.878 26.713a2.585 2.585 0 00-.488-3.657 2.585 2.585 0 00-3.658.488 2.585 2.585 0 00.488 3.657 2.585 2.585 0 003.658-.488z" class="heart__segment heart__segment--middle"/>
+      <path d="M29.902 27.933c.976-1.073.78-2.731-.341-3.658a2.585 2.585 0 00-3.658.293c-.975 1.121-.829 2.73.293 3.706 1.122.927 2.73.78 3.706-.341z" class="heart__segment heart__segment--middle"/>
+      <path d="M28.878 29.152c.976-1.073.927-2.682-.146-3.707-1.073-.975-2.731-.975-3.707.098-.975 1.122-.975 2.731.147 3.706 1.073.976 2.682.976 3.706-.097z" class="heart__segment heart__segment--middle"/>
+      <path d="M27.757 30.225c1.024-.976 1.072-2.585.097-3.658a2.585 2.585 0 00-3.706-.097 2.585 2.585 0 00-.098 3.657c.975 1.073 2.634 1.122 3.707.147z" class="heart__segment heart__segment--middle"/>
+      <path d="M26.537 31.298a2.572 2.572 0 00.342-3.658 2.585 2.585 0 00-3.658-.341 2.585 2.585 0 00-.341 3.657c.975 1.122 2.536 1.268 3.657.342z" class="heart__segment heart__segment--end"/>
+      <path d="M25.318 32.273c1.17-.878 1.414-2.438.537-3.658-.878-1.17-2.439-1.414-3.658-.536a2.585 2.585 0 00-.537 3.658c.878 1.17 2.439 1.414 3.658.536z" class="heart__segment heart__segment--end"/>
+      <path d="M24.001 33.15a2.585 2.585 0 00.78-3.56 2.585 2.585 0 00-3.608-.78 2.585 2.585 0 00-.78 3.61A2.585 2.585 0 0024 33.2z" class="heart__segment heart__segment--end"/>
+    </g>
+    <path class="heart__stroke" d="M20 35.04c-4.16 0-16-10.752-16-20.928C4 9.248 8.032 4.96 12.576 4.96c3.648 0 6.144 2.56 7.424 4.352 1.28-1.856 3.776-4.352 7.424-4.352C31.968 4.96 36 9.248 36 14.112c0 10.176-11.84 20.864-16 20.928zM12.576 7.328c-3.264 0-6.208 3.2-6.208 6.784 0 9.152 11.2 18.496 13.632 18.56 2.432-.064 13.632-9.408 13.632-18.56 0-3.584-2.944-6.784-6.208-6.784-4.032 0-6.272 4.672-6.336 4.736-.32.896-1.792.896-2.176 0 0 0-2.304-4.736-6.336-4.736z"/>
+    <path class="heart__fill" d="M20 35.052c-4.148-.119-16-10.785-16-20.919 0-4.918 4.03-9.185 8.593-9.185 3.674 0 6.103 2.548 7.407 4.385 1.304-1.837 3.733-4.385 7.407-4.385C31.97 4.948 36 9.215 36 14.133c0 10.074-11.852 20.8-16 20.919z"/>
+  </svg>
+</button>
