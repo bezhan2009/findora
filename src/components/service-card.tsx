@@ -6,34 +6,20 @@ import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { Heart, Star, Award } from 'lucide-react';
+import { Star, Award } from 'lucide-react';
 import type { Service } from '@/lib/types';
-import { useFavorites } from '@/hooks/use-favorites';
 import { Badge } from './ui/badge';
-import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { FavoriteButton } from './favorite-button';
 
 interface ServiceCardProps {
   service: Service;
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-  const favorite = isFavorite(service.id);
   const [imageSrc, setImageSrc] = useState(service.images[0]);
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (favorite) {
-      removeFavorite(service.id);
-    } else {
-      addFavorite(service.id);
-    }
-  };
-
   const handleProviderClick = (e: React.MouseEvent) => {
-    // This prevents the card's link from being triggered when clicking the provider
     e.stopPropagation();
   };
   
@@ -60,14 +46,9 @@ export default function ServiceCard({ service }: ServiceCardProps) {
               Featured
             </Badge>
           )}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-2 right-2 bg-card/60 hover:bg-card rounded-full text-rose-500 backdrop-blur-sm"
-            onClick={handleFavoriteClick}
-          >
-            <Heart className={cn("h-5 w-5 transition-all", favorite && "fill-current")} />
-          </Button>
+          <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
+            <FavoriteButton service={service} />
+          </div>
         </CardHeader>
       </Link>
       <CardContent className="p-4 flex-grow flex flex-col">

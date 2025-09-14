@@ -10,10 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, Heart } from 'lucide-react';
-import { useFavorites } from '@/hooks/use-favorites';
+import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AddToCartButton from '@/components/add-to-cart-button';
+import { FavoriteButton } from '@/components/favorite-button';
 
 function ClientFormattedDate({ dateString }: { dateString: string }) {
   const [formattedDate, setFormattedDate] = useState('');
@@ -28,21 +28,10 @@ function ClientFormattedDate({ dateString }: { dateString: string }) {
 
 function ServicePageContent({ params }: { params: { id: string } }) {
   const service = services.find((s) => s.id === params.id);
-  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-
+  
   if (!service) {
     notFound();
   }
-
-  const favorite = isFavorite(service.id);
-
-  const handleFavoriteClick = () => {
-    if (favorite) {
-      removeFavorite(service.id);
-    } else {
-      addFavorite(service.id);
-    }
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -132,10 +121,7 @@ function ServicePageContent({ params }: { params: { id: string } }) {
               <p className="text-muted-foreground mb-6">Starting price for a standard project.</p>
               <div className="flex flex-col gap-3">
                 <AddToCartButton service={service} />
-                <Button size="lg" variant="outline" onClick={handleFavoriteClick}>
-                  <Heart className={`mr-2 h-5 w-5 ${favorite ? 'text-rose-500 fill-current' : ''}`} />
-                  {favorite ? 'Saved to Favorites' : 'Save to Favorites'}
-                </Button>
+                <FavoriteButton service={service} as="button" />
               </div>
             </CardContent>
           </Card>
