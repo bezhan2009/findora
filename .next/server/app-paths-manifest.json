@@ -1,7 +1,7 @@
 {
-  "/translator/page": "app/translator/page.js",
-  "/services/[id]/page": "app/services/[id]/page.js",
-  "/page": "app/page.js",
+  "/chat/page": "app/chat/page.js",
+  "/cart/page": "app/cart/page.js",
   "/login/page": "app/login/page.js",
-  "/chat/page": "app/chat/page.js"
+  "/page": "app/page.js",
+  "/services/[id]/page": "app/services/[id]/page.js"
 }

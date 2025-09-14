@@ -75,9 +75,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const removeFromCart = (id: string) => {
     setCartItems((prevItems) => {
+      const itemToRemove = prevItems.find(item => item.id === id);
+      if (!itemToRemove) return prevItems;
+      
       const newItems = prevItems.filter((item) => item.id !== id);
       updateLocalStorage(newItems);
-      toast({ title: 'Removed from cart' });
+      toast({ title: 'Removed from cart', description: itemToRemove.name });
       return newItems;
     });
   };
@@ -97,9 +100,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearCart = () => {
-    setCartItems([]);
-    updateLocalStorage([]);
-    toast({ title: 'Cart cleared' });
+    setCartItems((prevItems) => {
+      if(prevItems.length > 0) {
+        updateLocalStorage([]);
+        toast({ title: 'Cart cleared' });
+      }
+      return [];
+    });
   };
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
