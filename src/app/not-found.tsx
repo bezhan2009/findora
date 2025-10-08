@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ChickenAnimation from '@/components/chicken-animation';
+import { Play } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -16,15 +17,25 @@ export default function NotFound() {
       <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-md" style={{ zIndex: 10 }}>
         Oops! The page you're looking for must have flown the coop!
       </p>
-      <Button
-        asChild
-        className="bg-orange-500 hover:bg-orange-600 text-white dark:bg-orange-600 dark:hover:bg-orange-700"
-        style={{ zIndex: 10 }}
-      >
-        <Link href="/">
-          Return to Home
-        </Link>
-      </Button>
+      <div className="flex gap-4" style={{ zIndex: 10 }}>
+        <Button
+          asChild
+          className="bg-orange-500 hover:bg-orange-600 text-white dark:bg-orange-600 dark:hover:bg-orange-700"
+        >
+          <Link href="/">
+            Return to Home
+          </Link>
+        </Button>
+        <Button
+          asChild
+          variant="secondary"
+        >
+          <a href="http://212.67.9.175" target="_blank" rel="noopener noreferrer">
+            <Play className="mr-2 h-4 w-4" />
+            Play
+          </a>
+        </Button>
+      </div>
     </div>
   );
 }

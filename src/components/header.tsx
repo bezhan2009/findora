@@ -1,10 +1,9 @@
-
 "use client";
 
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, Bell, Sparkles, Languages, ShoppingCart } from 'lucide-react';
+import { Menu, User, Heart, MessageSquare, LogOut, LogIn, LayoutDashboard, Bell, Sparkles, Languages, ShoppingCart, Play } from 'lucide-react';
 import Logo from './logo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -192,6 +191,12 @@ export default function Header() {
                      <Languages className="mr-2 h-4 w-4" />
                      <span>Translator</span>
                    </Link>
+                 </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                   <a href="http://212.67.9.175" target="_blank" rel="noopener noreferrer">
+                     <Play className="mr-2 h-4 w-4" />
+                     <span>Play</span>
+                   </a>
                  </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
