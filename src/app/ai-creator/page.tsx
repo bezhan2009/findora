@@ -8,18 +8,22 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { createContent, type ContentCreatorInput } from '@/ai/flows/content-creator-flow';
-import { Loader2, PenSquare, Sparkles } from 'lucide-react';
+import { createContent, type ContentCreatorInput, type ContentCreatorOutput } from '@/ai/flows/content-creator-flow';
+import { Loader2, PenSquare, Sparkles, Tag, FileText } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
+import { Badge } from '@/components/ui/badge';
 
 export default function AICreatorPage() {
   const [prompt, setPrompt] = useState('');
   const [tone, setTone] = useState<'formal' | 'casual'>('casual');
   const [length, setLength] = useState<'short' | 'medium' | 'long'>('medium');
   
-  const [generatedTitle, setGeneratedTitle] = useState('');
-  const [generatedBody, setGeneratedBody] = useState('');
+  const [generatedContent, setGeneratedContent] = useState<ContentCreatorOutput | null>(null);
+  const [editableTitle, setEditableTitle] = useState('');
+  const [editableBody, setEditableBody] = useState('');
+  const [editableTags, setEditableTags] = useState<string[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
@@ -32,8 +36,10 @@ export default function AICreatorPage() {
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     setIsLoading(true);
-    setGeneratedTitle('');
-    setGeneratedBody('');
+    setGeneratedContent(null);
+    setEditableTitle('');
+    setEditableBody('');
+    setEditableTags([]);
 
     try {
       const input: ContentCreatorInput = {
@@ -42,19 +48,21 @@ export default function AICreatorPage() {
         length,
       };
       const result = await createContent(input);
-      setGeneratedTitle(result.title);
-      setGeneratedBody(result.body);
+      setGeneratedContent(result);
+      setEditableTitle(result.meta.title);
+      setEditableBody(result.markdown);
+      setEditableTags(result.meta.tags);
     } catch (error) {
       console.error('Content generation error:', error);
-      setGeneratedBody('Sorry, something went wrong while generating content. Please try again.');
+      setEditableBody('Sorry, something went wrong while generating content. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
   
   const handlePublish = () => {
-      // Placeholder for publish logic
-      alert('Publish functionality not yet implemented.');
+      // Placeholder for publish logic as per user request
+      alert('Publish functionality with a real backend is not yet implemented.');
   };
 
   return (
@@ -131,38 +139,55 @@ export default function AICreatorPage() {
                     <p className="text-lg text-muted-foreground">Generating your content...</p>
                   </div>
               )}
-              {(!isLoading && !generatedTitle && !generatedBody) && (
+              {!isLoading && !generatedContent && (
                    <div className="flex flex-col items-center justify-center h-96 rounded-lg bg-muted/50">
-                    <Sparkles className="h-12 w-12 text-muted-foreground/50 mb-4"/>
+                    <FileText className="h-12 w-12 text-muted-foreground/50 mb-4"/>
                     <p className="text-lg text-muted-foreground">Your generated content will appear here.</p>
                   </div>
               )}
-              {(generatedTitle || generatedBody) && !isLoading && (
+              {generatedContent && !isLoading && (
                   <div className="space-y-6">
                     <div className="space-y-2">
                         <Label htmlFor="generated-title">Title</Label>
                         <Input 
                             id="generated-title"
-                            value={generatedTitle}
-                            onChange={(e) => setGeneratedTitle(e.target.value)}
+                            value={editableTitle}
+                            onChange={(e) => setEditableTitle(e.target.value)}
                             className="text-2xl font-bold font-headline h-auto p-2"
                         />
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="generated-body">Body</Label>
+                        <Label htmlFor="generated-body">Body (Markdown)</Label>
                         <Textarea 
                             id="generated-body"
-                            value={generatedBody}
-                            onChange={(e) => setGeneratedBody(e.target.value)}
-                            className="min-h-[400px] leading-relaxed"
+                            value={editableBody}
+                            onChange={(e) => setEditableBody(e.target.value)}
+                            className="min-h-[400px] leading-relaxed font-mono text-sm"
                             rows={15}
+                        />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="generated-tags">Tags</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {editableTags.map((tag, index) => (
+                            <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                              <Tag className="h-3 w-3" />
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                        <Input
+                          id="generated-tags"
+                          value={editableTags.join(', ')}
+                          onChange={(e) => setEditableTags(e.target.value.split(',').map(t => t.trim()))}
+                          placeholder="tag1, tag2, tag3"
                         />
                     </div>
                   </div>
               )}
             </CardContent>
             <CardFooter>
-                <Button onClick={handlePublish} disabled={!generatedTitle && !generatedBody}>Publish</Button>
+                <Button onClick={handlePublish} disabled={!generatedContent}>Publish</Button>
             </CardFooter>
           </Card>
         </div>
