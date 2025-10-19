@@ -1,6 +1,7 @@
+
 "use client";
 
-import { Suspense } from 'react';
+import { Suspense, use } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,9 +26,9 @@ function ClientFormattedDate({ dateString }: { dateString: string }) {
 }
 
 
-function ServicePageContent({ params }: { params: { id: string } }) {
+function ServicePageContent({ id }: { id: string }) {
   const { services, reviews: allReviews } = useData();
-  const service = services.find((s) => s.id === params.id);
+  const service = services.find((s) => s.id === id);
   
   if (!service) {
     notFound();
@@ -135,9 +136,11 @@ function ServicePageContent({ params }: { params: { id: string } }) {
 
 
 export default function ServicePage({ params }: { params: { id: string } }) {
+  const { id } = use(params);
+  
   return (
     <Suspense fallback={<div>Загрузка услуги...</div>}>
-      <ServicePageContent params={params} />
+      <ServicePageContent id={id} />
     </Suspense>
   );
 }
