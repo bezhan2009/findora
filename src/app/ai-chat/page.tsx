@@ -9,13 +9,13 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Sparkles, User, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
 import type { Service } from '@/lib/types';
+import Logo from '@/components/logo';
 
 interface Message {
   role: 'user' | 'model';
@@ -115,6 +115,7 @@ export default function AIChatPage() {
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const hasMessages = messages.length > 1;
 
   const scrollToBottom = () => {
     if (scrollViewportRef.current) {
@@ -157,36 +158,38 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col flex-grow">
-       <div className="flex items-center gap-4 mb-8">
-        <Sparkles className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">AI Ассистент</h1>
-      </div>
-      <Card className="flex-grow flex flex-col shadow-lg rounded-xl overflow-hidden">
-        <CardContent className="p-0 flex flex-col flex-grow overflow-hidden">
-            <ScrollArea className="flex-grow p-6" viewportRef={scrollViewportRef}>
+    <div className="h-[calc(100vh-4rem)] flex flex-col">
+        <ScrollArea className="flex-grow" viewportRef={scrollViewportRef}>
+            <div className={cn("max-w-3xl mx-auto px-4 pt-8 pb-4", hasMessages ? "w-full" : "flex flex-col justify-center h-full")}>
+              {!hasMessages && (
+                  <div className="text-center mb-16">
+                      <Logo />
+                  </div>
+              )}
                 <div className="space-y-6">
                 {messages.map((msg, index) => (
                     <div
                     key={index}
                     className={cn(
                         "flex items-start gap-4",
-                        msg.role === 'user' && 'justify-end'
                     )}
                     >
-                    {msg.role === 'model' && (
-                        <Avatar className="h-9 w-9 border-2 border-primary/50">
+                    {msg.role === 'model' ? (
+                        <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
                             <AvatarFallback>
                                 <Sparkles className="h-5 w-5 text-primary"/>
+                            </AvatarFallback>
+                        </Avatar>
+                    ): (
+                         <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
+                            <AvatarFallback>
+                                <User className="h-5 w-5 text-muted-foreground"/>
                             </AvatarFallback>
                         </Avatar>
                     )}
                     <div
                         className={cn(
-                        "max-w-md rounded-2xl px-4 py-3 break-words",
-                        msg.role === 'model'
-                            ? "bg-muted rounded-bl-none"
-                            : "bg-primary text-primary-foreground rounded-br-none"
+                        "max-w-full rounded-2xl break-words",
                         )}
                     >
                         {msg.role === 'model' ? (
@@ -195,18 +198,11 @@ export default function AIChatPage() {
                             <p className="text-sm">{msg.content}</p>
                         )}
                     </div>
-                      {msg.role === 'user' && (
-                        <Avatar className="h-9 w-9 border-2 border-muted">
-                            <AvatarFallback>
-                                <User className="h-5 w-5 text-muted-foreground"/>
-                            </AvatarFallback>
-                        </Avatar>
-                    )}
                     </div>
                 ))}
                 {isLoading && (
                     <div className="flex items-start gap-4">
-                          <Avatar className="h-9 w-9 border-2 border-primary/50">
+                          <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
                             <AvatarFallback>
                                 <Sparkles className="h-5 w-5 text-primary animate-pulse"/>
                             </AvatarFallback>
@@ -217,24 +213,26 @@ export default function AIChatPage() {
                     </div>
                 )}
                 </div>
-            </ScrollArea>
-            <div className="p-4 border-t bg-background">
-                <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+            </div>
+        </ScrollArea>
+        <div className="px-4 pb-4 w-full shrink-0">
+            <div className="max-w-3xl mx-auto">
+                <form onSubmit={handleSendMessage} className="relative">
                 <Input
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Спросите что-нибудь..."
-                    className="flex-grow"
+                    placeholder="Спросите что-нибудь у AI Ассистента..."
+                    className="w-full h-14 pl-4 pr-14 rounded-2xl shadow-lg border-border/20 text-base"
                     disabled={isLoading}
                 />
-                <Button type="submit" size="icon" disabled={isLoading}>
+                <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg">
                     <Send className="h-5 w-5" />
                 </Button>
                 </form>
+                <p className="text-xs text-center text-muted-foreground mt-2">AI может ошибаться. Проверяйте важную информацию.</p>
             </div>
-        </CardContent>
-      </Card>
+        </div>
     </div>
   );
 }
