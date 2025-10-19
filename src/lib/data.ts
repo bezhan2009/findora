@@ -211,14 +211,21 @@ const services: Service[] = [
 ];
 
 const categories: Category[] = [
-    { id: 'cat-1', name: 'Веб-разработка' },
-    { id: 'cat-2', name: 'Графический дизайн' },
-    { id: 'cat-3', name: 'Написание текстов' },
-    { id: 'cat-4', name: 'Маркетинг' },
-    { id: 'cat-5', name: 'Видеопродакшн' },
-    { id: 'cat-6', name: 'Бизнес' },
-    { id: 'cat-7', name: 'Фотография' },
-    { id: 'cat-8', name: 'IT-поддержка' },
+    { id: 'cat-1', name: 'Графический дизайн' },
+    { id: 'cat-2', name: 'Цифровой маркетинг' },
+    { id: 'cat-3', name: 'Тексты и переводы' },
+    { id: 'cat-4', name: 'Видео и анимация' },
+    { id: 'cat-5', name: 'Музыка и аудио' },
+    { id: 'cat-6', name: 'Программирование' },
+    { id: 'cat-7', name: 'Бизнес' },
+    { id: 'cat-8', name: 'Стиль жизни' },
+    { id: 'cat-9', name: 'Фотография' },
+    { id: 'cat-10', name: 'IT-поддержка' },
+    { id: 'cat-11', name: 'Консалтинг' },
+    { id: 'cat-12', name: 'UI/UX Дизайн' },
+    { id: 'cat-13', name: 'SEO-оптимизация' },
+    { id: 'cat-14', name: 'Создание контента' },
+    { id: 'cat-15', name: 'Озвучка' },
 ];
 
 const conversations: Conversation[] = [
