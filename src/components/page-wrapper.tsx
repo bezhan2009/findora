@@ -19,10 +19,17 @@ export default function PageWrapper({
   const showFooter = pathname !== '/chat' && pathname !== '/ai-chat';
   const showChatWidget = pathname !== '/ai-chat';
 
+  // For pages like /ai-chat, we want the main content to take up all available space
+  // and handle its own scrolling. For other pages, we allow the main content to
+  // be scrolled by the browser.
+  const mainContentClass = showFooter 
+    ? "flex-grow flex flex-col" 
+    : "flex-1 overflow-y-auto";
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow flex-1 flex flex-col">
+      <main className={mainContentClass}>
         {children}
       </main>
       {showFooter && <Footer />}

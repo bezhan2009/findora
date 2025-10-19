@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect, memo } from 'react';
@@ -158,7 +157,7 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col overflow-hidden">
+    <div className="flex flex-col h-full">
         <ScrollArea className="flex-grow" viewportRef={scrollViewportRef}>
             <div className={cn("max-w-3xl mx-auto px-4 pt-8 pb-4", hasMessages ? "w-full" : "flex flex-col justify-center h-full")}>
               {!hasMessages && (
@@ -179,13 +178,13 @@ export default function AIChatPage() {
                                     <Sparkles className="h-5 w-5 text-primary"/>
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="max-w-full rounded-2xl break-words">
+                            <div className="prose prose-sm dark:prose-invert bg-muted rounded-2xl px-4 py-3 break-words">
                                 <ModelMessage content={msg.content} />
                             </div>
                         </>
                     ) : (
                         <div className="flex items-start gap-4">
-                            <div className="prose prose-sm dark:prose-invert bg-muted px-4 py-3 rounded-2xl">
+                            <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl">
                                 <p className="text-base">{msg.content}</p>
                             </div>
                             <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
