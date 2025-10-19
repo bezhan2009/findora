@@ -1,6 +1,6 @@
 "use client";
 
-import { use, Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import ServiceCard from '@/components/service-card';
@@ -310,14 +310,9 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
 
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
-  // We are using a promise here to simulate async data fetching.
-  // In a real app, you would fetch data from an API.
-  // The `use` hook is a React 19 feature for reading promises.
-  const resolvedParams = use(Promise.resolve(params));
-  
   return (
     <Suspense fallback={<div>Загрузка профиля...</div>}>
-      <ProfilePageContent params={resolvedParams} />
+      <ProfilePageContent params={params} />
     </Suspense>
   );
 }
