@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -6,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { categories } from '@/lib/data';
+import type { Category } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { SlidersHorizontal } from 'lucide-react';
 
@@ -19,10 +20,11 @@ export interface FilterState {
 }
 
 interface FilterSidebarProps {
+  categories: Category[];
   onApplyFilters: (filters: FilterState) => void;
 }
 
-export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
+export default function FilterSidebar({ categories, onApplyFilters }: FilterSidebarProps) {
   const [filters, setFilters] = useState<FilterState>({
     category: 'all',
     priceRange: [0, 500],
@@ -112,7 +114,7 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
                 <Checkbox 
                     id="featured" 
                     checked={filters.featured} 
-                    onCheckedChange={handleFeaturedChange}
+                    onCheckedChange={(checked) => handleFeaturedChange(Boolean(checked))}
                 />
                 <Label htmlFor="featured" className="font-normal">Рекомендуемые</Label>
             </div>
@@ -120,7 +122,7 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
                 <Checkbox 
                     id="top-rated" 
                     checked={filters.topRated}
-                    onCheckedChange={handleTopRatedChange}
+                    onCheckedChange={(checked) => handleTopRatedChange(Boolean(checked))}
                 />
                 <Label htmlFor="top-rated" className="font-normal">С высоким рейтингом</Label>
             </div>

@@ -1,6 +1,5 @@
 {
   "/profile/[username]/page": "app/profile/[username]/page.js",
-  "/chat/page": "app/chat/page.js",
   "/ai-creator/page": "app/ai-creator/page.js",
   "/translator/page": "app/translator/page.js",
   "/dashboard/page": "app/dashboard/page.js",

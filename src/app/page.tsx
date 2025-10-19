@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
@@ -257,7 +258,7 @@ function HomePageContent() {
             )}
           </div>
           <aside className="lg:col-span-1">
-              <FilterSidebar onApplyFilters={handleApplyFilters} />
+              <FilterSidebar categories={categories} onApplyFilters={handleApplyFilters} />
           </aside>
         </div>
       </main>
