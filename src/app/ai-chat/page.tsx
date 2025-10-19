@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, memo } from 'react';
@@ -113,6 +114,7 @@ export default function AIChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { services } = useData();
 
   const hasMessages = messages.length > 1;
 
@@ -139,6 +141,13 @@ export default function AIChatPage() {
       const chatRequest: AIChatInput = {
         history: messages,
         message: input,
+        services: services.map(s => ({
+            id: s.id,
+            title: s.title,
+            description: s.description,
+            price: s.price,
+            category: s.category
+        })),
       };
       
       const result = await aiChat(chatRequest);

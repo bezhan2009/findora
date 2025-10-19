@@ -6,7 +6,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { initialData } from '@/lib/data';
 import type { Service } from '@/lib/types';
 
 // Define the schema for a single message in the chat history
@@ -15,10 +14,21 @@ const ChatMessageSchema = z.object({
   content: z.string(),
 });
 
+// Define the service schema for the input
+const ServiceSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  price: z.number(),
+  category: z.string(),
+});
+
+
 // Define the input schema for the chat flow
 const AIChatInputSchema = z.object({
   history: z.array(ChatMessageSchema),
   message: z.string().describe('The latest message from the user.'),
+  services: z.array(ServiceSchema).describe('The list of available services/products.'),
 });
 export type AIChatInput = z.infer<typeof AIChatInputSchema>;
 
@@ -57,13 +67,15 @@ You can communicate in multiple languages. If a user messages you in Tajik (то
 
 export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
   // Dynamically create the prompt with the latest service data
-  const services = initialData.services;
-  const systemPrompt = buildSystemPrompt(services);
+  const systemPrompt = buildSystemPrompt(input.services);
   
   const chatPrompt = ai.definePrompt(
     {
       name: 'aiChatPrompt_dynamic',
-      input: {schema: AIChatInputSchema},
+      input: {schema: z.object({
+        history: z.array(ChatMessageSchema),
+        message: z.string()
+      })},
       output: {schema: AIChatOutputSchema},
       prompt: `${systemPrompt}
 
@@ -77,7 +89,10 @@ AI Assistant:`,
     }
   );
 
-  const {output} = await chatPrompt(input);
+  const {output} = await chatPrompt({
+    history: input.history,
+    message: input.message,
+  });
   if (!output) {
     return { response: "I'm sorry, I couldn't generate a response." };
   }

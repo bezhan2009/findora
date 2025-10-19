@@ -120,6 +120,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { services } = useData();
 
 
   const scrollToBottom = () => {
@@ -145,6 +146,13 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
       const chatRequest: AIChatInput = {
         history: messages,
         message: input,
+        services: services.map(s => ({
+            id: s.id,
+            title: s.title,
+            description: s.description,
+            price: s.price,
+            category: s.category
+        })),
       };
       
       const result = await aiChat(chatRequest);
