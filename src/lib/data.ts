@@ -1,8 +1,7 @@
-import type { User, Service, Review, Category, Conversation } from './types';
+import type { User, Service, Review, Category, Conversation, Comment } from './types';
 
-const users: User[] = [
+const usersData: Omit<User, 'id'>[] = [
   {
-    id: 'user-0',
     name: 'Председатель',
     username: 'chairman',
     role: 'provider',
@@ -14,9 +13,13 @@ const users: User[] = [
     followers: 9999,
     following: [],
      posts: [
-      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Проведение командной встречи', likes: 120, comments: 12 },
-      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop', caption: 'Наставничество следующего поколения лидеров', likes: 256, comments: 34 },
-      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop', caption: 'Заключение сделки', likes: 512, comments: 50 },
+      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Проведение командной встречи', likes: 120, 
+        comments: [
+            { id: 'c1-1', author: { name: 'Алиса Иванова', username: 'alicej', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop' }, text: 'Отличная встреча!', timestamp: '2 часа назад', likes: 5, dislikes: 0, replies: [] }
+        ]
+      },
+      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop', caption: 'Наставничество следующего поколения лидеров', likes: 256, comments: [] },
+      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop', caption: 'Заключение сделки', likes: 512, comments: [] },
     ],
     socials: {
         instagram: "https://instagram.com/bizmart",
@@ -26,7 +29,6 @@ const users: User[] = [
     }
   },
   {
-    id: 'user-1',
     name: 'Алиса Иванова',
     username: 'alicej',
     role: 'provider',
@@ -38,9 +40,9 @@ const users: User[] = [
     followers: 1250,
     following: [],
     posts: [
-      { id: 'p1-1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Недавний проект по UI/UX дизайну', likes: 88, comments: 5 },
-      { id: 'p1-2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'Мое текущее рабочее место', likes: 150, comments: 18 },
-      { id: 'p1-3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Код, код и еще раз код.', likes: 230, comments: 25 },
+      { id: 'p1-1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Недавний проект по UI/UX дизайну', likes: 88, comments: [] },
+      { id: 'p1-2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'Мое текущее рабочее место', likes: 150, comments: [] },
+      { id: 'p1-3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Код, код и еще раз код.', likes: 230, comments: [] },
     ],
     socials: {
         linkedin: "https://linkedin.com/in/alicej",
@@ -49,7 +51,6 @@ const users: User[] = [
     }
   },
   {
-    id: 'user-2',
     name: 'Борис Васильев',
     username: 'bobw',
     role: 'provider',
@@ -61,11 +62,10 @@ const users: User[] = [
     followers: 840,
     following: [],
     posts: [
-       { id: 'p2-1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Проект по брендингу логотипа', likes: 402, comments: 45 },
+       { id: 'p2-1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Проект по брендингу логотипа', likes: 402, comments: [] },
     ]
   },
   {
-    id: 'user-3',
     name: 'Карл Смирнов',
     username: 'charlieb',
     role: 'provider',
@@ -77,11 +77,10 @@ const users: User[] = [
     followers: 530,
     following: [],
     posts: [
-       { id: 'p3-1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'Сила хорошего контента.', likes: 189, comments: 22 },
+       { id: 'p3-1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'Сила хорошего контента.', likes: 189, comments: [] },
     ]
   },
    {
-    id: 'user-4',
     name: 'Диана Князева',
     username: 'dianap',
     role: 'customer',
@@ -107,7 +106,6 @@ const users: User[] = [
     }
   },
   {
-    id: 'user-5',
     name: 'Ева Мартинес',
     username: 'evam',
     role: 'provider',
@@ -119,8 +117,8 @@ const users: User[] = [
     followers: 2100,
     following: [],
     posts: [
-       { id: 'p5-1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Мозговой штурм следующей большой кампании.', likes: 350, comments: 40 },
-       { id: 'p5-2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Анализ последних рыночных тенденций.', likes: 180, comments: 15 },
+       { id: 'p5-1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Мозговой штурм следующей большой кампании.', likes: 350, comments: [] },
+       { id: 'p5-2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Анализ последних рыночных тенденций.', likes: 180, comments: [] },
     ],
     socials: {
         linkedin: "https://linkedin.com/in/evamartinez",
@@ -129,13 +127,17 @@ const users: User[] = [
   },
 ];
 
+const users: User[] = usersData.map((user, index) => ({ ...user, id: `user-${index}`}));
+
 const reviews: Review[] = [
-    { id: 'rev-1', providerId: 'user-1', author: { name: 'Клиент А', username: 'clienta', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' }, rating: 5, comment: 'Потрясающая работа, выполнено в срок!', date: '2023-10-01' },
-    { id: 'rev-2', providerId: 'user-1', author: { name: 'Клиент Б', username: 'clientb', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop' }, rating: 4, comment: 'Отличное общение и качественные результаты.', date: '2023-09-22' },
-    { id: 'rev-3', providerId: 'user-2', author: { name: 'Клиент В', username: 'clientc', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' }, rating: 5, comment: 'Превысило мои ожидания. Настоятельно рекомендую.', date: '2023-11-05' },
-    { id: 'rev-4', providerId: 'user-3', author: { name: 'Клиент Г', username: 'clientd', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, rating: 3, comment: 'Хорошая работа, но заняло немного больше времени, чем ожидалось.', date: '2023-10-15' },
-    { id: 'rev-5', providerId: 'user-1', author: { name: 'Клиент Д', username: 'cliente', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop' }, rating: 5, comment: 'Алиса — настоящий профессионал. Буду нанимать снова!', date: '2023-11-10' },
-    { id: 'rev-6', providerId: 'user-5', author: { name: 'Основатель стартапа', username: 'founder1', avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop' }, rating: 5, comment: 'Маркетинговая стратегия Евы удвоила наши лиды за один квартал. Невероятно!', date: '2023-11-15' },
+    { id: 'rev-1', providerId: 'user-1', author: { name: 'Клиент А', username: 'clienta', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' }, rating: 5, comment: 'Потрясающая работа, выполнено в срок!', date: '2023-10-01', likes: 15, dislikes: 0, replies: [] },
+    { id: 'rev-2', providerId: 'user-1', author: { name: 'Клиент Б', username: 'clientb', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop' }, rating: 4, comment: 'Отличное общение и качественные результаты.', date: '2023-09-22', likes: 8, dislikes: 1, replies: [] },
+    { id: 'rev-3', providerId: 'user-2', author: { name: 'Клиент В', username: 'clientc', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' }, rating: 5, comment: 'Превысило мои ожидания. Настоятельно рекомендую.', date: '2023-11-05', likes: 22, dislikes: 0, replies: [
+        { id: 'reply-1', author: { name: 'Борис Васильев', username: 'bobw', avatar: users[2].avatar }, text: 'Спасибо за добрые слова!', timestamp: '2023-11-06', likes: 4, dislikes: 0, replies: [] }
+    ] },
+    { id: 'rev-4', providerId: 'user-3', author: { name: 'Клиент Г', username: 'clientd', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, rating: 3, comment: 'Хорошая работа, но заняло немного больше времени, чем ожидалось.', date: '2023-10-15', likes: 3, dislikes: 2, replies: [] },
+    { id: 'rev-5', providerId: 'user-1', author: { name: 'Клиент Д', username: 'cliente', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop' }, rating: 5, comment: 'Алиса — настоящий профессионал. Буду нанимать снова!', date: '2023-11-10', likes: 12, dislikes: 0, replies: [] },
+    { id: 'rev-6', providerId: 'user-5', author: { name: 'Основатель стартапа', username: 'founder1', avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop' }, rating: 5, comment: 'Маркетинговая стратегия Евы удвоила наши лиды за один квартал. Невероятно!', date: '2023-11-15', likes: 30, dislikes: 0, replies: [] },
 ];
 
 const services: Service[] = [

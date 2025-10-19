@@ -2,13 +2,23 @@
 
 export type UserRole = 'customer' | 'provider';
 
+export interface Comment {
+  id: string;
+  author: UserStub;
+  text: string;
+  timestamp: string;
+  likes: number;
+  dislikes: number;
+  replies: Comment[];
+}
+
 export interface Post {
   id: string;
   type: 'photo' | 'video';
   url: string;
   caption: string;
   likes: number;
-  comments: number;
+  comments: Comment[];
 }
 
 export interface Order {
@@ -83,6 +93,9 @@ export interface Review {
   rating: number;
   comment: string;
   date: string;
+  likes: number;
+  dislikes: number;
+  replies: Comment[];
 }
 
 export interface ChatMessage {

@@ -20,6 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import ReviewCard from '@/components/review-card';
 
 function ClientFormattedDate({ dateString }: { dateString: string }) {
   const [formattedDate, setFormattedDate] = useState('');
@@ -69,6 +70,9 @@ function AddReviewForm({ serviceId, onReviewSubmit }: { serviceId: string, onRev
       rating: values.rating,
       comment: values.comment,
       date: new Date().toISOString(),
+      likes: 0,
+      dislikes: 0,
+      replies: [],
     };
     addReview(serviceId, newReview);
     form.reset();
@@ -138,25 +142,32 @@ function ServicePageContent({ id }: { id: string }) {
   const { services, reviews: allReviews } = useData();
   const service = services.find((s) => s.id === id);
   
+  const [serviceReviews, setServiceReviews] = useState<Review[]>([]);
+  
+  useEffect(() => {
+    if (service) {
+      setServiceReviews(allReviews.filter(review => service.reviews?.includes(review.id)));
+    }
+  }, [id, service, allReviews, services]);
+
   if (!service) {
     notFound();
   }
-
-  const [serviceReviews, setServiceReviews] = useState(allReviews.filter(review => service.reviews?.includes(review.id)));
+  
   const [imageSources, setImageSources] = useState(service.images);
 
-  useEffect(() => {
-    // Update reviews when the service data changes
-    const updatedService = services.find((s) => s.id === id);
-    if (updatedService) {
-      setServiceReviews(allReviews.filter(review => updatedService.reviews?.includes(review.id)));
-    }
-  }, [services, id, allReviews]);
-  
   const handleImageError = (index: number) => {
     const newImageSources = [...imageSources];
     newImageSources[index] = 'https://placehold.co/800x500/F9F9F9/333333?text=Image+Not+Found';
     setImageSources(newImageSources);
+  };
+  
+  const handleReviewSubmit = () => {
+    // This function will re-filter the reviews when a new one is submitted.
+    const updatedService = services.find((s) => s.id === id);
+    if(updatedService) {
+        setServiceReviews(allReviews.filter(review => updatedService.reviews?.includes(review.id)));
+    }
   };
 
   return (
@@ -211,36 +222,13 @@ function ServicePageContent({ id }: { id: string }) {
             <div className="space-y-6 mb-8">
               {serviceReviews.length > 0 ? (
                  serviceReviews.map((review) => (
-                <Card key={review.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <Avatar>
-                                <AvatarImage src={review.author.avatar} />
-                                <AvatarFallback>{review.author.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-semibold">{review.author.name}</p>
-                                <p className="text-sm text-muted-foreground"><ClientFormattedDate dateString={review.date} /></p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`h-5 w-5 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-muted-foreground/30'}`} />
-                            ))}
-                        </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{review.comment}</p>
-                  </CardContent>
-                </Card>
-              ))
+                    <ReviewCard key={review.id} review={review} />
+                 ))
               ) : (
                 <p className="text-muted-foreground text-center py-8">Для этого товара еще нет отзывов. Будьте первым!</p>
               )}
             </div>
-            <AddReviewForm serviceId={service.id} onReviewSubmit={() => {}} />
+            <AddReviewForm serviceId={service.id} onReviewSubmit={handleReviewSubmit} />
           </div>
         </div>
         <div className="lg:col-span-1">

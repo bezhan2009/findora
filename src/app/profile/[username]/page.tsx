@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Suspense, useState, useEffect, use } from 'react';
@@ -6,18 +7,20 @@ import Image from 'next/image';
 import { notFound, useRouter } from 'next/navigation';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
+import CommentSection from '@/components/comment-section';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase, Instagram, Linkedin, Globe, Mail, Phone, Heart, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/hooks/use-auth';
-import type { User, Post, Order, UserStub, UserSocials, Conversation } from '@/lib/types';
+import type { User, Post, Order, UserStub, UserSocials, Conversation, Comment } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { useData } from '@/hooks/use-data';
 
-function PostInteraction({ post }: { post: Post }) {
+function PostInteraction({ post, onCommentClick }: { post: Post, onCommentClick: () => void }) {
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(post.likes ?? 0);
 
@@ -31,14 +34,13 @@ function PostInteraction({ post }: { post: Post }) {
     const handleComment = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        // Placeholder for comment logic
-        alert('Функция комментирования еще не реализована.');
+        onCommentClick();
     }
 
     return (
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
             <div className="flex flex-col items-center justify-center text-white text-center">
-                <p className="text-sm mb-4">{post.caption}</p>
+                <p className="text-sm mb-4 line-clamp-2">{post.caption}</p>
                 <div className="flex items-center gap-6">
                     <button onClick={handleLike} className="flex items-center gap-1.5 transition-colors hover:text-rose-400">
                         <Heart className={liked ? "fill-current text-rose-500" : ""} />
@@ -46,7 +48,7 @@ function PostInteraction({ post }: { post: Post }) {
                     </button>
                     <button onClick={handleComment} className="flex items-center gap-1.5 transition-colors hover:text-cyan-400">
                         <MessageCircle />
-                        <span className="font-semibold">{post.comments?.toLocaleString() ?? 0}</span>
+                        <span className="font-semibold">{post.comments?.length ?? 0}</span>
                     </button>
                 </div>
             </div>
@@ -55,6 +57,9 @@ function PostInteraction({ post }: { post: Post }) {
 }
 
 function PostsGrid({ posts }: { posts: Post[] }) {
+    const { addCommentToPost } = useData();
+    const { user: authUser } = useAuth();
+
     if (!posts || posts.length === 0) {
         return (
             <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
@@ -76,6 +81,20 @@ function PostsGrid({ posts }: { posts: Post[] }) {
         }
         return url; // Fallback to original url if not a youtube link
     };
+    
+    const handleAddComment = (postId: string, text: string) => {
+        if (!authUser) return;
+        const newComment: Comment = {
+            id: `c-${Date.now()}`,
+            author: { name: authUser.name, username: authUser.username, avatar: authUser.avatar },
+            text,
+            timestamp: 'Только что',
+            likes: 0,
+            dislikes: 0,
+            replies: [],
+        };
+        addCommentToPost(postId, newComment);
+    };
 
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-4">
@@ -84,23 +103,52 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                 const imageUrl = isVideo ? getYouTubeThumbnail(post.url) : post.url;
 
                 return (
-                    <div key={post.id} className="relative aspect-square group overflow-hidden rounded-lg cursor-pointer">
-                         <a href={post.url} target="_blank" rel="noopener noreferrer">
-                            <Image
-                                src={imageUrl}
-                                alt={post.caption}
-                                fill
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
-                            />
-                            <PostInteraction post={post} />
-                             {isVideo && (
-                                <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1">
-                                    <Video className="h-4 w-4 text-white" />
+                    <Dialog key={post.id}>
+                        <DialogTrigger asChild>
+                            <div className="relative aspect-square group overflow-hidden rounded-lg cursor-pointer">
+                                <Image
+                                    src={imageUrl}
+                                    alt={post.caption}
+                                    fill
+                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                    data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
+                                />
+                                <PostInteraction post={post} onCommentClick={() => {}} />
+                                {isVideo && (
+                                    <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1">
+                                        <Video className="h-4 w-4 text-white" />
+                                    </div>
+                                )}
+                            </div>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
+                            <DialogHeader className="p-4 border-b">
+                                <DialogTitle>Пост от {post.author?.name || 'пользователя'}</DialogTitle>
+                            </DialogHeader>
+                            <div className="grid grid-cols-1 md:grid-cols-2 flex-grow overflow-hidden">
+                                <div className="relative h-full w-full bg-black">
+                                    <Image
+                                        src={imageUrl}
+                                        alt={post.caption}
+                                        fill
+                                        className="object-contain"
+                                    />
                                 </div>
-                            )}
-                        </a>
-                    </div>
+                                <div className="flex flex-col h-full">
+                                    <div className="p-4 border-b">
+                                        <p className="font-semibold">{post.author?.name}</p>
+                                        <p className="text-sm text-muted-foreground">{post.caption}</p>
+                                    </div>
+                                    <div className="flex-grow overflow-y-auto">
+                                        <CommentSection
+                                            comments={post.comments}
+                                            onAddComment={(text) => handleAddComment(post.id, text)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 );
             })}
         </div>
@@ -281,6 +329,8 @@ function ProfilePageContent({ username }: { username: string }) {
     const userServices = allServices.filter(s => s.provider.username === user.username);
     const userReviews = allReviewsData.filter(r => user.reviews?.includes(r.id));
     
+    const postsWithAuthor = user.posts?.map(p => ({...p, author: { name: user.name, username: user.username, avatar: user.avatar}})) || [];
+
     return (
         <Tabs defaultValue="services" className="w-full">
             <TabsList className="grid w-full grid-cols-3 md:w-[28rem] mx-auto">
@@ -303,7 +353,7 @@ function ProfilePageContent({ username }: { username: string }) {
                 </div>
             </TabsContent>
             <TabsContent value="posts" className="mt-8">
-                <PostsGrid posts={user.posts || []} />
+                <PostsGrid posts={postsWithAuthor} />
             </TabsContent>
             <TabsContent value="reviews" className="mt-8">
               <div className="space-y-6">
@@ -405,5 +455,3 @@ export default function ProfilePage({ params }: { params: { username: string } }
         </Suspense>
     );
 }
-
-    

@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, ReactNode } from 'react';
 import { initialData } from '@/lib/data';
-import type { User, Service, Review, Category, Conversation, ChatMessage, Post } from '@/lib/types';
+import type { User, Service, Review, Category, Conversation, ChatMessage, Post, Comment } from '@/lib/types';
 
 interface DataContextType {
   users: User[];
@@ -15,6 +15,7 @@ interface DataContextType {
   addService: (service: Service) => void;
   addPost: (username: string, post: Post) => void;
   addReview: (serviceId: string, review: Review) => void;
+  addCommentToPost: (postId: string, comment: Comment) => void;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -84,7 +85,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
                 const newRating = totalRating / newReviewsCount;
                 return {
                     ...service,
-                    reviews: [review.id, ...service.reviews],
+                    reviews: [review.id, ...(service.reviews || [])],
                     reviewsCount: newReviewsCount,
                     rating: newRating,
                 };
@@ -99,6 +100,27 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const addCommentToPost = (postId: string, comment: Comment) => {
+    setData(prevData => {
+        const newUsers = prevData.users.map(user => {
+            if (user.posts) {
+                const newPosts = user.posts.map(post => {
+                    if (post.id === postId) {
+                        return {
+                            ...post,
+                            comments: [comment, ...post.comments]
+                        };
+                    }
+                    return post;
+                });
+                return { ...user, posts: newPosts };
+            }
+            return user;
+        });
+        return { ...prevData, users: newUsers };
+    });
+  };
+
   const value = {
     users: data.users,
     services: data.services,
@@ -109,7 +131,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     addMessageToConversation,
     addService,
     addPost,
-    addReview
+    addReview,
+    addCommentToPost,
   };
 
   return (
