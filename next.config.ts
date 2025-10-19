@@ -45,6 +45,12 @@ const nextConfig: NextConfig = {
         hostname: 'motioncue.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.mds.yandex.net',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
