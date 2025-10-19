@@ -1,6 +1,7 @@
+
 "use client";
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import ServiceCard from '@/components/service-card';
@@ -158,10 +159,10 @@ function SocialLinks({ socials }: { socials: UserSocials }) {
     )
 }
 
-function ProfilePageContent({ params }: { params: { username: string } }) {
+function ProfilePageContent({ username }: { username: string }) {
   const { user: authUser } = useAuth();
   const { users, services: allServices, reviews: allReviewsData } = useData();
-  const { username } = params;
+  
   const user = users.find((u) => u.username === username);
 
   const [isFollowing, setIsFollowing] = useState(false);
@@ -310,9 +311,11 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
 
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
+  const resolvedParams = use(params);
+  
   return (
     <Suspense fallback={<div>Загрузка профиля...</div>}>
-      <ProfilePageContent params={params} />
+      <ProfilePageContent username={resolvedParams.username} />
     </Suspense>
   );
 }

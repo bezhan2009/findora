@@ -4,6 +4,5 @@
   "/ai-creator/page": "app/ai-creator/page.js",
   "/translator/page": "app/translator/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/cart/page": "app/cart/page.js",
   "/page": "app/page.js"
 }
