@@ -128,7 +128,7 @@ function SocialLinks({ socials }: { socials: UserSocials }) {
     }
 
     return (
-        <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
+        <div className="flex items-center gap-4 mt-4">
             {socials.instagram && (
                 <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
                     <Instagram className="h-5 w-5" />
@@ -240,40 +240,15 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
   }
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8">
-      <header className="relative mb-12">
-        <div className="w-full h-48 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl"/>
-        <div className="absolute left-1/2 -translate-x-1/2 -bottom-16 flex flex-col items-center w-full px-4">
-            <Avatar className="h-32 w-32 border-4 border-background ring-4 ring-primary shrink-0">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="mt-4 text-center">
-                <h1 className="text-3xl font-bold font-headline">{user.name}</h1>
-                <p className="text-muted-foreground">@{user.username}</p>
-            </div>
-        </div>
-      </header>
-      
-      <main className="pt-20">
-        <Card className="p-6 mb-8">
-           <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6">
-                <div className="flex-grow">
-                    <div className="flex items-center justify-center md:justify-start gap-2 mb-2 text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{user.location}</span>
-                    </div>
-                    <p className="text-foreground/80 max-w-2xl mx-auto md:mx-0">{user.bio}</p>
-                    {user.socials && <SocialLinks socials={user.socials} />}
-                </div>
-
-                <div className="flex items-center justify-center md:justify-end gap-6 w-full md:w-auto shrink-0">
-                    {user.role === 'provider' && (
-                        <div className="text-center">
-                            <p className="text-2xl font-bold">{allServices.filter(s => s.provider.username === user.username).length}</p>
-                            <p className="text-sm text-muted-foreground">Услуги</p>
-                        </div>
-                    )}
+    <div className="container mx-auto max-w-6xl px-4 py-8">
+       <Card className="p-6 mb-8 overflow-hidden">
+           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="md:col-span-1 flex flex-col items-center text-center">
+                 <Avatar className="h-32 w-32 border-4 border-background ring-4 ring-primary shrink-0">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="text-4xl">{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="mt-4 flex items-center justify-center gap-6 w-full">
                     <div className="text-center">
                         <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
                         <p className="text-sm text-muted-foreground">Подписчики</p>
@@ -283,24 +258,39 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
                         <p className="text-sm text-muted-foreground">Подписки</p>
                     </div>
                 </div>
-            </div>
-            <div className="mt-6 flex justify-center md:justify-end gap-2">
-               {isOwnProfile ? (
-                    <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Редактировать профиль</Button>
-                ) : (
-                    <>
-                        <Button onClick={handleFollow} variant={isFollowing ? 'secondary' : 'default'} className="transition-colors">
-                            {isFollowing ? <UserCheck className="mr-2 h-4 w-4" /> : <UserPlus className="mr-2 h-4 w-4" />}
-                            {isFollowing ? 'Вы подписаны' : 'Подписаться'}
-                        </Button>
-                        <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Сообщение</Button>
-                    </>
-                )}
-            </div>
-        </Card>
+              </div>
+
+               <div className="md:col-span-3">
+                    <div className="flex flex-col md:flex-row justify-between items-start">
+                        <div>
+                             <h1 className="text-3xl font-bold font-headline">{user.name}</h1>
+                             <p className="text-muted-foreground">@{user.username}</p>
+                             <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                                <MapPin className="h-4 w-4" />
+                                <span>{user.location}</span>
+                            </div>
+                        </div>
+                         <div className="flex gap-2 mt-4 md:mt-0">
+                            {isOwnProfile ? (
+                                    <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Редактировать профиль</Button>
+                                ) : (
+                                    <>
+                                        <Button onClick={handleFollow} variant={isFollowing ? 'secondary' : 'default'} className="transition-colors">
+                                            {isFollowing ? <UserCheck className="mr-2 h-4 w-4" /> : <UserPlus className="mr-2 h-4 w-4" />}
+                                            {isFollowing ? 'Вы подписаны' : 'Подписаться'}
+                                        </Button>
+                                        <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Сообщение</Button>
+                                    </>
+                                )}
+                        </div>
+                    </div>
+                    <p className="text-foreground/80 max-w-2xl mt-4">{user.bio}</p>
+                    {user.socials && <SocialLinks socials={user.socials} />}
+               </div>
+           </div>
+       </Card>
       
         {user.role === 'provider' ? renderProviderProfile(user) : renderCustomerProfile(user)}
-      </main>
     </div>
   );
 }

@@ -10,17 +10,20 @@ import { Send, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { conversations } from '@/lib/data';
 import type { Conversation as ConversationType } from '@/lib/types';
+import Link from 'next/link';
 
 export default function ChatPage() {
   const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(conversations[0] || null);
 
   return (
-    <div className="container mx-auto px-4 py-8 h-[calc(100vh-8rem)]">
-      <div className="flex items-center gap-4 mb-8">
-        <MessageSquare className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">Сообщения</h1>
+    <div className="h-[calc(100vh-4rem)] flex flex-col">
+      <div className="container mx-auto px-4 pt-8">
+          <div className="flex items-center gap-4 mb-8">
+            <MessageSquare className="h-8 w-8 text-primary" />
+            <h1 className="text-4xl font-bold font-headline">Сообщения</h1>
+          </div>
       </div>
-      <Card className="h-full w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 overflow-hidden">
+      <Card className="flex-grow w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 overflow-hidden rounded-none border-t border-b-0">
         <div className="col-span-1 border-r flex flex-col">
           <div className="p-4 border-b">
             <h2 className="text-xl font-semibold font-headline">Диалоги</h2>
@@ -51,11 +54,15 @@ export default function ChatPage() {
           {selectedConversation ? (
             <>
               <div className="p-4 border-b flex items-center gap-4">
-                <Avatar>
-                  <AvatarImage src={selectedConversation.participant.avatar} />
-                  <AvatarFallback>{selectedConversation.participant.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <h3 className="text-lg font-semibold font-headline">{selectedConversation.participant.name}</h3>
+                 <Link href={`/profile/${selectedConversation.participant.username}`}>
+                    <Avatar>
+                    <AvatarImage src={selectedConversation.participant.avatar} />
+                    <AvatarFallback>{selectedConversation.participant.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                </Link>
+                 <Link href={`/profile/${selectedConversation.participant.username}`}>
+                    <h3 className="text-lg font-semibold font-headline">{selectedConversation.participant.name}</h3>
+                </Link>
               </div>
               <ScrollArea className="flex-grow p-6 bg-muted/20">
                 <div className="space-y-4">
@@ -69,7 +76,9 @@ export default function ChatPage() {
                     >
                       {msg.sender === 'other' && (
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={selectedConversation.participant.avatar} />
+                           <Link href={`/profile/${selectedConversation.participant.username}`}>
+                            <AvatarImage src={selectedConversation.participant.avatar} />
+                           </Link>
                         </Avatar>
                       )}
                       <div

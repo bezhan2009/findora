@@ -89,10 +89,7 @@ export interface ChatMessage {
 
 export interface Conversation {
   id: string;
-  participant: {
-    name: string;
-    avatar: string;
-  };
+  participant: UserStub;
   lastMessage: string;
   timestamp: string;
   messages: ChatMessage[];

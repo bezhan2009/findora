@@ -6,22 +6,21 @@ import { cn } from '@/lib/utils';
 
 export default function ChickenAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMouseOverRef = useRef(false);
 
   useEffect(() => {
     let animationFrame;
     let startTime;
-    let isMouseOver = false;
+    
 
     const animate = (time) => {
       if (!startTime) startTime = time;
       const elapsed = (time - startTime) / 1000;
 
-      if (containerRef.current && !isMouseOver) {
+      if (containerRef.current && !isMouseOverRef.current) {
         const chickenElement = containerRef.current.querySelector(`.${styles.chicken}`);
         if (chickenElement) {
-          // Subtle bobbing animation
-          const bob = Math.sin(elapsed * 2) * 4; // Slower and smaller bob
-          (chickenElement as HTMLElement).style.transform = `rotateX(65deg) rotateZ(45deg) translateY(${bob}px)`;
+          // Subtle bobbing animation from the CSS
         }
       }
       animationFrame = requestAnimationFrame(animate);
@@ -31,7 +30,7 @@ export default function ChickenAnimation() {
         if (!containerRef.current) return;
         const rect = containerRef.current.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) return;
-        if (!isMouseOver) return;
+        if (!isMouseOverRef.current) return;
 
         const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
         const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
@@ -48,14 +47,17 @@ export default function ChickenAnimation() {
     };
     
     const handleMouseEnter = () => {
-        isMouseOver = true;
+        isMouseOverRef.current = true;
     }
 
     const handleMouseLeave = () => {
-        isMouseOver = false;
+        isMouseOverRef.current = false;
         startTime = null; // Reset start time for bobbing animation
-        if(!animationFrame) {
-            animationFrame = requestAnimationFrame(animate);
+        if(containerRef.current) {
+            const chickenElement = containerRef.current.querySelector(`.${styles.chicken}`);
+            if (chickenElement) {
+                (chickenElement as HTMLElement).style.transform = `rotateX(65deg) rotateZ(45deg)`;
+            }
         }
     }
 
@@ -79,8 +81,8 @@ export default function ChickenAnimation() {
   }, []);
 
   return (
-    <div ref={containerRef} className={styles.container}>
-      <div className={cn(styles.chicken, 'transform-gpu')}>
+    <div ref={containerRef} className={cn(styles.container, 'pointer-events-none')}>
+      <div className={cn(styles.chicken, 'transform-gpu pointer-events-auto')}>
         {/* head */}
         <div className={cn(styles.cube, styles['chicken__head'])}>
           <div>
