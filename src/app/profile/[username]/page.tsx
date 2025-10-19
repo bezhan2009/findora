@@ -131,7 +131,9 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                                     data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
                                 />
-                                <PostInteraction post={post} onCommentClick={() => {}} />
+                                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                                    <PostInteraction post={post} onCommentClick={() => {}} />
+                                </div>
                                 {isVideo && (
                                     <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1">
                                         <Video className="h-4 w-4 text-white" />
@@ -140,11 +142,14 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                             </div>
                         </DialogTrigger>
                         <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 sm:max-w-4xl">
+                             <DialogHeader>
+                                <DialogTitle className="sr-only">Просмотр поста</DialogTitle>
+                            </DialogHeader>
                             <div className="grid md:grid-cols-2 flex-1 overflow-hidden">
                                 <div className="relative bg-black flex items-center justify-center">
                                     {isVideo ? (
                                         <iframe
-                                            src={`https://www.youtube.com/embed/${post.url.split('/').pop()}`}
+                                            src={`https://www.youtube.com/embed/${post.url.split('/').pop()?.split('?')[0]}`}
                                             title="YouTube video player"
                                             frameBorder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
