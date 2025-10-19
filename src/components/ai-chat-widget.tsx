@@ -1,15 +1,20 @@
+
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, Sparkles, User, X } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Send, Sparkles, User, X, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat } from '@/ai/flows/ai-chat';
 import type { AIChatInput } from '@/ai/flows/ai-chat';
+import { useData } from '@/hooks/use-data';
+import type { Service } from '@/lib/types';
 
 interface Message {
   role: 'user' | 'model';
@@ -20,9 +25,94 @@ interface AIChatWidgetProps {
   onClose: () => void;
 }
 
+const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    if (text.startsWith('SERVICE_CARD')) {
+        setDisplayedText(text);
+        onComplete();
+        return;
+    }
+
+    let i = 0;
+    const intervalId = setInterval(() => {
+      setDisplayedText(text.substring(0, i + 1));
+      i++;
+      if (i > text.length) {
+        clearInterval(intervalId);
+        onComplete();
+      }
+    }, 20); // Adjust typing speed here
+
+    return () => clearInterval(intervalId);
+  }, [text, onComplete]);
+
+  return <p className="text-sm">{displayedText}</p>;
+};
+
+const ServiceCard = memo(({ service }: { service: Service }) => (
+    <Link href={`/services/${service.id}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300">
+        <div className="relative h-32 w-full">
+            <Image src={service.images[0]} alt={service.title} fill className="object-cover" />
+        </div>
+        <div className="p-3">
+            <h4 className="font-semibold text-sm truncate">{service.title}</h4>
+            <p className="text-xs text-muted-foreground line-clamp-2">{service.description}</p>
+            <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center gap-1 text-xs">
+                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                    <span>{service.rating}</span>
+                </div>
+                <p className="text-sm font-bold">${service.price}</p>
+            </div>
+        </div>
+    </Link>
+));
+ServiceCard.displayName = 'ServiceCard';
+
+
+const MessageContent = ({ content }: { content: string }) => {
+    const { services } = useData();
+
+    if (content.startsWith('SERVICE_CARD')) {
+        const serviceId = content.match(/\[(.*?)\]/)?.[1];
+        if (serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (service) {
+                return <ServiceCard service={service} />;
+            }
+        }
+    }
+    
+    return <p className="text-sm">{content}</p>;
+};
+
+
+const ModelMessage = ({ content }: { content: string }) => {
+    const [isTyping, setIsTyping] = useState(true);
+
+    const parts = content.split(/(SERVICE_CARD\[.*?\])/g).filter(Boolean);
+
+    return (
+        <>
+            {parts.map((part, index) => {
+                if (part.startsWith('SERVICE_CARD')) {
+                    return <MessageContent key={index} content={part} />;
+                }
+                if (isTyping && index === parts.length - 1) {
+                    return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
+                }
+                return <p key={index} className="text-sm">{part}</p>;
+            })}
+        </>
+    );
+};
+
+
 export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: 'Здравствуйте! Чем я могу вам помочь сегодня?' }
+    { role: 'model', content: 'Здравствуйте! Чем я могу вам помочь сегодня? Я могу порекомендовать услуги или ответить на вопросы о нашей платформе.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +125,6 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   };
 
    useEffect(() => {
-    // A slight delay to ensure the DOM has updated before scrolling
     setTimeout(scrollToBottom, 100);
   }, [messages, isLoading]);
 
@@ -103,7 +192,11 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                                 : "bg-primary text-primary-foreground rounded-br-none"
                             )}
                         >
-                            <p className="text-sm">{msg.content}</p>
+                           {msg.role === 'model' ? (
+                                <ModelMessage content={msg.content} />
+                            ) : (
+                                <p className="text-sm">{msg.content}</p>
+                            )}
                         </div>
                         {msg.role === 'user' && (
                             <Avatar className="h-8 w-8 border">

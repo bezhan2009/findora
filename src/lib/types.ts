@@ -1,4 +1,5 @@
 
+
 export type UserRole = 'customer' | 'provider';
 
 export interface Post {
