@@ -25,22 +25,19 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
     if (!heartSvg) return;
 
     const handleAnimate = () => {
-      // Simple pulse animation
-      gsap.to(heartSvg, {
-        scale: 1.2,
-        duration: 0.2,
-        ease: 'power2.out',
-        yoyo: true,
-        repeat: 1
-      });
+      gsap.fromTo(heartSvg, 
+        { scale: 1,},
+        { scale: 1.3, duration: 0.2, ease: 'power2.out', yoyo: true, repeat: 1 }
+      );
     };
 
-    heartSvg.addEventListener('animateHeart', handleAnimate);
+    const currentSvg = svgRef.current;
+    currentSvg.addEventListener('animateHeart', handleAnimate);
 
     return () => {
-      heartSvg.removeEventListener('animateHeart', handleAnimate);
+      currentSvg.removeEventListener('animateHeart', handleAnimate);
     };
-  }, [svgRef]);
+  }, []);
 
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
@@ -57,7 +54,6 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
       } else {
         addFavorite(service.id);
         
-        // Trigger animation
         if (svgRef.current) {
           const event = new CustomEvent('animateHeart');
           svgRef.current.dispatchEvent(event);
@@ -66,7 +62,8 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
     } catch (error) {
       console.error('Error toggling favorite:', error);
     } finally {
-      setIsAnimating(false);
+      // Add a small delay to allow animation to complete
+      setTimeout(() => setIsAnimating(false), 400);
     }
   };
 
@@ -92,19 +89,14 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
         disabled={isAnimating}
         className={cn(
           "relative h-8 w-8 rounded-full flex items-center justify-center transition-all duration-300",
-          "hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500",
-          "disabled:opacity-50 disabled:cursor-not-allowed",
+          "bg-background/60 hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-500",
+          "disabled:opacity-80 disabled:cursor-not-allowed",
           favorited ? "text-rose-500" : "text-gray-400 hover:text-rose-400",
           className
         )}
         aria-label={favorited ? "Удалить из избранного" : "Добавить в избранное"}
       >
         {svgContent}
-        {isAnimating && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
       </button>
     );
   }

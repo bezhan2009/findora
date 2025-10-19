@@ -5,30 +5,33 @@ import styles from './chicken-animation.module.css';
 import { cn } from '@/lib/utils';
 
 export default function ChickenAnimation() {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let animationFrame;
     let startTime;
+    let isMouseOver = false;
 
     const animate = (time) => {
       if (!startTime) startTime = time;
       const elapsed = (time - startTime) / 1000;
 
-      if (containerRef.current) {
+      if (containerRef.current && !isMouseOver) {
         const chickenElement = containerRef.current.querySelector(`.${styles.chicken}`);
         if (chickenElement) {
-          const walkAngle = 45 + (elapsed % 5) * 72; // 360deg за 5 секунд
-          chickenElement.style.transform = `rotateX(65deg) rotateZ(${walkAngle}deg)`;
+          // Subtle bobbing animation
+          const bob = Math.sin(elapsed * 2) * 4; // Slower and smaller bob
+          (chickenElement as HTMLElement).style.transform = `rotateX(65deg) rotateZ(45deg) translateY(${bob}px)`;
         }
       }
       animationFrame = requestAnimationFrame(animate);
     };
 
     const handleMouseMove = (e) => {
-      if (containerRef.current) {
+        if (!containerRef.current) return;
         const rect = containerRef.current.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) return;
+        if (!isMouseOver) return;
 
         const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
         const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
@@ -38,18 +41,39 @@ export default function ChickenAnimation() {
           if (containerRef.current) {
             const chickenElement = containerRef.current.querySelector(`.${styles.chicken}`);
             if (chickenElement) {
-              chickenElement.style.transform = `rotateX(65deg) rotateZ(calc(45deg + ${x}deg)) translateY(${y}px)`;
+              (chickenElement as HTMLElement).style.transform = `rotateX(65deg) rotateZ(calc(45deg + ${x}deg)) translateY(${y}px)`;
             }
           }
         });
-      }
     };
+    
+    const handleMouseEnter = () => {
+        isMouseOver = true;
+    }
+
+    const handleMouseLeave = () => {
+        isMouseOver = false;
+        startTime = null; // Reset start time for bobbing animation
+        if(!animationFrame) {
+            animationFrame = requestAnimationFrame(animate);
+        }
+    }
+
 
     animationFrame = requestAnimationFrame(animate);
-    window.addEventListener('mousemove', handleMouseMove);
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+        currentContainer.addEventListener('mousemove', handleMouseMove);
+        currentContainer.addEventListener('mouseenter', handleMouseEnter);
+        currentContainer.addEventListener('mouseleave', handleMouseLeave);
+    }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      if (currentContainer) {
+        currentContainer.removeEventListener('mousemove', handleMouseMove);
+        currentContainer.removeEventListener('mouseenter', handleMouseEnter);
+        currentContainer.removeEventListener('mouseleave', handleMouseLeave);
+      }
       cancelAnimationFrame(animationFrame);
     };
   }, []);
