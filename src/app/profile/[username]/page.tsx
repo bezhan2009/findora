@@ -27,8 +27,12 @@ function PostInteraction({ post, onCommentClick }: { post: Post, onCommentClick:
     const handleLike = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        if (liked) {
+            setLikeCount(prev => prev - 1);
+        } else {
+            setLikeCount(prev => prev + 1);
+        }
         setLiked(!liked);
-        setLikeCount(prev => liked ? prev - 1 : prev + 1);
     }
     
     const handleComment = (e: React.MouseEvent) => {
@@ -57,7 +61,7 @@ function PostInteraction({ post, onCommentClick }: { post: Post, onCommentClick:
 }
 
 function PostsGrid({ posts }: { posts: Post[] }) {
-    const { addCommentToPost } = useData();
+    const { addCommentToPost, addReplyToComment } = useData();
     const { user: authUser } = useAuth();
 
     if (!posts || posts.length === 0) {
@@ -96,6 +100,20 @@ function PostsGrid({ posts }: { posts: Post[] }) {
         addCommentToPost(postId, newComment);
     };
 
+    const handleAddReply = (postId: string, parentCommentId: string, text: string) => {
+        if (!authUser) return;
+        const newReply: Comment = {
+            id: `reply-${Date.now()}`,
+            author: { name: authUser.name, username: authUser.username, avatar: authUser.avatar },
+            text,
+            timestamp: 'Только что',
+            likes: 0,
+            dislikes: 0,
+            replies: [],
+        };
+        addReplyToComment(postId, parentCommentId, newReply);
+    };
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-4">
             {posts.map(post => {
@@ -121,12 +139,12 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                                 )}
                             </div>
                         </DialogTrigger>
-                        <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
-                            <DialogHeader className="p-4 border-b">
+                        <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 sm:max-w-4xl">
+                            <DialogHeader className="p-4 border-b shrink-0">
                                 <DialogTitle>Пост от {post.author?.name || 'пользователя'}</DialogTitle>
                             </DialogHeader>
-                            <div className="grid grid-cols-1 md:grid-cols-2 flex-grow overflow-hidden">
-                                <div className="relative h-full w-full bg-black">
+                            <div className="grid md:grid-cols-2 flex-1 overflow-hidden">
+                                <div className="relative bg-black flex items-center justify-center">
                                     <Image
                                         src={imageUrl}
                                         alt={post.caption}
@@ -135,14 +153,21 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                                     />
                                 </div>
                                 <div className="flex flex-col h-full">
-                                    <div className="p-4 border-b">
-                                        <p className="font-semibold">{post.author?.name}</p>
-                                        <p className="text-sm text-muted-foreground">{post.caption}</p>
+                                    <div className="p-4 border-b shrink-0">
+                                        <div className="flex items-center gap-2">
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarImage src={post.author?.avatar} />
+                                                <AvatarFallback>{post.author?.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <p className="font-semibold">{post.author?.name}</p>
+                                        </div>
+                                        <p className="text-sm text-muted-foreground mt-2">{post.caption}</p>
                                     </div>
-                                    <div className="flex-grow overflow-y-auto">
+                                    <div className="flex-1 overflow-y-auto">
                                         <CommentSection
                                             comments={post.comments}
                                             onAddComment={(text) => handleAddComment(post.id, text)}
+                                            onAddReply={(parentCommentId, text) => handleAddReply(post.id, parentCommentId, text)}
                                         />
                                     </div>
                                 </div>

@@ -4,18 +4,73 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Star, ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
-import type { Review } from '@/lib/types';
+import type { Review, Comment } from '@/lib/types';
 import { useState } from 'react';
 import CommentSection from './comment-section';
+import { useAuth } from '@/hooks/use-auth';
+import { useData } from '@/hooks/use-data';
+import { Textarea } from './ui/textarea';
 
 interface ReviewCardProps {
   review: Review;
 }
 
 export default function ReviewCard({ review }: ReviewCardProps) {
+  const { user } = useAuth();
+  const { addReplyToReview } = useData();
+
   const [likes, setLikes] = useState(review.likes);
   const [dislikes, setDislikes] = useState(review.dislikes);
+  const [likeStatus, setLikeStatus] = useState<'liked' | 'disliked' | null>(null);
+
   const [showReplies, setShowReplies] = useState(false);
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replyText, setReplyText] = useState('');
+
+  const handleLike = () => {
+    if (likeStatus === 'liked') {
+      setLikes(likes - 1);
+      setLikeStatus(null);
+    } else {
+      if (likeStatus === 'disliked') {
+        setDislikes(dislikes - 1);
+      }
+      setLikes(likes + 1);
+      setLikeStatus('liked');
+    }
+  };
+
+  const handleDislike = () => {
+    if (likeStatus === 'disliked') {
+      setDislikes(dislikes - 1);
+      setLikeStatus(null);
+    } else {
+      if (likeStatus === 'liked') {
+        setLikes(likes - 1);
+      }
+      setDislikes(dislikes + 1);
+      setLikeStatus('disliked');
+    }
+  };
+
+  const handleReplySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyText.trim() || !user) return;
+
+    const newReply: Comment = {
+      id: `reply-${Date.now()}`,
+      author: { name: user.name, username: user.username, avatar: user.avatar },
+      text: replyText,
+      timestamp: 'Только что',
+      likes: 0,
+      dislikes: 0,
+      replies: [],
+    };
+    addReplyToReview(review.id, newReply);
+    setReplyText('');
+    setShowReplyForm(false);
+    setShowReplies(true);
+  };
 
   return (
     <Card>
@@ -40,24 +95,44 @@ export default function ReviewCard({ review }: ReviewCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground mb-4">{review.comment}</p>
-        <div className="flex items-center gap-4 text-muted-foreground">
-            <Button variant="ghost" size="sm" onClick={() => setLikes(likes + 1)} className="flex items-center gap-1.5">
-                <ThumbsUp className="h-4 w-4" /> {likes}
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Button variant="ghost" size="sm" onClick={handleLike} className="flex items-center gap-1.5" disabled={!user}>
+                <ThumbsUp className={`h-4 w-4 ${likeStatus === 'liked' ? 'text-primary' : ''}`} /> {likes}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setDislikes(dislikes + 1)} className="flex items-center gap-1.5">
-                <ThumbsDown className="h-4 w-4" /> {dislikes}
+            <Button variant="ghost" size="sm" onClick={handleDislike} className="flex items-center gap-1.5" disabled={!user}>
+                <ThumbsDown className={`h-4 w-4 ${likeStatus === 'disliked' ? 'text-destructive' : ''}`} /> {dislikes}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setShowReplies(!showReplies)} className="flex items-center gap-1.5">
+            <Button variant="ghost" size="sm" onClick={() => { setShowReplyForm(!showReplyForm); if (!showReplies) setShowReplies(true); }} className="flex items-center gap-1.5" disabled={!user}>
                 <MessageSquare className="h-4 w-4" /> Ответить
             </Button>
+             {review.replies?.length > 0 && (
+                 <Button variant="ghost" size="sm" onClick={() => setShowReplies(!showReplies)}>
+                    {showReplies ? 'Скрыть ответы' : `Показать ответы (${review.replies.length})`}
+                 </Button>
+            )}
         </div>
+        
         {showReplies && (
-            <div className="mt-4 pl-6 border-l-2">
+            <div className="mt-4 pl-6 border-l-2 space-y-4">
+                 {showReplyForm && user && (
+                    <form onSubmit={handleReplySubmit} className="flex flex-col gap-2">
+                        <Textarea 
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder={`Ответить ${review.author.name}...`}
+                            rows={2}
+                        />
+                        <div className="flex justify-end gap-2">
+                            <Button type="button" variant="ghost" size="sm" onClick={() => setShowReplyForm(false)}>Отмена</Button>
+                            <Button type="submit" size="sm">Ответить</Button>
+                        </div>
+                    </form>
+                )}
                  <CommentSection 
                     comments={review.replies} 
-                    onAddComment={(newComment) => console.log('Новый ответ на отзыв:', newComment)} // Placeholder
+                    onAddComment={(newComment) => console.log('Новый ответ на отзыв:', newComment)} // This is handled by addReplyToReview
                     isReply
-                />
+                 />
             </div>
         )}
       </CardContent>

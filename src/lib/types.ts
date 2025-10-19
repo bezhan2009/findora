@@ -19,6 +19,7 @@ export interface Post {
   caption: string;
   likes: number;
   comments: Comment[];
+  author?: UserStub;
 }
 
 export interface Order {

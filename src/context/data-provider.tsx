@@ -16,6 +16,8 @@ interface DataContextType {
   addPost: (username: string, post: Post) => void;
   addReview: (serviceId: string, review: Review) => void;
   addCommentToPost: (postId: string, comment: Comment) => void;
+  addReplyToComment: (postId: string, parentCommentId: string, reply: Comment) => void;
+  addReplyToReview: (reviewId: string, reply: Comment) => void;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -103,36 +105,70 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const addCommentToPost = (postId: string, comment: Comment) => {
     setData(prevData => {
         const newUsers = prevData.users.map(user => {
-            if (user.posts) {
-                const newPosts = user.posts.map(post => {
-                    if (post.id === postId) {
-                        return {
-                            ...post,
-                            comments: [comment, ...post.comments]
-                        };
-                    }
-                    return post;
-                });
-                return { ...user, posts: newPosts };
-            }
-            return user;
+            const newPosts = user.posts?.map(post => {
+                if (post.id === postId) {
+                    return {
+                        ...post,
+                        comments: [comment, ...(post.comments || [])]
+                    };
+                }
+                return post;
+            });
+            return { ...user, posts: newPosts };
         });
         return { ...prevData, users: newUsers };
     });
   };
 
+  const addReplyToComment = (postId: string, parentCommentId: string, reply: Comment) => {
+    setData(prevData => {
+        const newUsers = prevData.users.map(user => {
+            const newPosts = user.posts?.map(post => {
+                if (post.id === postId) {
+                    const findAndAddReply = (comments: Comment[]): Comment[] => {
+                        return comments.map(c => {
+                            if (c.id === parentCommentId) {
+                                return { ...c, replies: [reply, ...(c.replies || [])] };
+                            }
+                            if (c.replies && c.replies.length > 0) {
+                                return { ...c, replies: findAndAddReply(c.replies) };
+                            }
+                            return c;
+                        });
+                    };
+                    const updatedComments = findAndAddReply(post.comments || []);
+                    return { ...post, comments: updatedComments };
+                }
+                return post;
+            });
+            return { ...user, posts: newPosts };
+        });
+        return { ...prevData, users: newUsers };
+    });
+  };
+  
+  const addReplyToReview = (reviewId: string, reply: Comment) => {
+    setData(prevData => {
+      const newReviews = prevData.reviews.map(review => {
+        if (review.id === reviewId) {
+          return { ...review, replies: [reply, ...(review.replies || [])] };
+        }
+        return review;
+      });
+      return { ...prevData, reviews: newReviews };
+    });
+  };
+
   const value = {
-    users: data.users,
-    services: data.services,
-    reviews: data.reviews,
-    categories: data.categories,
-    conversations: data.conversations,
+    ...data,
     addConversation,
     addMessageToConversation,
     addService,
     addPost,
     addReview,
     addCommentToPost,
+    addReplyToComment,
+    addReplyToReview
   };
 
   return (

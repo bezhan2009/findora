@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -16,11 +15,41 @@ interface CommentProps {
 }
 
 const CommentItem = ({ comment, onAddReply }: CommentProps) => {
+  const { user } = useAuth();
   const [likes, setLikes] = useState(comment.likes);
   const [dislikes, setDislikes] = useState(comment.dislikes);
+  const [likeStatus, setLikeStatus] = useState<'liked' | 'disliked' | null>(null);
+
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
   
+  const handleLike = () => {
+    if (likeStatus === 'liked') {
+      setLikes(likes - 1);
+      setLikeStatus(null);
+    } else {
+      if (likeStatus === 'disliked') {
+        setDislikes(dislikes - 1);
+      }
+      setLikes(likes + 1);
+      setLikeStatus('liked');
+    }
+  };
+
+  const handleDislike = () => {
+    if (likeStatus === 'disliked') {
+      setDislikes(dislikes - 1);
+      setLikeStatus(null);
+    } else {
+      if (likeStatus === 'liked') {
+        setLikes(likes - 1);
+      }
+      setDislikes(dislikes + 1);
+      setLikeStatus('disliked');
+    }
+  };
+
+
   const handleReplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim()) return;
@@ -43,17 +72,17 @@ const CommentItem = ({ comment, onAddReply }: CommentProps) => {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                     <span>{comment.timestamp}</span>
-                    <button onClick={() => setLikes(likes + 1)} className="flex items-center gap-1 hover:text-primary">
+                    <button onClick={handleLike} className={`flex items-center gap-1 hover:text-primary ${likeStatus === 'liked' ? 'text-primary' : ''}`} disabled={!user}>
                         <ThumbsUp className="h-3 w-3" /> {likes}
                     </button>
-                    <button onClick={() => setDislikes(dislikes + 1)} className="flex items-center gap-1 hover:text-destructive">
+                    <button onClick={handleDislike} className={`flex items-center gap-1 hover:text-destructive ${likeStatus === 'disliked' ? 'text-destructive' : ''}`} disabled={!user}>
                         <ThumbsDown className="h-3 w-3" /> {dislikes}
                     </button>
-                    <button onClick={() => setShowReplyForm(!showReplyForm)} className="hover:text-primary">Ответить</button>
+                    <button onClick={() => setShowReplyForm(!showReplyForm)} className="hover:text-primary" disabled={!user}>Ответить</button>
                 </div>
             </div>
         </div>
-        {showReplyForm && (
+        {showReplyForm && user && (
             <form onSubmit={handleReplySubmit} className="pl-12 flex flex-col gap-2">
                 <Textarea 
                     value={replyText}
@@ -68,9 +97,9 @@ const CommentItem = ({ comment, onAddReply }: CommentProps) => {
             </form>
         )}
         {comment.replies && comment.replies.length > 0 && (
-            <div className="pl-12 space-y-4 border-l-2 border-border ml-4">
+            <div className="pl-12 space-y-4 border-l-2 border-border ml-4 mt-2">
                 {comment.replies.map(reply => (
-                    <CommentItem key={reply.id} comment={reply} onAddReply={(text) => console.log("Adding nested reply:", text)} />
+                    <CommentItem key={reply.id} comment={reply} onAddReply={(text) => onAddReply(text)} />
                 ))}
             </div>
         )}
@@ -80,12 +109,13 @@ const CommentItem = ({ comment, onAddReply }: CommentProps) => {
 
 
 interface CommentSectionProps {
-  comments: Comment[];
+  comments?: Comment[];
   onAddComment: (text: string) => void;
+  onAddReply: (parentCommentId: string, text: string) => void;
   isReply?: boolean;
 }
 
-export default function CommentSection({ comments, onAddComment, isReply = false }: CommentSectionProps) {
+export default function CommentSection({ comments, onAddComment, onAddReply, isReply = false }: CommentSectionProps) {
   const [newComment, setNewComment] = useState('');
   const { user } = useAuth();
   
@@ -126,7 +156,7 @@ export default function CommentSection({ comments, onAddComment, isReply = false
           <CommentItem 
               key={comment.id} 
               comment={comment} 
-              onAddReply={(text) => console.log('Adding reply to comment:', comment.id, text)} // Placeholder
+              onAddReply={(text) => onAddReply(comment.id, text)}
           />
         ))}
         {(!comments || comments.length === 0) && (
