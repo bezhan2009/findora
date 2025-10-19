@@ -3,7 +3,6 @@
 import { use, Suspense, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { users, services as allServices, reviews as allReviewsData } from '@/lib/data';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +14,7 @@ import type { User, Post, Order, UserStub, UserSocials } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { useData } from '@/hooks/use-data';
 
 function PostsGrid({ posts }: { posts: Post[] }) {
     if (!posts || posts.length === 0) {
@@ -160,22 +160,28 @@ function SocialLinks({ socials }: { socials: UserSocials }) {
 
 function ProfilePageContent({ params }: { params: { username: string } }) {
   const { user: authUser } = useAuth();
+  const { users, services: allServices, reviews: allReviewsData } = useData();
   const { username } = params;
   const user = users.find((u) => u.username === username);
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(user?.followers || 0);
+  const [formattedFollowerCount, setFormattedFollowerCount] = useState<string | number>(user?.followers || 0);
+
+  useEffect(() => {
+    if (user) {
+        setFollowerCount(user.followers);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    // Format the number on the client side to avoid hydration mismatch
+    setFormattedFollowerCount(followerCount.toLocaleString('ru-RU'));
+  }, [followerCount]);
 
   if (!user) {
     notFound();
   }
-  
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followerCount, setFollowerCount] = useState(user.followers);
-  const [formattedFollowerCount, setFormattedFollowerCount] = useState<string | number>(user.followers);
-
-  useEffect(() => {
-    // Format the number on the client side to avoid hydration mismatch
-    setFormattedFollowerCount(followerCount.toLocaleString());
-  }, [followerCount]);
-
 
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -303,8 +309,11 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
 }
 
 
-export default function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
-  const resolvedParams = use(params);
+export default function ProfilePage({ params }: { params: { username: string } }) {
+  // We are using a promise here to simulate async data fetching.
+  // In a real app, you would fetch data from an API.
+  // The `use` hook is a React 19 feature for reading promises.
+  const resolvedParams = use(Promise.resolve(params));
   
   return (
     <Suspense fallback={<div>Загрузка профиля...</div>}>

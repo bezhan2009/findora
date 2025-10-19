@@ -8,11 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { conversations } from '@/lib/data';
 import type { Conversation as ConversationType } from '@/lib/types';
 import Link from 'next/link';
+import { useData } from '@/hooks/use-data';
 
 export default function ChatPage() {
+  const { conversations } = useData();
   const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(conversations[0] || null);
 
   return (
@@ -60,7 +61,7 @@ export default function ChatPage() {
                     <AvatarFallback>{selectedConversation.participant.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </Link>
-                 <Link href={`/profile/${selectedConversation.participant.username}`}>
+                 <Link href={`/profile/${selectedConversation.participant.username}`} className="hover:underline">
                     <h3 className="text-lg font-semibold font-headline">{selectedConversation.participant.name}</h3>
                 </Link>
               </div>

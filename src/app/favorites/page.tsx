@@ -2,13 +2,14 @@
 
 import ServiceCard from '@/components/service-card';
 import { useFavorites } from '@/hooks/use-favorites';
-import { services } from '@/lib/data';
+import { useData } from '@/hooks/use-data';
 import { Heart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export default function FavoritesPage() {
   const { favoriteIds } = useFavorites();
+  const { services } = useData();
   const favoriteServices = services.filter(service => favoriteIds.includes(service.id));
 
   return (

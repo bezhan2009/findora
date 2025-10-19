@@ -26,6 +26,7 @@ export interface Service {
   price: number;
   rating: number;
   reviewsCount: number;
+  reviews: string[]; // Array of review IDs
   images: string[];
   provider: UserStub;
   featured?: boolean;
@@ -54,8 +55,8 @@ export interface User {
   location: string;
   bio: string;
   socials?: UserSocials;
-  services?: string[];
-  reviews?: Review[];
+  services?: string[]; // Array of service IDs
+  reviews?: string[]; // Array of review IDs
   followers: number;
   following?: UserStub[];
   posts?: Post[];
@@ -73,6 +74,7 @@ export interface Review {
   providerId: string;
   author: {
     name: string;
+    username: string;
     avatar: string;
   };
   rating: number;

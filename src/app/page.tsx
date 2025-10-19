@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import ServiceCard from '@/components/service-card';
 import HorizontalServiceCard from '@/components/horizontal-service-card';
 import PromoCard from '@/components/promo-card';
-import { services, categories } from '@/lib/data';
 import type { Service } from '@/lib/types';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Link from 'next/link';
@@ -16,6 +15,7 @@ import PageSearchInput from '@/components/page-search-input';
 import FilterSidebar, { type FilterState } from '@/components/filter-sidebar';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useData } from '@/hooks/use-data';
 
 function SearchResults({ services, query }: { services: Service[], query: string }) {
   if (services.length === 0) {
@@ -40,11 +40,11 @@ function SearchResults({ services, query }: { services: Service[], query: string
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { services: allServices, categories } = useData();
   const searchQuery = searchParams.get('q');
   const categoryQuery = searchParams.get('category');
   
-  const [allServices] = useState<Service[]>(services);
-  const [filteredServices, setFilteredServices] = useState<Service[]>(services);
+  const [filteredServices, setFilteredServices] = useState<Service[]>(allServices);
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     category: categoryQuery || 'all',
     priceRange: [0, 500],
@@ -88,9 +88,9 @@ function HomePageContent() {
     setFilteredServices(results);
   }, [searchQuery, categoryQuery, allServices, activeFilters]);
 
-  const featuredServices = services.filter(s => s.featured);
-  const trendingServices = services.slice(0, 4);
-  const newArrivals = services.slice(2, 6);
+  const featuredServices = allServices.filter(s => s.featured);
+  const trendingServices = allServices.slice(0, 4);
+  const newArrivals = allServices.slice(2, 6);
 
   const handleApplyFilters = (filters: FilterState) => {
     setActiveFilters(filters);

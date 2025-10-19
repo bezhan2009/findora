@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
-import { services } from "@/lib/data";
+import { useData } from "@/hooks/use-data";
 import { BarChart, Eye, Heart, DollarSign, Users, LineChart as LineChartIcon, Activity } from "lucide-react";
 import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useRouter } from "next/navigation";
@@ -22,6 +22,7 @@ const chartData = [
 
 export default function DashboardPage() {
     const { user, role } = useAuth();
+    const { services } = useData();
     const router = useRouter();
 
     useEffect(() => {

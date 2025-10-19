@@ -4,7 +4,6 @@ import { use, Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { services, reviews as allReviews } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -13,6 +12,7 @@ import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AddToCartButton from '@/components/add-to-cart-button';
 import { FavoriteButton } from '@/components/favorite-button';
+import { useData } from '@/hooks/use-data';
 
 function ClientFormattedDate({ dateString }: { dateString: string }) {
   const [formattedDate, setFormattedDate] = useState('');
@@ -26,11 +26,14 @@ function ClientFormattedDate({ dateString }: { dateString: string }) {
 
 
 function ServicePageContent({ params }: { params: { id: string } }) {
+  const { services, reviews: allReviews } = useData();
   const service = services.find((s) => s.id === params.id);
   
   if (!service) {
     notFound();
   }
+
+  const serviceReviews = allReviews.filter(review => service.reviews?.includes(review.id));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -81,7 +84,7 @@ function ServicePageContent({ params }: { params: { id: string } }) {
           <div className="mt-12">
             <h2 className="text-2xl font-bold mb-6 font-headline">Что говорят люди</h2>
             <div className="space-y-6">
-              {allReviews.slice(0, 3).map((review) => (
+              {serviceReviews.slice(0, 3).map((review) => (
                 <Card key={review.id}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
@@ -131,8 +134,8 @@ function ServicePageContent({ params }: { params: { id: string } }) {
 }
 
 
-export default function ServicePage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
+export default function ServicePage({ params }: { params: { id: string } }) {
+  const resolvedParams = use(Promise.resolve(params));
   
   return (
     <Suspense fallback={<div>Загрузка услуги...</div>}>

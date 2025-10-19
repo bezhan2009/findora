@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/auth-provider';
 import PageWrapper from '@/components/page-wrapper';
 import { CartProvider } from '@/context/cart-provider';
+import { DataProvider } from '@/context/data-provider';
 
 export const metadata: Metadata = {
   title: 'BizMart',
@@ -34,14 +35,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <FavoritesProvider>
-              <CartProvider>
-                <PageWrapper>
-                  {children}
-                </PageWrapper>
-                <Toaster />
-              </CartProvider>
-            </FavoritesProvider>
+            <DataProvider>
+              <FavoritesProvider>
+                <CartProvider>
+                  <PageWrapper>
+                    {children}
+                  </PageWrapper>
+                  <Toaster />
+                </CartProvider>
+              </FavoritesProvider>
+            </DataProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

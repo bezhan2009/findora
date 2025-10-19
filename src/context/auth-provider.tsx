@@ -1,9 +1,9 @@
 
 "use client";
 
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import type { User, UserRole } from '@/lib/types';
-import { users } from '@/lib/data';
+import { initialData } from '@/lib/data';
 
 interface AuthContextType {
   user: User | null;
@@ -17,11 +17,21 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole | null>(null);
+  
+  useEffect(() => {
+    // Mock auto-login
+    const chairmanUser = initialData.users.find(u => u.username === 'chairman');
+    if (chairmanUser) {
+        setUser(chairmanUser);
+        setRole(chairmanUser.role);
+    }
+  }, []);
+
 
   const authenticate = (email: string, name?: string, userRole: UserRole = 'customer') => {
     // Dummy authentication: find user by email or create a new stub for registration
-    const foundUser = users.find(u => u.username === email.split('@')[0]) || {
-        ...users[0],
+    const foundUser = initialData.users.find(u => u.username === email.split('@')[0]) || {
+        ...initialData.users[0],
         id: `user-${Date.now()}`,
         name: name || `User ${email.split('@')[0]}`,
         username: email.split('@')[0],

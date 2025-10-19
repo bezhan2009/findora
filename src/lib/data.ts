@@ -1,6 +1,30 @@
 import type { User, Service, Review, Category, Conversation } from './types';
 
-export const users: User[] = [
+const users: User[] = [
+  {
+    id: 'user-0',
+    name: 'Председатель',
+    username: 'chairman',
+    role: 'provider',
+    avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&h=500&fit=crop',
+    location: 'Москва, Россия',
+    bio: 'Главный исполнительный директор и основатель BizMart. Курирую лучшие таланты и услуги на платформе.',
+    services: ['service-1', 'service-2', 'service-5', 'service-7', 'service-9', 'service-16', 'service-33', 'service-43'],
+    reviews: [],
+    followers: 9999,
+    following: [],
+     posts: [
+      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Проведение командной встречи' },
+      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop', caption: 'Наставничество следующего поколения лидеров' },
+      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop', caption: 'Заключение сделки' },
+    ],
+    socials: {
+        instagram: "https://instagram.com/bizmart",
+        linkedin: "https://linkedin.com/in/bizmart",
+        website: "https://bizmart.com",
+        email: "chairman@bizmart.com"
+    }
+  },
   {
     id: 'user-1',
     name: 'Алиса Иванова',
@@ -10,19 +34,18 @@ export const users: User[] = [
     location: 'Сан-Франциско, Калифорния',
     bio: 'Опытный веб-разработчик, специализирующийся на React и Next.js. Я создаю красивые и производительные сайты для бизнеса любого размера.',
     services: ['service-1', 'service-2', 'service-6', 'service-10', 'service-28', 'service-37', 'service-47'],
-    reviews: [],
+    reviews: ['rev-1', 'rev-2', 'rev-5'],
     followers: 1250,
     following: [],
     posts: [
-      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Недавний проект по UI/UX дизайну' },
-      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'Мое текущее рабочее место' },
-      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Код, код и еще раз код.' },
+      { id: 'p1-1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Недавний проект по UI/UX дизайну' },
+      { id: 'p1-2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'Мое текущее рабочее место' },
+      { id: 'p1-3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Код, код и еще раз код.' },
     ],
     socials: {
-        instagram: "https://instagram.com/bizmart",
-        linkedin: "https://linkedin.com/in/bizmart",
-        website: "https://bizmart.com",
-        email: "contact@bizmart.com"
+        linkedin: "https://linkedin.com/in/alicej",
+        website: "https://alicej.dev",
+        email: "contact@alicej.dev"
     }
   },
   {
@@ -34,11 +57,11 @@ export const users: User[] = [
     location: 'Нью-Йорк, Нью-Йорк',
     bio: 'Графический дизайнер со страстью к созданию потрясающих логотипов и брендинговых материалов. Давайте сделаем ваш бренд заметным!',
     services: ['service-3', 'service-11', 'service-12', 'service-29', 'service-38', 'service-41', 'service-48'],
-    reviews: [],
+    reviews: ['rev-3'],
     followers: 840,
     following: [],
     posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Проект по брендингу логотипа' },
+       { id: 'p2-1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Проект по брендингу логотипа' },
     ]
   },
   {
@@ -50,11 +73,11 @@ export const users: User[] = [
     location: 'Остин, Техас',
     bio: 'Я пишу убедительные тексты, которые конвертируют. От постов в блоге до контента для сайта, я помогу вам эффективно донести ваше сообщение.',
     services: ['service-4', 'service-8', 'service-13', 'service-14', 'service-30', 'service-39', 'service-42', 'service-49'],
-    reviews: [],
+    reviews: ['rev-4'],
     followers: 530,
     following: [],
     posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'Сила хорошего контента.' },
+       { id: 'p3-1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'Сила хорошего контента.' },
     ]
   },
    {
@@ -92,106 +115,30 @@ export const users: User[] = [
     location: 'Майами, Флорида',
     bio: 'Маркетинговый стратег, ориентированный на результат, с более чем 8-летним опытом помощи брендам в росте их онлайн-присутствия и увеличении дохода.',
     services: ['service-5', 'service-15', 'service-16', 'service-17', 'service-31', 'service-40', 'service-50'],
-    reviews: [],
+    reviews: ['rev-6'],
     followers: 2100,
     following: [],
     posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Мозговой штурм следующей большой кампании.' },
-       { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Анализ последних рыночных тенденций.' },
+       { id: 'p5-1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Мозговой штурм следующей большой кампании.' },
+       { id: 'p5-2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Анализ последних рыночных тенденций.' },
     ],
     socials: {
         linkedin: "https://linkedin.com/in/evamartinez",
         website: "https://evadigital.co"
     }
   },
-  {
-    id: 'user-6',
-    name: 'Франк Миллер',
-    username: 'frankm',
-    role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&h=500&fit=crop',
-    location: 'Лос-Анджелес, Калифорния',
-    bio: 'Креативный видеоредактор и специалист по моушн-графике. Оживляю истории с помощью убедительных визуальных эффектов и звука.',
-    services: ['service-7', 'service-18', 'service-19', 'service-32', 'service-43'],
-    reviews: [],
-    followers: 1600,
-    following: [],
-    posts: [
-       { id: 'p1', type: 'video', url: 'https://images.unsplash.com/photo-1527236438218-d82077ae1638?w=400&h=400&fit=crop', caption: 'Кадр из моего последнего короткометражного фильма.' },
-    ]
-  },
-   {
-    id: 'user-7',
-    name: 'Грейс Ли',
-    username: 'gracel',
-    role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1622281938263-af1399397686?w=500&h=500&fit=crop',
-    location: 'Сиэтл, Вашингтон',
-    bio: 'Бизнес-консультант, специализирующийся на помощи стартапам в масштабировании и оптимизации их операций для устойчивого роста.',
-    services: ['service-9', 'service-20', 'service-21', 'service-33', 'service-46'],
-    reviews: [],
-    followers: 3200,
-    following: [],
-    posts: [
-       { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Проведение семинара по agile-методологиям.' },
-    ]
-  },
-  {
-    id: 'user-8',
-    name: 'Генри Уилсон',
-    username: 'henryw',
-    role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=500&fit=crop',
-    location: 'Денвер, Колорадо',
-    bio: 'Фотограф, специализирующийся на лайфстайл и предметной съемке. Запечатлеваю подлинные моменты и красивые изображения, которые рассказывают историю.',
-    services: ['service-22', 'service-23', 'service-34', 'service-44'],
-    reviews: [],
-    followers: 980,
-    following: [],
-    posts: []
-  },
-  {
-    id: 'user-9',
-    name: 'Изабелла Гарсия',
-    username: 'isabellag',
-    role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&h=500&fit=crop',
-    location: 'Финикс, Аризона',
-    bio: 'Сертифицированный бухгалтер, предоставляющий услуги по ведению бухгалтерии, подготовке налогов и финансовому консультированию для малого бизнеса и фрилансеров.',
-    services: ['service-24', 'service-25', 'service-35'],
-    reviews: [],
-    followers: 450,
-    following: [],
-    posts: []
-  },
-  {
-    id: 'user-10',
-    name: 'Джек Робинсон',
-    username: 'jackr',
-    role: 'provider',
-    avatar: 'https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=500&h=500&fit=crop',
-    location: 'Хьюстон, Техас',
-    bio: 'Специалист по IT-поддержке, предлагающий удаленную помощь, настройку сети и решения по кибербезопасности для дома и офиса.',
-    services: ['service-26', 'service-27', 'service-36', 'service-45'],
-    reviews: [],
-    followers: 300,
-    following: [],
-    posts: []
-  }
 ];
 
-export const reviews: Review[] = [
-    { id: 'rev-1', providerId: 'user-1', author: { name: 'Клиент А', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' }, rating: 5, comment: 'Потрясающая работа, выполнено в срок!', date: '2023-10-01' },
-    { id: 'rev-2', providerId: 'user-1', author: { name: 'Клиент Б', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop' }, rating: 4, comment: 'Отличное общение и качественные результаты.', date: '2023-09-22' },
-    { id: 'rev-3', providerId: 'user-2', author: { name: 'Клиент В', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' }, rating: 5, comment: 'Превысило мои ожидания. Настоятельно рекомендую.', date: '2023-11-05' },
-    { id: 'rev-4', providerId: 'user-3', author: { name: 'Клиент Г', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, rating: 3, comment: 'Хорошая работа, но заняло немного больше времени, чем ожидалось.', date: '2023-10-15' },
-    { id: 'rev-5', providerId: 'user-1', author: { name: 'Клиент Д', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop' }, rating: 5, comment: 'Алиса — настоящий профессионал. Буду нанимать снова!', date: '2023-11-10' },
-    { id: 'rev-6', providerId: 'user-5', author: { name: 'Основатель стартапа', avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop' }, rating: 5, comment: 'Маркетинговая стратегия Евы удвоила наши лиды за один квартал. Невероятно!', date: '2023-11-15' },
-    { id: 'rev-7', providerId: 'user-6', author: { name: 'Кинорежиссер', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop' }, rating: 5, comment: 'Франк — мастер своего дела. Финальный монтаж был захватывающим.', date: '2023-11-18' },
-    { id: 'rev-8', providerId: 'user-7', author: { name: 'CEO TechCorp', avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100&h=100&fit=crop' }, rating: 5, comment: 'Грейс предоставила бесценные инсайты, которые помогли нам оптимизировать весь рабочий процесс.', date: '2023-11-20' },
+const reviews: Review[] = [
+    { id: 'rev-1', providerId: 'user-1', author: { name: 'Клиент А', username: 'clienta', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' }, rating: 5, comment: 'Потрясающая работа, выполнено в срок!', date: '2023-10-01' },
+    { id: 'rev-2', providerId: 'user-1', author: { name: 'Клиент Б', username: 'clientb', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop' }, rating: 4, comment: 'Отличное общение и качественные результаты.', date: '2023-09-22' },
+    { id: 'rev-3', providerId: 'user-2', author: { name: 'Клиент В', username: 'clientc', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' }, rating: 5, comment: 'Превысило мои ожидания. Настоятельно рекомендую.', date: '2023-11-05' },
+    { id: 'rev-4', providerId: 'user-3', author: { name: 'Клиент Г', username: 'clientd', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop' }, rating: 3, comment: 'Хорошая работа, но заняло немного больше времени, чем ожидалось.', date: '2023-10-15' },
+    { id: 'rev-5', providerId: 'user-1', author: { name: 'Клиент Д', username: 'cliente', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop' }, rating: 5, comment: 'Алиса — настоящий профессионал. Буду нанимать снова!', date: '2023-11-10' },
+    { id: 'rev-6', providerId: 'user-5', author: { name: 'Основатель стартапа', username: 'founder1', avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop' }, rating: 5, comment: 'Маркетинговая стратегия Евы удвоила наши лиды за один квартал. Невероятно!', date: '2023-11-15' },
 ];
 
-export const services: Service[] = [
+const services: Service[] = [
   {
     id: 'service-1',
     title: 'Разработка сайта на заказ',
@@ -200,8 +147,9 @@ export const services: Service[] = [
     price: 450,
     rating: 4.9,
     reviewsCount: 8,
+    reviews: ['rev-1', 'rev-2', 'rev-5'],
     images: ['https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
+    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
     featured: true,
     analytics: { views: 1250, likes: 230, revenue: 4500 }
   },
@@ -213,8 +161,9 @@ export const services: Service[] = [
     price: 380,
     rating: 4.8,
     reviewsCount: 12,
+    reviews: [],
     images: ['https://images.unsplash.com/photo-1557800636-894a64c1696f?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
+    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
     analytics: { views: 890, likes: 180, revenue: 3800 }
   },
   {
@@ -225,8 +174,9 @@ export const services: Service[] = [
     price: 150,
     rating: 5.0,
     reviewsCount: 25,
+    reviews: ['rev-3'],
     images: ['https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
+    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
     analytics: { views: 2100, likes: 450, revenue: 6750 }
   },
   {
@@ -237,8 +187,9 @@ export const services: Service[] = [
     price: 80,
     rating: 4.7,
     reviewsCount: 42,
+    reviews: ['rev-4'],
     images: ['https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
+    provider: { name: users[3].name, username: users[3].username, avatar: users[3].avatar },
     analytics: { views: 3500, likes: 600, revenue: 3360 }
   },
   {
@@ -249,558 +200,15 @@ export const services: Service[] = [
     price: 300,
     rating: 4.9,
     reviewsCount: 15,
+    reviews: ['rev-6'],
     images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=500&fit=crop'],
     provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
     featured: true,
     analytics: { views: 1800, likes: 320, revenue: 4500 }
   },
-  {
-    id: 'service-6',
-    title: 'Дизайн UI/UX для мобильных приложений',
-    description: 'Ориентированный на пользователя дизайн UI/UX для приложений на iOS и Android. Я создам интуитивные вайрфреймы, интерактивные прототипы и пиксель-перфект визуальные дизайны, обеспечивающие бесшовный пользовательский опыт.',
-    category: 'Графический дизайн',
-    price: 500,
-    rating: 4.9,
-    reviewsCount: 9,
-    images: ['https://images.unsplash.com/photo-1519241047957-be3-1d7379a5d?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
-     analytics: { views: 1100, likes: 200, revenue: 4000 }
-  },
-  {
-    id: 'service-7',
-    title: 'Профессиональный видеомонтаж',
-    description: 'Высококачественный монтаж видео для рекламы, контента YouTube и корпоративных видео. Услуга включает цветокоррекцию, звуковой дизайн и моушн-графику, чтобы ваше видео выделялось.',
-    category: 'Видеопродакшн',
-    price: 250,
-    rating: 5.0,
-    reviewsCount: 18,
-    images: ['https://cdn.mos.cms.futurecdn.net/y27kBjXzhQmFkofj4i8tfV-1200-80.jpg'],
-    provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
-    featured: true,
-    analytics: { views: 2500, likes: 550, revenue: 7500 }
-  },
-  {
-    id: 'service-8',
-    title: 'Создание контента и копирайтинг',
-    description: 'Создание убедительных историй для вашего бренда. От текстов для сайта до email-рассылок, я создаю контент, который привлекает вашу аудиторию и побуждает к действию.',
-    category: 'Написание текстов',
-    price: 120,
-    rating: 4.8,
-    reviewsCount: 30,
-    images: ['https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 2800, likes: 400, revenue: 3600 }
-  },
-  {
-    id: 'service-9',
-    title: 'Консалтинг по росту бизнеса',
-    description: 'Стратегический консалтинг, чтобы помочь вашему бизнесу определить возможности для роста, оптимизировать воронки и улучшить удержание клиентов. Я предоставляю действенные планы, основанные на данных.',
-    category: 'Бизнес',
-    price: 480,
-    rating: 5.0,
-    reviewsCount: 11,
-    images: ['https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=500&fit=crop'],
-    provider: { name: users[6].name, username: users[6].username, avatar: users[6].avatar },
-    analytics: { views: 1500, likes: 350, revenue: 5280 }
-  },
-   {
-    id: 'service-10',
-    title: 'Разработка Full Stack приложений',
-    description: 'Полный цикл разработки приложений, от архитектуры бэкенда до реализации фронтенда. Специализируюсь на Node.js, Python и современных JavaScript-фреймворках.',
-    category: 'Веб-разработка',
-    price: 500,
-    rating: 5.0,
-    reviewsCount: 7,
-    images: ['https://images.unsplash.com/photo-1593720213428-28a5b9e94613?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
-    analytics: { views: 950, likes: 150, revenue: 3500 }
-  },
-  {
-    id: 'service-11',
-    title: 'Пакет фирменного стиля',
-    description: 'Полный пакет брендинга, включая логотип, цветовую палитру, типографику и руководство по бренду для обеспечения согласованности во всех ваших материалах.',
-    category: 'Графический дизайн',
-    price: 400,
-    rating: 4.9,
-    reviewsCount: 19,
-    images: ['https://images.unsplash.com/photo-1558655146-364adaf1fcc9?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 1400, likes: 280, revenue: 7600 }
-  },
-  {
-    id: 'service-12',
-    title: 'Графика для социальных сетей',
-    description: 'Индивидуальная графика для ваших каналов в социальных сетях. Включает шаблоны для постов, историй и баннеров, которые соответствуют вашему фирменному стилю.',
-    category: 'Графический дизайн',
-    price: 95,
-    rating: 4.8,
-    reviewsCount: 22,
-    images: ['https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 1900, likes: 350, revenue: 2090 }
-  },
-  {
-    id: 'service-13',
-    title: 'Тексты для Email-рассылок',
-    description: 'Привлекательные и убедительные тексты для ваших email-маркетинговых кампаний. Я напишу заголовки, которые открывают, и контент, который приводит к кликам.',
-    category: 'Написание текстов',
-    price: 60,
-    rating: 4.9,
-    reviewsCount: 35,
-    images: ['https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 2200, likes: 410, revenue: 2100 }
-  },
-  {
-    id: 'service-14',
-    title: 'Аудит контента сайта',
-    description: 'Всесторонний аудит контента вашего сайта для выявления областей для улучшения. Включает рекомендации по SEO, ясности и вовлечению пользователей.',
-    category: 'Написание текстов',
-    price: 150,
-    rating: 4.7,
-    reviewsCount: 18,
-    images: ['https://images.unsplash.com/photo-1543286386-713bdd548da4?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 1300, likes: 200, revenue: 2700 }
-  },
-  {
-    id: 'service-15',
-    title: 'Управление PPC-кампаниями',
-    description: 'Управление вашими рекламными кампаниями в Google Ads и социальных сетях. Я оптимизирую ваши кампании для максимального ROI и предоставлю подробные отчеты о производительности.',
-    category: 'Маркетинг',
-    price: 350,
-    rating: 4.8,
-    reviewsCount: 13,
-    images: ['https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?w=800&h=500&fit=crop'],
-    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
-    analytics: { views: 1600, likes: 290, revenue: 4550 }
-  },
-  {
-    id: 'service-16',
-    title: 'SEO-аудит и стратегия',
-    description: 'Глубокий анализ SEO-показателей вашего сайта. Я выявлю технические проблемы, возможности по ключевым словам и предоставлю дорожную карту для улучшения ваших позиций в поисковых системах.',
-    category: 'Маркетинг',
-    price: 450,
-    rating: 5.0,
-    reviewsCount: 10,
-    images: ['https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=800&h=500&fit=crop'],
-    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
-    featured: true,
-    analytics: { views: 2000, likes: 400, revenue: 9000 }
-  },
-  {
-    id: 'service-17',
-    title: 'Маркетинг влияния',
-    description: 'Разработка и управление кампаниями по маркетингу влияния для охвата вашей целевой аудитории. Я найду подходящих инфлюенсеров и буду управлять отношениями для создания подлинных и эффективных партнерств.',
-    category: 'Маркетинг',
-    price: 280,
-    rating: 4.7,
-    reviewsCount: 9,
-    images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=500&fit=crop'],
-    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
-    analytics: { views: 1200, likes: 180, revenue: 2520 }
-  },
-  {
-    id: 'service-18',
-    title: 'Анимационное объясняющее видео',
-    description: '60-90 секундное анимационное видео для объяснения вашего продукта или услуги. Включает написание сценария, раскадровку, анимацию и звуковой дизайн.',
-    category: 'Видеопродакшн',
-    price: 480,
-    rating: 4.9,
-    reviewsCount: 14,
-    images: ['https://tse2.mm.bing.net/th/id/OIP.kv_EnCYKjwCfi60dGBwqtwHaEv?rs=1&pid=ImgDetMain&o=7&rm=3'],
-    provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
-    analytics: { views: 2200, likes: 480, revenue: 6720 }
-  },
-  {
-    id: 'service-19',
-    title: 'Монтаж и производство подкастов',
-    description: 'Профессиональный монтаж вашего подкаста. Я удалю ошибки, улучшу качество звука, добавлю интро/аутро и сделаю мастеринг финального аудио.',
-    category: 'Видеопродакшн',
-    price: 70,
-    rating: 5.0,
-    reviewsCount: 20,
-    images: ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&h=500&fit=crop'],
-    provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
-    analytics: { views: 3000, likes: 600, revenue: 1400 }
-  },
-  {
-    id: 'service-20',
-    title: 'Финансовое моделирование',
-    description: 'Пользовательские финансовые модели для стартапов и малого бизнеса. Я помогу вам спрогнозировать доходы, расходы и денежный поток для принятия обоснованных бизнес-решений.',
-    category: 'Бизнес',
-    price: 400,
-    rating: 4.8,
-    reviewsCount: 8,
-    images: ['https://images.unsplash.com/photo-1622445271930-1dc1d1a50637?w=800&h=500&fit=crop'],
-    provider: { name: users[6].name, username: users[6].username, avatar: users[6].avatar },
-    analytics: { views: 1100, likes: 150, revenue: 3200 }
-  },
-  {
-    id: 'service-21',
-    title: 'Отчет об исследовании рынка',
-    description: 'Подробный отчет об исследовании рынка для вашей отрасли. Включает анализ конкурентов, рыночные тенденции и инсайты о клиентах, чтобы помочь вам успешно позиционировать свой бизнес.',
-    category: 'Бизнес',
-    price: 450,
-    rating: 4.9,
-    reviewsCount: 12,
-    images: ['https://images.unsplash.com/photo-1606813902910-5a4b4b35b8f1?w=800&h=500&fit=crop'],
-    provider: { name: users[6].name, username: users[6].username, avatar: users[6].avatar },
-    analytics: { views: 1400, likes: 250, revenue: 5400 }
-  },
-  {
-    id: 'service-22',
-    title: 'Предметная фотосъемка',
-    description: 'Высококачественные фотографии ваших товаров для интернет-магазина или маркетинговых материалов. Включает профессиональное освещение, монтаж и ретушь.',
-    category: 'Фотография',
-    price: 200,
-    rating: 5.0,
-    reviewsCount: 15,
-    images: ['https://images.unsplash.com/photo-1616627455122-81e7c3f4b7a1?w=800&h=500&fit=crop'],
-    provider: { name: users[7].name, username: users[7].username, avatar: users[7].avatar },
-    analytics: { views: 1800, likes: 300, revenue: 3000 }
-  },
-  {
-    id: 'service-23',
-    title: 'Репортажная фотосъемка',
-    description: 'Запечатлейте лучшие моменты ваших корпоративных мероприятий, вечеринок или свадеб. Я предоставляю смесь спонтанных и постановочных кадров, чтобы рассказать историю вашего события.',
-    category: 'Фотография',
-    price: 350,
-    rating: 4.9,
-    reviewsCount: 10,
-    images: ['https://images.unsplash.com/photo-1580910051074-3c4b2da5d58e?w=800&h=500&fit=crop'],
-    provider: { name: users[7].name, username: users[7].username, avatar: users[7].avatar },
-    analytics: { views: 1300, likes: 220, revenue: 3500 }
-  },
-  {
-    id: 'service-24',
-    title: 'Бухгалтерские услуги',
-    description: 'Ежемесячные бухгалтерские услуги для поддержания ваших финансов в порядке. Включает категоризацию транзакций, сверку банковских счетов и подготовку финансовой отчетности.',
-    category: 'Бизнес',
-    price: 150,
-    rating: 4.8,
-    reviewsCount: 25,
-    images: ['https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[8].name, username: users[8].username, avatar: users[8].avatar },
-    analytics: { views: 2500, likes: 450, revenue: 3750 }
-  },
-  {
-    id: 'service-25',
-    title: 'Подготовка налоговой декларации',
-    description: 'Беспроблемная подготовка налогов для физических лиц и малого бизнеса. Я позабочусь о том, чтобы вы получили все положенные вычеты и подали декларацию точно и в срок.',
-    category: 'Бизнес',
-    price: 180,
-    rating: 4.9,
-    reviewsCount: 20,
-    images: ['https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[8].name, username: users[8].username, avatar: users[8].avatar },
-    analytics: { views: 2200, likes: 380, revenue: 3600 }
-  },
-  {
-    id: 'service-26',
-    title: 'Удаленная IT-поддержка',
-    description: 'Быстрая и надежная удаленная IT-поддержка для решения ваших компьютерных проблем. Я могу помочь с проблемами программного обеспечения, удалением вирусов и общим устранением неполадок.',
-    category: 'IT-поддержка',
-    price: 50,
-    rating: 4.7,
-    reviewsCount: 30,
-    images: ['https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[9].name, username: users[9].username, avatar: users[9].avatar },
-    analytics: { views: 3200, likes: 550, revenue: 1500 }
-  },
-  {
-    id: 'service-27',
-    title: 'Настройка домашней сети',
-    description: 'Я настрою безопасную и надежную беспроводную сеть в вашем доме. Включает настройку маршрутизатора, оптимизацию сигнала и подключение всех ваших устройств.',
-    category: 'IT-поддержка',
-    price: 120,
-    rating: 4.8,
-    reviewsCount: 15,
-    images: ['https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[9].name, username: users[9].username, avatar: users[9].avatar },
-    analytics: { views: 1500, likes: 250, revenue: 1800 }
-  },
-  {
-    id: 'service-28',
-    title: 'Разработка приложений на React Native',
-    description: 'Кроссплатформенная разработка мобильных приложений с использованием React Native. Получите красивое и производительное приложение для iOS и Android из единой кодовой базы.',
-    category: 'Веб-разработка',
-    price: 480,
-    rating: 4.9,
-    reviewsCount: 11,
-    images: ['https://images.pexels.com/photos/298864/pexels-photo-298864.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
-    analytics: { views: 1400, likes: 260, revenue: 5280 }
-  },
-  {
-    id: 'service-29',
-    title: 'UI/UX дизайн для веба',
-    description: 'Я разработаю удобный и визуально привлекательный интерфейс для вашего сайта. Эта услуга направлена на создание отличного пользовательского опыта, который стимулирует конверсии.',
-    category: 'Графический дизайн',
-    price: 320,
-    rating: 4.8,
-    reviewsCount: 14,
-    images: ['https://images.pexels.com/photos/1640778/pexels-photo-1640778.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 1600, likes: 310, revenue: 4480 }
-  },
-  {
-    id: 'service-30',
-    title: 'Техническое писательство',
-    description: 'Четкая и краткая техническая документация для вашего программного обеспечения или продуктов. Я могу написать руководства пользователя, документацию по API и статьи для базы знаний.',
-    category: 'Написание текстов',
-    price: 100,
-    rating: 4.9,
-    reviewsCount: 28,
-    images: ['https://images.pexels.com/photos/277253/pexels-photo-277253.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 2400, likes: 450, revenue: 2800 }
-  },
-  {
-    id: 'service-31',
-    title: 'Стратегия контент-маркетинга',
-    description: 'Полная стратегия контент-маркетинга для привлечения и удержания вашей целевой аудитории. Включает столпы контента, каналы распространения и контент-календарь.',
-    category: 'Маркетинг',
-    price: 400,
-    rating: 4.9,
-    reviewsCount: 11,
-    images: ['https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
-    analytics: { views: 1500, likes: 280, revenue: 4400 }
-  },
-  {
-    id: 'service-32',
-    title: 'Корпоративные обучающие видео',
-    description: 'Привлекательные обучающие видео для ваших сотрудников. Я буду работать с вами над созданием информативного, легкого для восприятия и профессионально снятого контента.',
-    category: 'Видеопродакшн',
-    price: 450,
-    rating: 4.8,
-    reviewsCount: 9,
-    images: ['https://motioncue.com/wp-content/uploads/2021/06/Corporate-Training-Videos.jpg'],
-    provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
-    analytics: { views: 1200, likes: 200, revenue: 4050 }
-  },
-  {
-    id: 'service-33',
-    title: 'Написание бизнес-плана',
-    description: 'Комплексный бизнес-план, который поможет вам привлечь финансирование и направить вашу бизнес-стратегию. Включает анализ рынка, финансовые прогнозы и операционный план.',
-    category: 'Бизнес',
-    price: 500,
-    rating: 5.0,
-    reviewsCount: 10,
-    images: ['https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[6].name, username: users[6].username, avatar: users[6].avatar },
-    featured: true,
-    analytics: { views: 1800, likes: 350, revenue: 5000 }
-  },
-  {
-    id: 'service-34',
-    title: 'Портретная фотосъемка',
-    description: 'Профессиональные хедшоты и портреты для вашего личного бренда или корпоративного профиля. Я помогу вам запечатлеть вашу лучшую сторону естественным и лестным образом.',
-    category: 'Фотография',
-    price: 150,
-    rating: 4.9,
-    reviewsCount: 18,
-    images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&h=500&fit=crop'],
-    provider: { name: users[7].name, username: users[7].username, avatar: users[7].avatar },
-    analytics: { views: 2000, likes: 320, revenue: 2700 }
-  },
-  {
-    id: 'service-35',
-    title: 'Финансовый аудит',
-    description: 'Тщательный аудит вашей финансовой отчетности для обеспечения точности и соответствия требованиям. Я предоставляю подробный отчет с выводами и рекомендациями.',
-    category: 'Бизнес',
-    price: 480,
-    rating: 4.8,
-    reviewsCount: 12,
-    images: ['https://images.unsplash.com/photo-1513708925886-bb3e4e7d6a2d?w=800&h=500&fit=crop'],
-    provider: { name: users[8].name, username: users[8].username, avatar: users[8].avatar },
-    analytics: { views: 1300, likes: 210, revenue: 5760 }
-  },
-  {
-    id: 'service-36',
-    title: 'Оценка кибербезопасности',
-    description: 'Комплексная оценка вашего состояния кибербезопасности. Я выявлю уязвимости в ваших системах и предоставлю рекомендации по снижению рисков.',
-    category: 'IT-поддержка',
-    price: 400,
-    rating: 4.9,
-    reviewsCount: 10,
-    images: ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800&h=500&fit=crop'],
-    provider: { name: users[9].name, username: users[9].username, avatar: users[9].avatar },
-    analytics: { views: 1100, likes: 180, revenue: 4000 }
-  },
-  {
-    id: 'service-37',
-    title: 'Настройка сайта на WordPress',
-    description: 'Настройка вашей темы WordPress в соответствии с вашим брендом и требованиями. Я также могу помочь с установкой и настройкой плагинов.',
-    category: 'Веб-разработка',
-    price: 250,
-    rating: 4.7,
-    reviewsCount: 22,
-    images: ['https://images.unsplash.com/photo-1622445271930-1dc1d1a50637?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
-    analytics: { views: 2100, likes: 350, revenue: 5500 }
-  },
-  {
-    id: 'service-38',
-    title: 'Дизайн инфографики',
-    description: 'Визуально привлекательная инфографика для представления сложной информации в простом и понятном виде. Идеально подходит для отчетов, презентаций и социальных сетей.',
-    category: 'Графический дизайн',
-    price: 120,
-    rating: 4.8,
-    reviewsCount: 18,
-    images: ['https://images.unsplash.com/photo-1606813902910-5a4b4b35b8f1?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 1900, likes: 320, revenue: 2160 }
-  },
-  {
-    id: 'service-39',
-    title: 'Корректура и редактирование',
-    description: 'Я вычитаю и отредактирую ваши документы на предмет грамматики, орфографии, пунктуации и ясности. Убедитесь, что ваш текст отполирован и профессионален.',
-    category: 'Написание текстов',
-    price: 40,
-    rating: 5.0,
-    reviewsCount: 40,
-    images: ['https://images.unsplash.com/photo-1616627455122-81e7c3f4b7a1?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 4000, likes: 800, revenue: 1600 }
-  },
-  {
-    id: 'service-40',
-    title: 'Автоматизация email-маркетинга',
-    description: 'Настройка автоматизированных email-цепочек для взращивания лидов и вовлечения клиентов. Я работаю с платформами, такими как Mailchimp и ConvertKit.',
-    category: 'Маркетинг',
-    price: 300,
-    rating: 4.8,
-    reviewsCount: 15,
-    images: ['https://images.unsplash.com/photo-1580910051074-3c4b2da5d58e?w=800&h=500&fit=crop'],
-    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
-    analytics: { views: 1700, likes: 300, revenue: 4500 }
-  },
-  {
-    id: 'service-41',
-    title: 'Оформление YouTube-канала',
-    description: 'Индивидуальный баннер и превью для видео для вашего YouTube-канала. Я создам профессионально выглядящую графику, которая привлекает зрителей и представляет ваш бренд.',
-    category: 'Графический дизайн',
-    price: 80,
-    rating: 4.9,
-    reviewsCount: 25,
-    images: ['https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 2500, likes: 500, revenue: 2000 }
-  },
-  {
-    id: 'service-42',
-    title: 'Написание резюме и сопроводительного письма',
-    description: 'Я напишу профессиональное резюме и сопроводительное письмо, которые подчеркнут ваши навыки и опыт, чтобы помочь вам получить работу мечты.',
-    category: 'Написание текстов',
-    price: 90,
-    rating: 4.9,
-    reviewsCount: 32,
-    images: ['https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 3000, likes: 600, revenue: 2880 }
-  },
-  {
-    id: 'service-43',
-    title: 'Аэросъемка с дрона',
-    description: 'Потрясающие кадры с воздуха для недвижимости, мероприятий или кинематографических проектов. Я лицензированный пилот дрона с профессиональным оборудованием.',
-    category: 'Видеопродакшн',
-    price: 400,
-    rating: 5.0,
-    reviewsCount: 12,
-    images: ['https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[5].name, username: users[5].username, avatar: users[5].avatar },
-    featured: true,
-    analytics: { views: 2000, likes: 450, revenue: 4800 }
-  },
-  {
-    id: 'service-44',
-    title: 'Фуд-фотография',
-    description: 'Аппетитные фотографии вашей еды для меню, сайтов и социальных сетей. Я сделаю так, чтобы ваши блюда выглядели так же хорошо, как и на вкус.',
-    category: 'Фотография',
-    price: 180,
-    rating: 4.9,
-    reviewsCount: 16,
-    images: ['https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[7].name, username: users[7].username, avatar: users[7].avatar },
-    analytics: { views: 1900, likes: 350, revenue: 2880 }
-  },
-  {
-    id: 'service-45',
-    title: 'Оптимизация облачных расходов',
-    description: 'Я проанализирую вашу облачную инфраструктуру (AWS, GCP, Azure) и предоставлю рекомендации по сокращению ваших ежемесячных счетов.',
-    category: 'IT-поддержка',
-    price: 350,
-    rating: 4.8,
-    reviewsCount: 8,
-    images: ['https://images.pexels.com/photos/298864/pexels-photo-298864.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[9].name, username: users[9].username, avatar: users[9].avatar },
-    analytics: { views: 1000, likes: 150, revenue: 2800 }
-  },
-  {
-    id: 'service-46',
-    title: 'Составление юридических документов',
-    description: 'Составление юридических документов, таких как контракты, условия обслуживания и политики конфиденциальности. Я квалифицированный юрист, специализирующийся на коммерческом праве.',
-    category: 'Бизнес',
-    price: 300,
-    rating: 5.0,
-    reviewsCount: 15,
-    images: ['https://images.pexels.com/photos/1640778/pexels-photo-1640778.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[6].name, username: users[6].username, avatar: users[6].avatar },
-    analytics: { views: 1600, likes: 300, revenue: 4500 }
-  },
-  {
-    id: 'service-47',
-    title: 'Интеграция API',
-    description: 'Я интегрирую сторонние API в ваше веб-приложение, такие как платежные шлюзы, входы через социальные сети и картографические сервисы.',
-    category: 'Веб-разработка',
-    price: 200,
-    rating: 4.8,
-    reviewsCount: 18,
-    images: ['https://images.pexels.com/photos/277253/pexels-photo-277253.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[0].name, username: users[0].username, avatar: users[0].avatar },
-    analytics: { views: 1800, likes: 320, revenue: 3600 }
-  },
-  {
-    id: 'service-48',
-    title: 'Дизайн футболок и мерча',
-    description: 'Креативные дизайны для ваших футболок, кружек и другого мерча. Я предоставлю готовые к печати файлы для вашего производителя.',
-    category: 'Графический дизайн',
-    price: 100,
-    rating: 4.9,
-    reviewsCount: 28,
-    images: ['https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 2800, likes: 550, revenue: 2800 }
-  },
-  {
-    id: 'service-49',
-    title: 'Текст для лендинга',
-    description: 'Убедительный текст для вашего лендинга, который превращает посетителей в клиентов. Я напишу убедительный заголовок, ценностное предложение и призыв к действию.',
-    category: 'Написание текстов',
-    price: 150,
-    rating: 4.9,
-    reviewsCount: 25,
-    images: ['https://images.pexels.com/photos/298864/pexels-photo-298864.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 2600, likes: 500, revenue: 3750 }
-  },
-  {
-    id: 'service-50',
-    title: 'Программа бренд-амбассадоров',
-    description: 'Я помогу вам создать и управлять программой бренд-амбассадоров, чтобы превратить ваших лояльных клиентов в мощных защитников вашего бренда.',
-    category: 'Маркетинг',
-    price: 400,
-    rating: 4.8,
-    reviewsCount: 10,
-    images: ['https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?w=800&h=500&fit=crop'],
-    provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
-    analytics: { views: 1400, likes: 250, revenue: 4000 }
-  }
 ];
 
-export const categories: Category[] = [
+const categories: Category[] = [
     { id: 'cat-1', name: 'Веб-разработка' },
     { id: 'cat-2', name: 'Графический дизайн' },
     { id: 'cat-3', name: 'Написание текстов' },
@@ -811,10 +219,10 @@ export const categories: Category[] = [
     { id: 'cat-8', name: 'IT-поддержка' },
 ];
 
-export const conversations: Conversation[] = [
+const conversations: Conversation[] = [
     {
         id: 'conv-1',
-        participant: { name: 'Алиса Иванова', avatar: users[0].avatar },
+        participant: { name: 'Алиса Иванова', username: 'alicej', avatar: users[1].avatar },
         lastMessage: 'Звучит отлично, я приступлю к макетам.',
         timestamp: '10:42',
         messages: [
@@ -827,7 +235,7 @@ export const conversations: Conversation[] = [
     },
     {
         id: 'conv-2',
-        participant: { name: 'Борис Васильев', avatar: users[1].avatar },
+        participant: { name: 'Борис Васильев', username: 'bobw', avatar: users[2].avatar },
         lastMessage: 'Отлично, с нетерпением жду концепций.',
         timestamp: 'Вчера',
         messages: [
@@ -837,5 +245,10 @@ export const conversations: Conversation[] = [
     }
 ];
 
-export const getUserByUsername = (username: string) => users.find(u => u.username === username);
-export const getServicesByUserId = (userId: string) => services.filter(s => s.provider.name === users.find(u => u.id === userId)?.name);
+export const initialData = {
+    users,
+    services,
+    reviews,
+    categories,
+    conversations
+};
