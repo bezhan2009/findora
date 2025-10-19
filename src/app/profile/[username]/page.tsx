@@ -21,11 +21,20 @@ function PostInteraction({ post }: { post: Post }) {
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(post.likes ?? 0);
 
-    const handleLike = () => {
+    const handleLike = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         setLiked(!liked);
         setLikeCount(prev => liked ? prev - 1 : prev + 1);
     }
     
+    const handleComment = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Placeholder for comment logic
+        alert('Функция комментирования еще не реализована.');
+    }
+
     return (
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
             <div className="flex flex-col items-center justify-center text-white text-center">
@@ -35,13 +44,12 @@ function PostInteraction({ post }: { post: Post }) {
                         <Heart className={liked ? "fill-current text-rose-500" : ""} />
                         <span className="font-semibold">{likeCount.toLocaleString()}</span>
                     </button>
-                    <button className="flex items-center gap-1.5 transition-colors hover:text-cyan-400">
+                    <button onClick={handleComment} className="flex items-center gap-1.5 transition-colors hover:text-cyan-400">
                         <MessageCircle />
                         <span className="font-semibold">{post.comments?.toLocaleString() ?? 0}</span>
                     </button>
                 </div>
             </div>
-             {post.type === 'video' && <Video className="absolute top-2 right-2 h-6 w-6 text-white drop-shadow-lg" />}
         </div>
     );
 }
@@ -53,18 +61,20 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                 <Video className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет постов</h3>
                 <p className="text-muted-foreground mb-6">Этот пользователь еще не публиковал фото или видео.</p>
-                <Button>Создать первый пост</Button>
+                <Button asChild>
+                    <Link href="/dashboard/post/edit">Создать первый пост</Link>
+                </Button>
             </div>
         )
     }
 
     const getYouTubeThumbnail = (url: string) => {
-        const videoId = url.split('v=')[1] || url.split('/').pop();
-        const ampersandPosition = videoId?.indexOf('&');
-        if (videoId && ampersandPosition !== -1) {
-            return `https://img.youtube.com/vi/${videoId.substring(0, ampersandPosition)}/0.jpg`;
+        const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+        const videoId = videoIdMatch ? videoIdMatch[1] : null;
+        if (videoId) {
+            return `https://img.youtube.com/vi/${videoId}/0.jpg`;
         }
-        return `https://img.youtube.com/vi/${videoId}/0.jpg`;
+        return url; // Fallback to original url if not a youtube link
     };
 
     return (
@@ -287,7 +297,7 @@ function ProfilePageContent({ username }: { username: string }) {
                         <Briefcase className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                         <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет товаров</h3>
                         <p className="text-muted-foreground mb-6">Этот исполнитель еще не разместил ни одного товара или услуги.</p>
-                        {isOwnProfile && <Button>Добавить первый товар</Button>}
+                        {isOwnProfile && <Button asChild><Link href="/dashboard/service/edit">Добавить первый товар</Link></Button>}
                     </div>
                   )}
                 </div>
@@ -362,7 +372,7 @@ function ProfilePageContent({ username }: { username: string }) {
                         </div>
                          <div className="flex gap-2 mt-4 md:mt-0">
                             {isOwnProfile ? (
-                                    <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Редактировать профиль</Button>
+                                <Button variant="outline" asChild><Link href="/profile/edit"><Edit className="mr-2 h-4 w-4" /> Редактировать профиль</Link></Button>
                                 ) : (
                                     <>
                                         <Button onClick={handleFollow} variant={isFollowing ? 'secondary' : 'default'} className="transition-colors">
@@ -395,3 +405,5 @@ export default function ProfilePage({ params }: { params: { username: string } }
         </Suspense>
     );
 }
+
+    
