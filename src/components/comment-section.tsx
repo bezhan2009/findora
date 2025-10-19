@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -11,7 +12,7 @@ import Link from 'next/link';
 
 interface CommentProps {
   comment: Comment;
-  onAddReply: (text: string) => void;
+  onAddReply: (commentId: string, text: string) => void;
 }
 
 const CommentItem = ({ comment, onAddReply }: CommentProps) => {
@@ -53,7 +54,7 @@ const CommentItem = ({ comment, onAddReply }: CommentProps) => {
   const handleReplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim()) return;
-    onAddReply(replyText);
+    onAddReply(comment.id, replyText);
     setReplyText('');
     setShowReplyForm(false);
   };
@@ -99,7 +100,7 @@ const CommentItem = ({ comment, onAddReply }: CommentProps) => {
         {comment.replies && comment.replies.length > 0 && (
             <div className="pl-12 space-y-4 border-l-2 border-border ml-4 mt-2">
                 {comment.replies.map(reply => (
-                    <CommentItem key={reply.id} comment={reply} onAddReply={(text) => onAddReply(text)} />
+                    <CommentItem key={reply.id} comment={reply} onAddReply={onAddReply} />
                 ))}
             </div>
         )}
@@ -156,7 +157,7 @@ export default function CommentSection({ comments, onAddComment, onAddReply, isR
           <CommentItem 
               key={comment.id} 
               comment={comment} 
-              onAddReply={(text) => onAddReply(comment.id, text)}
+              onAddReply={onAddReply}
           />
         ))}
         {(!comments || comments.length === 0) && (

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -17,7 +18,7 @@ interface ReviewCardProps {
 
 export default function ReviewCard({ review }: ReviewCardProps) {
   const { user } = useAuth();
-  const { addReplyToReview } = useData();
+  const { addReplyToReview, addReplyToComment } = useData();
 
   const [likes, setLikes] = useState(review.likes);
   const [dislikes, setDislikes] = useState(review.dislikes);
@@ -71,6 +72,24 @@ export default function ReviewCard({ review }: ReviewCardProps) {
     setShowReplyForm(false);
     setShowReplies(true);
   };
+  
+  const handleAddReplyToComment = (parentCommentId: string, text: string) => {
+    if(!user) return;
+    const newReply: Comment = {
+        id: `reply-${Date.now()}`,
+        author: { name: user.name, username: user.username, avatar: user.avatar },
+        text,
+        timestamp: 'Только что',
+        likes: 0,
+        dislikes: 0,
+        replies: [],
+    };
+    // This is a bit of a hack, since we don't have a direct way to add a reply to a review's comment
+    // We can simulate it by finding the review and then the comment.
+    // In a real app, this would be a single API call.
+    console.log("Replying to a comment on a review is not fully implemented in mock data.", review.id, parentCommentId, newReply);
+  };
+
 
   return (
     <Card>
@@ -130,7 +149,8 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                 )}
                  <CommentSection 
                     comments={review.replies} 
-                    onAddComment={(newComment) => console.log('Новый ответ на отзыв:', newComment)} // This is handled by addReplyToReview
+                    onAddComment={() => {}}
+                    onAddReply={handleAddReplyToComment}
                     isReply
                  />
             </div>
