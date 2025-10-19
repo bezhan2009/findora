@@ -22,7 +22,7 @@ export default function PageWrapper({
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow flex-1 flex flex-col">
         {children}
       </main>
       {showFooter && <Footer />}
