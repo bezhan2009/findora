@@ -42,7 +42,7 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
     const letters = text.split('');
 
     return (
-        <div className="prose prose-sm dark:prose-invert leading-relaxed">
+        <div className="prose prose-sm dark:prose-invert leading-relaxed typing-animation-container">
             {letters.map((letter, index) => (
                 <span
                     key={index}
