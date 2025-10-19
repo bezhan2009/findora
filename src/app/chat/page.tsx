@@ -37,7 +37,8 @@ export default function ChatPage() {
     if (convoId) {
       conversationToSelect = conversations.find(c => c.id === convoId) || null;
     } else if (conversations.length > 0) {
-      conversationToSelect = conversations[0];
+      // Select the most recent conversation if none is specified
+      conversationToSelect = conversations.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
     }
     
     setSelectedConversation(conversationToSelect);
@@ -70,116 +71,116 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col">
-      <div className="container mx-auto px-4 pt-8">
-          <div className="flex items-center gap-4 mb-8">
+    <div className="container mx-auto px-4 py-8 flex flex-col flex-grow">
+        <div className="flex items-center gap-4 mb-8">
             <MessageSquare className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold font-headline">Сообщения</h1>
-          </div>
-      </div>
-      <Card className="flex-grow w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 overflow-hidden rounded-none border-t border-b-0">
-        <div className="col-span-1 border-r flex flex-col">
-          <div className="p-4 border-b">
-            <h2 className="text-xl font-semibold font-headline">Диалоги</h2>
-          </div>
-          <ScrollArea className="flex-grow">
-            {conversations.map((convo) => (
-              <button
-                key={convo.id}
-                className={cn(
-                  "flex items-center gap-4 p-4 w-full text-left hover:bg-accent/50 transition-colors",
-                  selectedConversation?.id === convo.id && "bg-accent"
-                )}
-                onClick={() => setSelectedConversation(convo)}
-              >
-                <Avatar>
-                  <AvatarImage src={convo.participant.avatar} />
-                  <AvatarFallback>{convo.participant.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-grow overflow-hidden">
-                  <p className="font-semibold truncate">{convo.participant.name}</p>
-                  <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
-                </div>
-              </button>
-            ))}
-          </ScrollArea>
         </div>
-        <div className="md:col-span-2 lg:col-span-3 flex flex-col h-full">
-          {selectedConversation ? (
-            <>
-              <div className="p-4 border-b flex items-center gap-4">
-                 <Link href={`/profile/${selectedConversation.participant.username}`}>
-                    <Avatar>
-                    <AvatarImage src={selectedConversation.participant.avatar} />
-                    <AvatarFallback>{selectedConversation.participant.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                </Link>
-                 <Link href={`/profile/${selectedConversation.participant.username}`} className="hover:underline">
-                    <h3 className="text-lg font-semibold font-headline">{selectedConversation.participant.name}</h3>
-                </Link>
-              </div>
-              <ScrollArea className="flex-grow p-6 bg-muted/20" viewportRef={scrollViewportRef}>
-                <div className="space-y-4">
-                  {selectedConversation.messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={cn(
-                        "flex items-end gap-2",
-                        msg.sender === 'me' ? 'justify-end' : 'justify-start'
-                      )}
-                    >
-                      {msg.sender === 'other' && authUser?.username !== selectedConversation.participant.username && (
-                        <Avatar className="h-8 w-8">
-                           <Link href={`/profile/${selectedConversation.participant.username}`}>
-                            <AvatarImage src={selectedConversation.participant.avatar} />
-                           </Link>
-                        </Avatar>
-                      )}
-                       {msg.sender === 'me' && authUser && (
-                         <Avatar className="h-8 w-8 order-2">
-                           <Link href={`/profile/${authUser.username}`}>
-                            <AvatarImage src={authUser.avatar} />
-                           </Link>
-                        </Avatar>
-                      )}
-                      <div
-                        className={cn(
-                          "max-w-xs md:max-w-md lg:max-w-lg rounded-2xl px-4 py-2",
-                          msg.sender === 'me'
-                            ? "bg-primary text-primary-foreground rounded-br-none"
-                            : "bg-card text-card-foreground border rounded-bl-none"
-                        )}
-                      >
-                        <p>{msg.text}</p>
-                      </div>
+        <Card className="flex-grow flex flex-col overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 flex-grow overflow-hidden">
+                <div className="col-span-1 border-r flex flex-col">
+                    <div className="p-4 border-b">
+                        <h2 className="text-xl font-semibold font-headline">Диалоги</h2>
                     </div>
-                  ))}
+                    <ScrollArea className="flex-grow">
+                        {conversations.map((convo) => (
+                        <button
+                            key={convo.id}
+                            className={cn(
+                            "flex items-center gap-4 p-4 w-full text-left hover:bg-accent/50 transition-colors",
+                            selectedConversation?.id === convo.id && "bg-accent"
+                            )}
+                            onClick={() => setSelectedConversation(convo)}
+                        >
+                            <Avatar>
+                            <AvatarImage src={convo.participant.avatar} />
+                            <AvatarFallback>{convo.participant.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-grow overflow-hidden">
+                            <p className="font-semibold truncate">{convo.participant.name}</p>
+                            <p className="text-sm text-muted-foreground truncate">{convo.lastMessage}</p>
+                            </div>
+                        </button>
+                        ))}
+                    </ScrollArea>
                 </div>
-              </ScrollArea>
-              <div className="p-4 border-t bg-background">
-                <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                  <Input 
-                    ref={inputRef}
-                    placeholder="Напишите сообщение..." 
-                    className="flex-grow" 
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                  />
-                  <Button type="submit" size="icon" disabled={!newMessage.trim()}>
-                    <Send className="h-5 w-5" />
-                  </Button>
-                </form>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                <MessageSquare className="h-16 w-16 text-muted-foreground/50 mb-4" />
-              <h2 className="text-2xl font-semibold font-headline">Выберите диалог</h2>
-              <p className="text-muted-foreground">Выберите диалог из левой панели, чтобы начать общение.</p>
+                <div className="md:col-span-2 lg:col-span-3 flex flex-col">
+                    {selectedConversation ? (
+                        <>
+                        <div className="p-4 border-b flex items-center gap-4 shrink-0">
+                            <Link href={`/profile/${selectedConversation.participant.username}`}>
+                                <Avatar>
+                                <AvatarImage src={selectedConversation.participant.avatar} />
+                                <AvatarFallback>{selectedConversation.participant.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                            </Link>
+                            <Link href={`/profile/${selectedConversation.participant.username}`} className="hover:underline">
+                                <h3 className="text-lg font-semibold font-headline">{selectedConversation.participant.name}</h3>
+                            </Link>
+                        </div>
+                        <ScrollArea className="flex-grow p-6 bg-muted/20" viewportRef={scrollViewportRef}>
+                            <div className="space-y-4">
+                            {selectedConversation.messages.map((msg) => (
+                                <div
+                                key={msg.id}
+                                className={cn(
+                                    "flex items-end gap-2",
+                                    msg.sender === 'me' ? 'justify-end' : 'justify-start'
+                                )}
+                                >
+                                {msg.sender === 'other' && authUser?.username !== selectedConversation.participant.username && (
+                                    <Avatar className="h-8 w-8">
+                                    <Link href={`/profile/${selectedConversation.participant.username}`}>
+                                        <AvatarImage src={selectedConversation.participant.avatar} />
+                                    </Link>
+                                    </Avatar>
+                                )}
+                                {msg.sender === 'me' && authUser && (
+                                    <Avatar className="h-8 w-8 order-2">
+                                    <Link href={`/profile/${authUser.username}`}>
+                                        <AvatarImage src={authUser.avatar} />
+                                    </Link>
+                                    </Avatar>
+                                )}
+                                <div
+                                    className={cn(
+                                    "max-w-xs md:max-w-md lg:max-w-lg rounded-2xl px-4 py-2",
+                                    msg.sender === 'me'
+                                        ? "bg-primary text-primary-foreground rounded-br-none"
+                                        : "bg-card text-card-foreground border rounded-bl-none"
+                                    )}
+                                >
+                                    <p>{msg.text}</p>
+                                </div>
+                                </div>
+                            ))}
+                            </div>
+                        </ScrollArea>
+                        <div className="p-4 border-t bg-background shrink-0">
+                            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                            <Input 
+                                ref={inputRef}
+                                placeholder="Напишите сообщение..." 
+                                className="flex-grow" 
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                            />
+                            <Button type="submit" size="icon" disabled={!newMessage.trim()}>
+                                <Send className="h-5 w-5" />
+                            </Button>
+                            </form>
+                        </div>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                            <MessageSquare className="h-16 w-16 text-muted-foreground/50 mb-4" />
+                            <h2 className="text-2xl font-semibold font-headline">Выберите диалог</h2>
+                            <p className="text-muted-foreground">Выберите диалог из левой панели, чтобы начать общение.</p>
+                        </div>
+                    )}
+                </div>
             </div>
-          )}
-        </div>
-      </Card>
+        </Card>
     </div>
   );
 }
