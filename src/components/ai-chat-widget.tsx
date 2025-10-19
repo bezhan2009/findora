@@ -28,36 +28,32 @@ interface AIChatWidgetProps {
 }
 
 const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  
-  useEffect(() => {
+    useEffect(() => {
+        if (text) {
+            const timer = setTimeout(onComplete, text.length * 15 + 500); // Estimate completion time
+            return () => clearTimeout(timer);
+        }
+    }, [text, onComplete]);
+
     if (text.startsWith('SERVICE_CARD') || text.startsWith('PROVIDER_CARD')) {
-        setDisplayedText(text);
-        onComplete();
-        return;
+        return <MessageContent content={text} />;
     }
 
-    let i = 0;
-    const intervalId = setInterval(() => {
-      setDisplayedText(text.substring(0, i + 1));
-      i++;
-      if (i > text.length) {
-        clearInterval(intervalId);
-        onComplete();
-      }
-    }, 10); // Speed up typing animation
+    const letters = text.split('');
 
-    return () => clearInterval(intervalId);
-  }, [text, onComplete]);
-
-  return (
-    <div className="prose prose-sm dark:prose-invert max-w-full">
-       <div style={{ display: 'inline-block' }}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>
-       </div>
-      <span className="typing-cursor"></span>
-    </div>
-  );
+    return (
+        <div className="prose prose-sm dark:prose-invert leading-relaxed">
+            {letters.map((letter, index) => (
+                <span
+                    key={index}
+                    className="animate-letter"
+                    style={{ animationDelay: `${index * 0.015}s` }}
+                >
+                    {letter}
+                </span>
+            ))}
+        </div>
+    );
 };
 
 
@@ -314,5 +310,3 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
     </Card>
   );
 }
-
-    
