@@ -1,4 +1,5 @@
-// 'use server';
+
+'use server';
 /**
  * @fileOverview This file implements the smart search assistant flow.
  *
@@ -6,8 +7,6 @@
  * - SmartSearchSuggestionsInput - The input type for the smartSearchSuggestions function.
  * - SmartSearchSuggestionsOutput - The return type for the smartSearchSuggestions function.
  */
-
-'use server';
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
@@ -52,6 +51,9 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (!output) {
+      return { suggestions: [] };
+    }
+    return output;
   }
 );
