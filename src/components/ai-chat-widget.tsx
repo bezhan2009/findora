@@ -52,7 +52,9 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
 
   return (
     <div className="prose prose-sm dark:prose-invert max-w-full">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>
+       <div style={{ display: 'inline-block' }}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>
+       </div>
       <span className="typing-cursor"></span>
     </div>
   );
