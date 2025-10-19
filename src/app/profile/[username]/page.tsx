@@ -140,17 +140,25 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                             </div>
                         </DialogTrigger>
                         <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 sm:max-w-4xl">
-                            <DialogHeader className="p-4 border-b shrink-0">
-                                <DialogTitle>Пост от {post.author?.name || 'пользователя'}</DialogTitle>
-                            </DialogHeader>
                             <div className="grid md:grid-cols-2 flex-1 overflow-hidden">
                                 <div className="relative bg-black flex items-center justify-center">
-                                    <Image
-                                        src={imageUrl}
-                                        alt={post.caption}
-                                        fill
-                                        className="object-contain"
-                                    />
+                                    {isVideo ? (
+                                        <iframe
+                                            src={`https://www.youtube.com/embed/${post.url.split('/').pop()}`}
+                                            title="YouTube video player"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="w-full h-full aspect-video"
+                                        ></iframe>
+                                    ) : (
+                                        <Image
+                                            src={imageUrl}
+                                            alt={post.caption}
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    )}
                                 </div>
                                 <div className="flex flex-col h-full">
                                     <div className="p-4 border-b shrink-0">
