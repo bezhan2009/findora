@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +15,20 @@ import { useData } from '@/hooks/use-data';
 
 export default function ChatPage() {
   const { conversations } = useData();
-  const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(conversations[0] || null);
+  const searchParams = useSearchParams();
+  const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(null);
+
+  useEffect(() => {
+    const newConvoId = searchParams.get('new');
+    if (newConvoId) {
+      const newConvo = conversations.find(c => c.id === newConvoId);
+      if (newConvo) {
+        setSelectedConversation(newConvo);
+      }
+    } else if (conversations.length > 0 && !selectedConversation) {
+      setSelectedConversation(conversations[0]);
+    }
+  }, [searchParams, conversations, selectedConversation]);
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">

@@ -3,7 +3,7 @@
 
 import { Suspense, useState, useEffect, use } from 'react';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,7 +11,7 @@ import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, Shopp
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/hooks/use-auth';
-import type { User, Post, Order, UserStub, UserSocials } from '@/lib/types';
+import type { User, Post, Order, UserStub, UserSocials, Conversation } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -161,7 +161,8 @@ function SocialLinks({ socials }: { socials: UserSocials }) {
 
 function ProfilePageContent({ username }: { username: string }) {
   const { user: authUser } = useAuth();
-  const { users, services: allServices, reviews: allReviewsData } = useData();
+  const { users, services: allServices, reviews: allReviewsData, conversations, addConversation } = useData();
+  const router = useRouter();
   
   const user = users.find((u) => u.username === username);
 
@@ -189,11 +190,39 @@ function ProfilePageContent({ username }: { username: string }) {
     setFollowerCount(prev => isFollowing ? prev - 1 : prev + 1);
   };
 
+  const handleMessage = () => {
+    if (!user) return;
+    
+    // Check if a conversation already exists
+    const existingConversation = conversations.find(c => c.participant.username === user.username);
+    
+    if (existingConversation) {
+        router.push(`/chat?new=${existingConversation.id}`);
+        return;
+    }
+
+    // Create a new conversation
+    const newConversation: Conversation = {
+        id: `conv-${Date.now()}`,
+        participant: {
+            name: user.name,
+            username: user.username,
+            avatar: user.avatar,
+        },
+        lastMessage: "Начните беседу...",
+        timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit'}),
+        messages: []
+    };
+
+    addConversation(newConversation);
+    router.push(`/chat?new=${newConversation.id}`);
+  };
+
   const isOwnProfile = authUser?.username === user.username;
 
   const renderProviderProfile = (user: User) => {
     const userServices = allServices.filter(s => s.provider.username === user.username);
-    const userReviews = allReviewsData.filter(r => r.providerId === user.id);
+    const userReviews = allReviewsData.filter(r => user.reviews?.includes(r.id));
     
     return (
         <Tabs defaultValue="services" className="w-full">
@@ -293,7 +322,7 @@ function ProfilePageContent({ username }: { username: string }) {
                                             {isFollowing ? <UserCheck className="mr-2 h-4 w-4" /> : <UserPlus className="mr-2 h-4 w-4" />}
                                             {isFollowing ? 'Вы подписаны' : 'Подписаться'}
                                         </Button>
-                                        <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Сообщение</Button>
+                                        <Button variant="outline" onClick={handleMessage}><MessageSquare className="mr-2 h-4 w-4" /> Сообщение</Button>
                                     </>
                                 )}
                         </div>
@@ -311,11 +340,11 @@ function ProfilePageContent({ username }: { username: string }) {
 
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
-  const resolvedParams = use(params);
+    const { username } = use(params);
   
-  return (
-    <Suspense fallback={<div>Загрузка профиля...</div>}>
-      <ProfilePageContent username={resolvedParams.username} />
-    </Suspense>
-  );
+    return (
+        <Suspense fallback={<div>Загрузка профиля...</div>}>
+            <ProfilePageContent username={username} />
+        </Suspense>
+    );
 }

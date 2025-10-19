@@ -10,6 +10,7 @@ interface DataContextType {
   reviews: Review[];
   categories: Category[];
   conversations: Conversation[];
+  addConversation: (conversation: Conversation) => void;
   // Add setter functions here later for CRUD operations
 }
 
@@ -18,12 +19,20 @@ export const DataContext = createContext<DataContextType | undefined>(undefined)
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState(initialData);
 
+  const addConversation = (conversation: Conversation) => {
+    setData(prevData => ({
+      ...prevData,
+      conversations: [conversation, ...prevData.conversations]
+    }));
+  };
+
   const value = {
     users: data.users,
     services: data.services,
     reviews: data.reviews,
     categories: data.categories,
     conversations: data.conversations,
+    addConversation,
   };
 
   return (
