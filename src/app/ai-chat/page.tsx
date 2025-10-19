@@ -158,7 +158,7 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col">
+    <div className="h-[calc(100vh-4rem)] flex flex-col overflow-hidden">
         <ScrollArea className="flex-grow" viewportRef={scrollViewportRef}>
             <div className={cn("max-w-3xl mx-auto px-4 pt-8 pb-4", hasMessages ? "w-full" : "flex flex-col justify-center h-full")}>
               {!hasMessages && (
@@ -166,48 +166,45 @@ export default function AIChatPage() {
                       <Logo />
                   </div>
               )}
-                <div className="space-y-6">
+                <div className="space-y-8">
                 {messages.map((msg, index) => (
                     <div
-                    key={index}
-                    className={cn(
-                        "flex items-start gap-4",
-                    )}
+                        key={index}
+                        className={cn("flex items-start gap-4")}
                     >
                     {msg.role === 'model' ? (
-                        <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
-                            <AvatarFallback>
-                                <Sparkles className="h-5 w-5 text-primary"/>
-                            </AvatarFallback>
-                        </Avatar>
-                    ): (
-                         <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
-                            <AvatarFallback>
-                                <User className="h-5 w-5 text-muted-foreground"/>
-                            </AvatarFallback>
-                        </Avatar>
+                        <>
+                            <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
+                                <AvatarFallback>
+                                    <Sparkles className="h-5 w-5 text-primary"/>
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="max-w-full rounded-2xl break-words">
+                                <ModelMessage content={msg.content} />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex items-start gap-4">
+                            <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
+                                <AvatarFallback>
+                                    <User className="h-5 w-5 text-muted-foreground"/>
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="prose prose-sm dark:prose-invert">
+                                <p className="text-base">{msg.content}</p>
+                            </div>
+                        </div>
                     )}
-                    <div
-                        className={cn(
-                        "max-w-full rounded-2xl break-words",
-                        )}
-                    >
-                        {msg.role === 'model' ? (
-                            <ModelMessage content={msg.content} />
-                        ) : (
-                            <p className="text-sm">{msg.content}</p>
-                        )}
-                    </div>
                     </div>
                 ))}
                 {isLoading && (
                     <div className="flex items-start gap-4">
-                          <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
+                        <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
                             <AvatarFallback>
                                 <Sparkles className="h-5 w-5 text-primary animate-pulse"/>
                             </AvatarFallback>
                         </Avatar>
-                          <div className="max-w-md rounded-2xl px-4 py-3 bg-muted rounded-bl-none">
+                        <div className="max-w-md rounded-2xl px-4 py-3 bg-muted rounded-bl-none">
                             <p className="text-sm text-muted-foreground animate-pulse">Думаю...</p>
                         </div>
                     </div>
