@@ -23,7 +23,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
         setFavoriteIds(JSON.parse(storedFavorites));
       }
     } catch (error) {
-      console.error("Could not read favorites from localStorage", error);
+      console.error("Не удалось прочитать избранное из localStorage", error);
     }
   }, []);
 
@@ -31,7 +31,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     try {
       localStorage.setItem('bizmart-favorites', JSON.stringify(ids));
     } catch (error) {
-      console.error("Could not save favorites to localStorage", error);
+      console.error("Не удалось сохранить избранное в localStorage", error);
     }
   };
 
@@ -40,7 +40,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
       if (prevIds.includes(id)) return prevIds;
       const newIds = [...prevIds, id];
       updateLocalStorage(newIds);
-      toast({ title: 'Added to favorites!' });
+      toast({ title: 'Добавлено в избранное!' });
       return newIds;
     });
   };
@@ -50,7 +50,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
       if (!prevIds.includes(id)) return prevIds;
       const newIds = prevIds.filter((favId) => favId !== id);
       updateLocalStorage(newIds);
-      toast({ title: 'Removed from favorites' });
+      toast({ title: 'Удалено из избранного' });
       return newIds;
     });
   };

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { HelpCircle } from 'lucide-react';
@@ -8,43 +7,43 @@ export default function HelpCenterPage() {
     <div className="container mx-auto max-w-4xl px-4 py-12">
       <div className="flex items-center gap-4 mb-8">
         <HelpCircle className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">Help Center</h1>
+        <h1 className="text-4xl font-bold font-headline">Центр помощи</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
+          <CardTitle>Часто задаваемые вопросы</CardTitle>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
-              <AccordionTrigger>How do I create an account?</AccordionTrigger>
+              <AccordionTrigger>Как создать аккаунт?</AccordionTrigger>
               <AccordionContent>
-                To create an account, click on the &quot;Sign Up&quot; button in the top right corner of the homepage. You can sign up as either a customer or a service provider.
+                Чтобы создать аккаунт, нажмите на кнопку "Регистрация" в правом верхнем углу главной страницы. Вы можете зарегистрироваться как клиент или как исполнитель услуг.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger>How do I book a service?</AccordionTrigger>
+              <AccordionTrigger>Как заказать услугу?</AccordionTrigger>
               <AccordionContent>
-                Once you find a service you like, you can message the provider directly from the service page to discuss details and arrangements.
+                Найдя понравившуюся услугу, вы можете написать исполнителю напрямую со страницы услуги, чтобы обсудить детали и договориться об условиях.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
-              <AccordionTrigger>Can I save services for later?</AccordionTrigger>
+              <AccordionTrigger>Могу ли я сохранить услуги на потом?</AccordionTrigger>
               <AccordionContent>
-                Yes, you can click the heart icon on any service card to add it to your favorites. You can view your favorites list from your profile menu.
+                Да, вы можете нажать на значок сердца на любой карточке услуги, чтобы добавить ее в избранное. Вы можете просмотреть свой список избранного из меню вашего профиля.
               </AccordionContent>
             </AccordionItem>
              <AccordionItem value="item-4">
-              <AccordionTrigger>How do I become a service provider?</AccordionTrigger>
+              <AccordionTrigger>Как стать исполнителем услуг?</AccordionTrigger>
               <AccordionContent>
-                When signing up, choose the &quot;Offer a service&quot; role. Once your account is created, you can create a detailed profile and start listing your services from your provider dashboard.
+                При регистрации выберите роль "Предложить услугу". После создания аккаунта вы сможете создать подробный профиль и начать размещать свои услуги из вашей панели управления исполнителя.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-5">
-              <AccordionTrigger>What is your refund policy?</AccordionTrigger>
+              <AccordionTrigger>Какова ваша политика возврата средств?</AccordionTrigger>
               <AccordionContent>
-                Refund policies are typically set by the individual service providers. We recommend discussing payment and refund terms directly with the provider before purchasing a service. BizMart provides a platform for connection but does not handle direct payments or refunds.
+                Политика возврата средств обычно устанавливается индивидуальными исполнителями. Мы рекомендуем обсуждать условия оплаты и возврата напрямую с исполнителем перед покупкой услуги. BizMart предоставляет платформу для связи, но не обрабатывает прямые платежи или возвраты.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -53,5 +52,3 @@ export default function HelpCenterPage() {
     </div>
   );
 }
-
-    

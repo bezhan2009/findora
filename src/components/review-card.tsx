@@ -21,7 +21,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
                 </Avatar>
                 <div>
                     <p className="font-semibold">{review.author.name}</p>
-                    <p className="text-sm text-muted-foreground">{new Date(review.date).toLocaleDateString()}</p>
+                    <p className="text-sm text-muted-foreground">{new Date(review.date).toLocaleDateString('ru-RU')}</p>
                 </div>
             </div>
             <div className="flex items-center gap-1">

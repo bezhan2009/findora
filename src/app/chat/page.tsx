@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -19,12 +18,12 @@ export default function ChatPage() {
     <div className="container mx-auto px-4 py-8 h-[calc(100vh-8rem)]">
       <div className="flex items-center gap-4 mb-8">
         <MessageSquare className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">Messages</h1>
+        <h1 className="text-4xl font-bold font-headline">Сообщения</h1>
       </div>
       <Card className="h-full w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 overflow-hidden">
         <div className="col-span-1 border-r flex flex-col">
           <div className="p-4 border-b">
-            <h2 className="text-xl font-semibold font-headline">Conversations</h2>
+            <h2 className="text-xl font-semibold font-headline">Диалоги</h2>
           </div>
           <ScrollArea className="flex-grow">
             {conversations.map((convo) => (
@@ -89,7 +88,7 @@ export default function ChatPage() {
               </ScrollArea>
               <div className="p-4 border-t bg-background">
                 <form className="flex items-center gap-2">
-                  <Input placeholder="Type a message..." className="flex-grow" />
+                  <Input placeholder="Напишите сообщение..." className="flex-grow" />
                   <Button type="submit" size="icon">
                     <Send className="h-5 w-5" />
                   </Button>
@@ -99,8 +98,8 @@ export default function ChatPage() {
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center p-8">
                 <MessageSquare className="h-16 w-16 text-muted-foreground/50 mb-4" />
-              <h2 className="text-2xl font-semibold font-headline">Select a conversation</h2>
-              <p className="text-muted-foreground">Choose a conversation from the left panel to start chatting.</p>
+              <h2 className="text-2xl font-semibold font-headline">Выберите диалог</h2>
+              <p className="text-muted-foreground">Выберите диалог из левой панели, чтобы начать общение.</p>
             </div>
           )}
         </div>

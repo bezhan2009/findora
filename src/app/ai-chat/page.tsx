@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -19,7 +18,7 @@ interface Message {
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: 'Hello! How can I help you find the perfect service on BizMart today?' }
+    { role: 'model', content: 'Здравствуйте! Как я могу помочь вам найти идеальную услугу на BizMart сегодня?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -56,8 +55,8 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, modelMessage]);
 
     } catch (error) {
-      console.error("AI chat error:", error);
-      const errorMessage: Message = { role: 'model', content: "I'm sorry, something went wrong. Please try again." };
+      console.error("Ошибка AI чата:", error);
+      const errorMessage: Message = { role: 'model', content: "Извините, что-то пошло не так. Пожалуйста, попробуйте еще раз." };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -68,7 +67,7 @@ export default function AIChatPage() {
     <div className="container mx-auto px-4 py-8 h-[calc(100vh-8rem)] flex flex-col">
        <div className="flex items-center gap-4 mb-8">
         <Sparkles className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">AI Assistant</h1>
+        <h1 className="text-4xl font-bold font-headline">AI Ассистент</h1>
       </div>
       <Card className="flex-grow flex flex-col shadow-lg rounded-xl">
         <CardContent className="p-0 flex flex-col flex-grow overflow-hidden">
@@ -116,7 +115,7 @@ export default function AIChatPage() {
                             </AvatarFallback>
                         </Avatar>
                           <div className="max-w-md rounded-2xl px-4 py-3 bg-muted rounded-bl-none">
-                            <p className="text-sm text-muted-foreground animate-pulse">Thinking...</p>
+                            <p className="text-sm text-muted-foreground animate-pulse">Думаю...</p>
                         </div>
                     </div>
                 )}
@@ -127,7 +126,7 @@ export default function AIChatPage() {
                 <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask anything..."
+                    placeholder="Спросите что-нибудь..."
                     className="flex-grow"
                     disabled={isLoading}
                 />

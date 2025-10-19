@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -29,13 +28,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
   email: z.string().email({
-    message: "Please enter a valid email.",
+    message: "Пожалуйста, введите действительный email.",
   }),
   password: z.string().min(1, {
-    message: "Password is required.",
+    message: "Пароль обязателен.",
   }),
   role: z.enum(["customer", "provider"], {
-    required_error: "You need to select a role.",
+    required_error: "Вам нужно выбрать роль.",
   }),
 });
 
@@ -63,9 +62,9 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <Logo />
           </div>
-          <CardTitle className="text-2xl font-headline">Log In</CardTitle>
+          <CardTitle className="text-2xl font-headline">Вход</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Введите свою почту ниже, чтобы войти в аккаунт
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -89,7 +88,7 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Пароль</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -102,7 +101,7 @@ export default function LoginPage() {
                 name="role"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>I am a...</FormLabel>
+                    <FormLabel>Я...</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -114,7 +113,7 @@ export default function LoginPage() {
                             <RadioGroupItem value="customer" />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            Customer
+                            Клиент
                           </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-2 space-y-0">
@@ -122,7 +121,7 @@ export default function LoginPage() {
                             <RadioGroupItem value="provider" />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            Service Provider
+                            Исполнитель
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
@@ -132,14 +131,14 @@ export default function LoginPage() {
                 )}
               />
               <Button type="submit" className="w-full">
-                Log in
+                Войти
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Нет аккаунта?{" "}
             <Link href="/register" className="underline hover:text-primary">
-              Sign up
+              Зарегистрироваться
             </Link>
           </div>
         </CardContent>

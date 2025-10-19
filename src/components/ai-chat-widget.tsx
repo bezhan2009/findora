@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -23,7 +22,7 @@ interface AIChatWidgetProps {
 
 export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: 'Hello! How can I help you today?' }
+    { role: 'model', content: 'Здравствуйте! Чем я могу вам помочь сегодня?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -61,8 +60,8 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
       setMessages(prev => [...prev, modelMessage]);
 
     } catch (error) {
-      console.error("AI chat error:", error);
-      const errorMessage: Message = { role: 'model', content: "I'm sorry, something went wrong. Please try again." };
+      console.error("Ошибка AI чата:", error);
+      const errorMessage: Message = { role: 'model', content: "Извините, что-то пошло не так. Пожалуйста, попробуйте еще раз." };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -74,7 +73,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
         <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
             <div className="flex items-center gap-3">
                 <Sparkles className="h-6 w-6 text-primary"/>
-                <CardTitle className="text-lg font-headline">AI Assistant</CardTitle>
+                <CardTitle className="text-lg font-headline">AI Ассистент</CardTitle>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="h-5 w-5" />
@@ -119,7 +118,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                                 <AvatarFallback><Sparkles className="h-4 w-4 text-primary animate-pulse"/></AvatarFallback>
                             </Avatar>
                             <div className="max-w-xs rounded-xl px-3 py-2 bg-muted rounded-bl-none">
-                                <p className="text-sm text-muted-foreground animate-pulse">Thinking...</p>
+                                <p className="text-sm text-muted-foreground animate-pulse">Думаю...</p>
                             </div>
                         </div>
                     )}
@@ -130,7 +129,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                 <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask anything..."
+                    placeholder="Спросите что-нибудь..."
                     className="flex-grow"
                     disabled={isLoading}
                 />

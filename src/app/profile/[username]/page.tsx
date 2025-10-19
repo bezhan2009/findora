@@ -1,4 +1,3 @@
-
 "use client";
 
 import { use, Suspense, useState } from 'react';
@@ -22,9 +21,9 @@ function PostsGrid({ posts }: { posts: Post[] }) {
         return (
             <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                 <Video className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                <h3 className="text-2xl font-semibold mb-2 font-headline">No Posts Yet</h3>
-                <p className="text-muted-foreground mb-6">This user hasn't posted any photos or videos.</p>
-                <Button>Create First Post</Button>
+                <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет постов</h3>
+                <p className="text-muted-foreground mb-6">Этот пользователь еще не публиковал фото или видео.</p>
+                <Button>Создать первый пост</Button>
             </div>
         )
     }
@@ -55,9 +54,9 @@ function FollowingList({ following }: { following: UserStub[] }) {
         return (
             <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                 <UserRound className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                <h3 className="text-2xl font-semibold mb-2 font-headline">Not Following Anyone</h3>
-                <p className="text-muted-foreground mb-6">Follow service providers to see their updates here.</p>
-                <Button asChild><Link href="/">Explore Services</Link></Button>
+                <h3 className="text-2xl font-semibold mb-2 font-headline">Нет подписок</h3>
+                <p className="text-muted-foreground mb-6">Подпишитесь на исполнителей, чтобы видеть их обновления здесь.</p>
+                <Button asChild><Link href="/">Найти услуги</Link></Button>
             </div>
         )
     }
@@ -76,7 +75,7 @@ function FollowingList({ following }: { following: UserStub[] }) {
                             <p className="text-sm text-muted-foreground">@{user.username}</p>
                         </div>
                         <Button asChild variant="outline" className="ml-auto">
-                            <Link href={`/profile/${user.username}`}>View Profile</Link>
+                            <Link href={`/profile/${user.username}`}>Профиль</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -90,9 +89,9 @@ function OrdersList({ orders }: { orders: Order[] }) {
         return (
             <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                 <Package className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                <h3 className="text-2xl font-semibold mb-2 font-headline">No Orders Yet</h3>
-                <p className="text-muted-foreground mb-6">Your purchased services will appear here.</p>
-                <Button asChild><Link href="/">Browse Services</Link></Button>
+                <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет заказов</h3>
+                <p className="text-muted-foreground mb-6">Приобретенные вами услуги появятся здесь.</p>
+                <Button asChild><Link href="/">Найти услуги</Link></Button>
             </div>
         )
     }
@@ -104,7 +103,7 @@ function OrdersList({ orders }: { orders: Order[] }) {
                     <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 items-start md:items-center gap-4">
                         <div className="md:col-span-1">
                             <p className="font-semibold">{order.serviceTitle}</p>
-                            <p className="text-sm text-muted-foreground">with <Link href={`/profile/${order.providerUsername}`} className="text-primary hover:underline">{order.providerName}</Link></p>
+                            <p className="text-sm text-muted-foreground">у <Link href={`/profile/${order.providerUsername}`} className="text-primary hover:underline">{order.providerName}</Link></p>
                         </div>
                         <div className="md:col-span-1 flex items-center gap-4 text-sm text-muted-foreground">
                             <span>{new Date(order.date).toLocaleDateString()}</span>
@@ -112,7 +111,7 @@ function OrdersList({ orders }: { orders: Order[] }) {
                             <span>${order.price}</span>
                         </div>
                         <div className="md:col-span-1 flex justify-start md:justify-end">
-                             <Badge variant={order.status === 'Completed' ? 'default' : (order.status === 'In Progress' ? 'secondary' : 'outline')}>{order.status}</Badge>
+                             <Badge variant={order.status === 'Completed' ? 'default' : (order.status === 'In Progress' ? 'secondary' : 'outline')}>{order.status === 'Completed' ? 'Завершено' : (order.status === 'In Progress' ? 'В процессе' : 'Отменено')}</Badge>
                         </div>
                     </CardContent>
                 </Card>
@@ -185,9 +184,9 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
     return (
         <Tabs defaultValue="services" className="w-full">
             <TabsList className="grid w-full grid-cols-3 md:w-[28rem] mx-auto">
-              <TabsTrigger value="services"><Briefcase className="mr-2 h-4 w-4"/> Services</TabsTrigger>
-              <TabsTrigger value="posts"><Grid3x3 className="mr-2 h-4 w-4"/> Posts</TabsTrigger>
-              <TabsTrigger value="reviews"><MessageSquare className="mr-2 h-4 w-4"/> Reviews</TabsTrigger>
+              <TabsTrigger value="services"><Briefcase className="mr-2 h-4 w-4"/> Услуги</TabsTrigger>
+              <TabsTrigger value="posts"><Grid3x3 className="mr-2 h-4 w-4"/> Посты</TabsTrigger>
+              <TabsTrigger value="reviews"><MessageSquare className="mr-2 h-4 w-4"/> Отзывы</TabsTrigger>
             </TabsList>
             <TabsContent value="services" className="mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -196,9 +195,9 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
                   ) : (
                     <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                         <Briefcase className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                        <h3 className="text-2xl font-semibold mb-2 font-headline">No Services Yet</h3>
-                        <p className="text-muted-foreground mb-6">This provider hasn't listed any services.</p>
-                        {isOwnProfile && <Button>Add Your First Service</Button>}
+                        <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет услуг</h3>
+                        <p className="text-muted-foreground mb-6">Этот исполнитель еще не разместил ни одной услуги.</p>
+                        {isOwnProfile && <Button>Добавить первую услугу</Button>}
                     </div>
                   )}
                 </div>
@@ -213,8 +212,8 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
                 ) : (
                     <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                         <MessageSquare className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                        <h3 className="text-2xl font-semibold mb-2 font-headline">No Reviews Yet</h3>
-                        <p className="text-muted-foreground">This provider doesn't have any reviews.</p>
+                        <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет отзывов</h3>
+                        <p className="text-muted-foreground">У этого исполнителя еще нет отзывов.</p>
                     </div>
                 )}
               </div>
@@ -227,8 +226,8 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
     return (
         <Tabs defaultValue="following" className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:w-96 mx-auto">
-              <TabsTrigger value="following"><UserRound className="mr-2 h-4 w-4"/> Following ({user.following?.length || 0})</TabsTrigger>
-              <TabsTrigger value="orders"><ShoppingBag className="mr-2 h-4 w-4"/> My Orders ({user.orders?.length || 0})</TabsTrigger>
+              <TabsTrigger value="following"><UserRound className="mr-2 h-4 w-4"/> Подписки ({user.following?.length || 0})</TabsTrigger>
+              <TabsTrigger value="orders"><ShoppingBag className="mr-2 h-4 w-4"/> Мои заказы ({user.orders?.length || 0})</TabsTrigger>
             </TabsList>
             <TabsContent value="following" className="mt-8">
                 <FollowingList following={user.following || []} />
@@ -272,29 +271,29 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
                     {user.role === 'provider' && (
                         <div className="text-center">
                             <p className="text-2xl font-bold">{allServices.filter(s => s.provider.username === user.username).length}</p>
-                            <p className="text-sm text-muted-foreground">Services</p>
+                            <p className="text-sm text-muted-foreground">Услуги</p>
                         </div>
                     )}
                     <div className="text-center">
                         <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
-                        <p className="text-sm text-muted-foreground">Followers</p>
+                        <p className="text-sm text-muted-foreground">Подписчики</p>
                     </div>
                     <div className="text-center">
                         <p className="text-2xl font-bold">{user.following?.length || 0}</p>
-                        <p className="text-sm text-muted-foreground">Following</p>
+                        <p className="text-sm text-muted-foreground">Подписки</p>
                     </div>
                 </div>
             </div>
             <div className="mt-6 flex justify-center md:justify-end gap-2">
                {isOwnProfile ? (
-                    <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Edit Profile</Button>
+                    <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Редактировать профиль</Button>
                 ) : (
                     <>
                         <Button onClick={handleFollow} variant={isFollowing ? 'secondary' : 'default'} className="transition-colors">
                             {isFollowing ? <UserCheck className="mr-2 h-4 w-4" /> : <UserPlus className="mr-2 h-4 w-4" />}
-                            {isFollowing ? 'Following' : 'Follow'}
+                            {isFollowing ? 'Вы подписаны' : 'Подписаться'}
                         </Button>
-                        <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Message</Button>
+                        <Button variant="outline"><MessageSquare className="mr-2 h-4 w-4" /> Сообщение</Button>
                     </>
                 )}
             </div>
@@ -311,7 +310,7 @@ export default function ProfilePage({ params }: { params: Promise<{ username: st
   const resolvedParams = use(params);
   
   return (
-    <Suspense fallback={<div>Loading profile...</div>}>
+    <Suspense fallback={<div>Загрузка профиля...</div>}>
       <ProfilePageContent params={resolvedParams} />
     </Suspense>
   );

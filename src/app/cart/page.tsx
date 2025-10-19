@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -17,16 +16,16 @@ export default function CartPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <ShoppingCart className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">Shopping Cart</h1>
+        <h1 className="text-4xl font-bold font-headline">Корзина</h1>
       </div>
 
       {cartItems.length === 0 ? (
         <div className="text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
           <Package className="h-16 w-16 text-muted-foreground/50 mb-4" />
-          <h2 className="text-2xl font-semibold mb-2 font-headline">Your cart is empty</h2>
-          <p className="text-muted-foreground mb-6">Looks like you haven't added any services yet.</p>
+          <h2 className="text-2xl font-semibold mb-2 font-headline">Ваша корзина пуста</h2>
+          <p className="text-muted-foreground mb-6">Похоже, вы еще не добавили ни одной услуги.</p>
           <Button asChild>
-            <Link href="/">Explore Services</Link>
+            <Link href="/">Посмотреть услуги</Link>
           </Button>
         </div>
       ) : (
@@ -34,10 +33,10 @@ export default function CartPage() {
           <div className="lg:col-span-2">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>{cartCount} {cartCount === 1 ? 'Service' : 'Services'} in Cart</CardTitle>
+                    <CardTitle>{cartCount} {cartCount === 1 ? 'Услуга' : (cartCount > 1 && cartCount < 5 ? 'Услуги' : 'Услуг')} в корзине</CardTitle>
                     <Button variant="outline" size="sm" onClick={clearCart}>
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Clear Cart
+                        Очистить корзину
                     </Button>
                 </CardHeader>
                 <CardContent>
@@ -97,23 +96,23 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
                 <CardHeader>
-                    <CardTitle>Order Summary</CardTitle>
+                    <CardTitle>Сумма заказа</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="text-muted-foreground">Промежуточный итог</span>
                         <span>${totalPrice.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Taxes</span>
-                        <span>Calculated at checkout</span>
+                        <span className="text-muted-foreground">Налоги</span>
+                        <span>Рассчитываются при оформлении</span>
                     </div>
                     <div className="border-t pt-4 flex justify-between font-bold text-lg">
-                        <span>Total</span>
+                        <span>Итого</span>
                         <span>${totalPrice.toFixed(2)}</span>
                     </div>
                      <Button size="lg" className="w-full mt-4">
-                        Proceed to Checkout
+                        Перейти к оформлению
                     </Button>
                 </CardContent>
             </Card>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -62,19 +61,19 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <SlidersHorizontal className="h-5 w-5" />
-          Filters
+          Фильтры
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">Категория</Label>
             <Select onValueChange={handleCategoryChange} defaultValue={filters.category}>
               <SelectTrigger id="category">
-                <SelectValue placeholder="All Categories" />
+                <SelectValue placeholder="Все категории" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="all">Все категории</SelectItem>
                 {categories.map(cat => (
                   <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
                 ))}
@@ -83,7 +82,7 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
           </div>
           
           <div>
-            <Label>Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}</Label>
+            <Label>Ценовой диапазон: ${filters.priceRange[0]} - ${filters.priceRange[1]}</Label>
             <Slider 
               value={filters.priceRange}
               onValueChange={handlePriceChange}
@@ -94,16 +93,16 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
           </div>
           
           <div>
-            <Label htmlFor="rating">Rating</Label>
+            <Label htmlFor="rating">Рейтинг</Label>
             <Select onValueChange={handleRatingChange} defaultValue={String(filters.rating)}>
               <SelectTrigger id="rating">
-                <SelectValue placeholder="Any Rating" />
+                <SelectValue placeholder="Любой рейтинг" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Any Rating</SelectItem>
-                <SelectItem value="4.5">4.5 Stars & Up</SelectItem>
-                <SelectItem value="4">4 Stars & Up</SelectItem>
-                <SelectItem value="3">3 Stars & Up</SelectItem>
+                <SelectItem value="0">Любой рейтинг</SelectItem>
+                <SelectItem value="4.5">4.5 звезды и выше</SelectItem>
+                <SelectItem value="4">4 звезды и выше</SelectItem>
+                <SelectItem value="3">3 звезды и выше</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -115,7 +114,7 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
                     checked={filters.featured} 
                     onCheckedChange={handleFeaturedChange}
                 />
-                <Label htmlFor="featured" className="font-normal">Featured</Label>
+                <Label htmlFor="featured" className="font-normal">Рекомендуемые</Label>
             </div>
             <div className="flex items-center space-x-2">
                 <Checkbox 
@@ -123,11 +122,11 @@ export default function FilterSidebar({ onApplyFilters }: FilterSidebarProps) {
                     checked={filters.topRated}
                     onCheckedChange={handleTopRatedChange}
                 />
-                <Label htmlFor="top-rated" className="font-normal">Top Rated</Label>
+                <Label htmlFor="top-rated" className="font-normal">С высоким рейтингом</Label>
             </div>
           </div>
           
-          <Button type="submit" className="w-full">Apply Filters</Button>
+          <Button type="submit" className="w-full">Применить фильтры</Button>
         </form>
       </CardContent>
     </Card>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -16,9 +15,9 @@ import { Badge } from './ui/badge';
 
 
 const navLinks = [
-  { href: '/favorites', label: 'Favorites', icon: Heart, roles: ['customer', 'provider'] },
-  { href: '/chat', label: 'Messages', icon: MessageSquare, roles: ['customer', 'provider'] },
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['provider'] },
+  { href: '/favorites', label: 'Избранное', icon: Heart, roles: ['customer', 'provider'] },
+  { href: '/chat', label: 'Сообщения', icon: MessageSquare, roles: ['customer', 'provider'] },
+  { href: '/dashboard', label: 'Панель управления', icon: LayoutDashboard, roles: ['provider'] },
 ];
 
 export default function Header() {
@@ -42,14 +41,14 @@ export default function Header() {
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Открыть меню</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
               <div className="flex flex-col gap-6 p-4">
                 <Logo />
                 <nav className="flex flex-col gap-4">
-                  <Link href="/" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">Home</Link>
+                  <Link href="/" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">Главная</Link>
                   {getNavLinks().map(({ href, label, icon: Icon }) => (
                     <Link
                       key={href}
@@ -64,11 +63,11 @@ export default function Header() {
                      <>
                       <Link href="/login" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">
                         <LogIn className="h-5 w-5" />
-                        Log In
+                        Войти
                       </Link>
                       <Link href="/register" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">
                         <User className="h-5 w-5" />
-                        Sign Up
+                        Регистрация
                       </Link>
                      </>
                    )}
@@ -82,7 +81,7 @@ export default function Header() {
                 href="/"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               >
-                Home
+                Главная
               </Link>
             {getNavLinks().map(({ href, label }) => (
               <Link
@@ -110,7 +109,7 @@ export default function Header() {
                     {cartCount > 9 ? '9+' : cartCount}
                   </Badge>
                 )}
-                <span className="sr-only">Shopping Cart</span>
+                <span className="sr-only">Корзина</span>
               </Link>
             </Button>
           {user ? (
@@ -126,7 +125,7 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuLabel>Уведомления</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex items-start gap-3">
                   <Avatar className="h-8 w-8 mt-1">
@@ -134,8 +133,8 @@ export default function Header() {
                     <AvatarFallback>DP</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium">New Order!</p>
-                    <p className="text-xs text-muted-foreground">Diana Prince just ordered "Custom Website Development".</p>
+                    <p className="text-sm font-medium">Новый заказ!</p>
+                    <p className="text-xs text-muted-foreground">Diana Prince только что заказала "Разработка сайта на заказ".</p>
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="flex items-start gap-3">
@@ -143,8 +142,8 @@ export default function Header() {
                         <Heart className="h-5 w-5 text-rose-500" />
                     </div>
                   <div>
-                    <p className="text-sm font-medium">New Like</p>
-                    <p className="text-xs text-muted-foreground">Someone liked your service "E-commerce Store Setup".</p>
+                    <p className="text-sm font-medium">Новый лайк</p>
+                    <p className="text-xs text-muted-foreground">Кто-то оценил вашу услугу "Настройка E-commerce магазина".</p>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -170,7 +169,7 @@ export default function Header() {
                 <DropdownMenuItem asChild>
                   <Link href={`/profile/${user.username}`}>
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <span>Профиль</span>
                   </Link>
                 </DropdownMenuItem>
                  {getNavLinks().map((link) => (
@@ -184,31 +183,31 @@ export default function Header() {
                  <DropdownMenuItem asChild>
                    <Link href="/ai-chat">
                      <Sparkles className="mr-2 h-4 w-4" />
-                     <span>AI Assistant</span>
+                     <span>AI Ассистент</span>
                    </Link>
                  </DropdownMenuItem>
                  <DropdownMenuItem asChild>
                   <Link href="/ai-creator">
                     <PenSquare className="mr-2 h-4 w-4" />
-                    <span>AI Creator</span>
+                    <span>AI-Контент</span>
                   </Link>
                 </DropdownMenuItem>
                  <DropdownMenuItem asChild>
                    <Link href="/translator">
                      <Languages className="mr-2 h-4 w-4" />
-                     <span>Translator</span>
+                     <span>Переводчик</span>
                    </Link>
                  </DropdownMenuItem>
                  <DropdownMenuItem asChild>
                    <a href="http://212.67.9.175" target="_blank" rel="noopener noreferrer">
                      <Play className="mr-2 h-4 w-4" />
-                     <span>Play</span>
+                     <span>Играть</span>
                    </a>
                  </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>Выйти</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -216,10 +215,10 @@ export default function Header() {
           ) : (
              <div className="hidden md:flex items-center gap-2">
                 <Button variant="ghost" asChild>
-                  <Link href="/login">Log In</Link>
+                  <Link href="/login">Войти</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/register">Sign Up</Link>
+                  <Link href="/register">Регистрация</Link>
                 </Button>
             </div>
           )}

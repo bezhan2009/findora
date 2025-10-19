@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -29,20 +28,20 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "Имя должно содержать не менее 2 символов.",
   }),
   email: z.string().email({
-    message: "Please enter a valid email.",
+    message: "Пожалуйста, введите действительный email.",
   }),
   password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
+    message: "Пароль должен содержать не менее 6 символов.",
   }),
   confirmPassword: z.string(),
   role: z.enum(["customer", "provider"], {
-    required_error: "You need to select a role.",
+    required_error: "Вам нужно выбрать роль.",
   }),
 }).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Пароли не совпадают",
   path: ["confirmPassword"],
 });
 
@@ -72,9 +71,9 @@ export default function RegisterPage() {
            <div className="flex justify-center mb-4">
             <Logo />
           </div>
-          <CardTitle className="text-2xl font-headline">Create an account</CardTitle>
+          <CardTitle className="text-2xl font-headline">Создать аккаунт</CardTitle>
           <CardDescription>
-            Enter your information to create an account
+            Введите свои данные для создания аккаунта
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -85,9 +84,9 @@ export default function RegisterPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Имя</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
+                      <Input placeholder="Иван Петров" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,7 +110,7 @@ export default function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Пароль</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -124,7 +123,7 @@ export default function RegisterPage() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel>Подтвердите пароль</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -137,7 +136,7 @@ export default function RegisterPage() {
                 name="role"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>I want to...</FormLabel>
+                    <FormLabel>Я хочу...</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -149,7 +148,7 @@ export default function RegisterPage() {
                             <RadioGroupItem value="customer" />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            Hire for a service
+                            Нанять исполнителя
                           </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-2 space-y-0">
@@ -157,7 +156,7 @@ export default function RegisterPage() {
                             <RadioGroupItem value="provider" />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            Offer a service
+                            Предложить услугу
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
@@ -167,14 +166,14 @@ export default function RegisterPage() {
                 )}
               />
               <Button type="submit" className="w-full">
-                Create Account
+                Создать аккаунт
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
+            Уже есть аккаунт?{" "}
             <Link href="/login" className="underline hover:text-primary">
-              Log in
+              Войти
             </Link>
           </div>
         </CardContent>

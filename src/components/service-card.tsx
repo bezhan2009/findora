@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Button } from './ui/button';
 import { Star, Award } from 'lucide-react';
 import type { Service } from '@/lib/types';
 import { Badge } from './ui/badge';
@@ -42,7 +41,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           {service.featured && (
             <Badge className="absolute top-3 left-3 bg-primary/80 backdrop-blur-sm text-primary-foreground border-none" variant="default">
               <Award className="h-3 w-3 mr-1" />
-              Featured
+              Рекомендуемый
             </Badge>
           )}
           <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
@@ -86,7 +85,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           </span>
         </div>
         <div className="text-base font-semibold text-foreground">
-          <span className="text-xs font-normal text-muted-foreground">FROM </span>$
+          <span className="text-xs font-normal text-muted-foreground">ОТ </span>$
           {service.price}
         </div>
       </CardFooter>

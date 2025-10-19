@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
@@ -36,7 +35,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setCartItems([]);
       }
     } catch (error) {
-      console.error("Could not read cart from localStorage", error);
+      console.error("Не удалось прочитать корзину из localStorage", error);
       setCartItems([]);
     }
   }, [getStorageKey]);
@@ -45,7 +44,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     try {
       localStorage.setItem(getStorageKey(), JSON.stringify(items));
     } catch (error) {
-      console.error("Could not save cart to localStorage", error);
+      console.error("Не удалось сохранить корзину в localStorage", error);
     }
   };
 
@@ -68,7 +67,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         newItems = [...prevItems, newItem];
       }
       updateLocalStorage(newItems);
-      toast({ title: 'Added to cart!', description: service.title });
+      toast({ title: 'Добавлено в корзину!', description: service.title });
       return newItems;
     });
   };
@@ -80,7 +79,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       
       const newItems = prevItems.filter((item) => item.id !== id);
       updateLocalStorage(newItems);
-      toast({ title: 'Removed from cart', description: itemToRemove.name });
+      toast({ title: 'Удалено из корзины', description: itemToRemove.name });
       return newItems;
     });
   };
@@ -103,7 +102,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCartItems((prevItems) => {
       if(prevItems.length > 0) {
         updateLocalStorage([]);
-        toast({ title: 'Cart cleared' });
+        toast({ title: 'Корзина очищена' });
       }
       return [];
     });

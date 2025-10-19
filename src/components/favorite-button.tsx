@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -98,7 +97,7 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
           favorited ? "text-rose-500" : "text-gray-400 hover:text-rose-400",
           className
         )}
-        aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
+        aria-label={favorited ? "Удалить из избранного" : "Добавить в избранное"}
       >
         {svgContent}
         {isAnimating && (
@@ -123,7 +122,7 @@ export function FavoriteButton({ service, className, as = 'icon' }: FavoriteButt
       )}
     >
       {svgContent}
-      {isAnimating ? '...' : (favorited ? 'Favorited' : 'Add to Favorites')}
+      {isAnimating ? '...' : (favorited ? 'В избранном' : 'Добавить в избранное')}
     </Button>
   );
 }

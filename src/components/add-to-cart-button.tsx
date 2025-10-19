@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -26,12 +25,12 @@ export default function AddToCartButton({ service }: AddToCartButtonProps) {
       {isAdded ? (
         <>
           <Check className="mr-2 h-5 w-5" />
-          Added to Cart
+          Добавлено в корзину
         </>
       ) : (
         <>
           <ShoppingCart className="mr-2 h-5 w-5" />
-          Add to Cart
+          Добавить в корзину
         </>
       )}
     </Button>

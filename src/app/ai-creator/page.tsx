@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -53,8 +52,8 @@ export default function AICreatorPage() {
       setEditableBody(result.markdown);
       setEditableTags(result.meta.tags);
     } catch (error) {
-      console.error('Content generation error:', error);
-      setEditableBody('Sorry, something went wrong while generating content. Please try again.');
+      console.error('Ошибка генерации контента:', error);
+      setEditableBody('К сожалению, при генерации контента произошла ошибка. Пожалуйста, попробуйте еще раз.');
     } finally {
       setIsLoading(false);
     }
@@ -62,56 +61,56 @@ export default function AICreatorPage() {
   
   const handlePublish = () => {
       // Placeholder for publish logic as per user request
-      alert('Publish functionality with a real backend is not yet implemented.');
+      alert('Функция публикации с реальным бэкендом еще не реализована.');
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
        <div className="flex items-center gap-4 mb-8">
         <PenSquare className="h-8 w-8 text-primary" />
-        <h1 className="text-4xl font-bold font-headline">AI Content Creator</h1>
+        <h1 className="text-4xl font-bold font-headline">AI-Контент</h1>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Control Panel */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Content Generator</CardTitle>
-              <CardDescription>Describe the content you want to create.</CardDescription>
+              <CardTitle>Генератор контента</CardTitle>
+              <CardDescription>Опишите контент, который вы хотите создать.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="prompt">Prompt</Label>
+                <Label htmlFor="prompt">Промпт</Label>
                 <Textarea
                   id="prompt"
-                  placeholder="e.g., A blog post about the benefits of remote work"
+                  placeholder="например, пост в блоге о преимуществах удаленной работы"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   rows={4}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tone">Tone</Label>
+                <Label htmlFor="tone">Тон</Label>
                 <Select value={tone} onValueChange={(v) => setTone(v as any)}>
                   <SelectTrigger id="tone">
-                    <SelectValue placeholder="Select tone" />
+                    <SelectValue placeholder="Выберите тон" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="casual">Casual</SelectItem>
-                    <SelectItem value="formal">Formal</SelectItem>
+                    <SelectItem value="casual">Неформальный</SelectItem>
+                    <SelectItem value="formal">Формальный</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="length">Length</Label>
+                <Label htmlFor="length">Длина</Label>
                 <Select value={length} onValueChange={(v) => setLength(v as any)}>
                   <SelectTrigger id="length">
-                    <SelectValue placeholder="Select length" />
+                    <SelectValue placeholder="Выберите длину" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="short">Short</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="long">Long</SelectItem>
+                    <SelectItem value="short">Короткий</SelectItem>
+                    <SelectItem value="medium">Средний</SelectItem>
+                    <SelectItem value="long">Длинный</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -119,7 +118,7 @@ export default function AICreatorPage() {
             <CardFooter>
               <Button onClick={handleGenerate} disabled={isLoading || !prompt.trim()} className="w-full">
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                {isLoading ? 'Generating...' : 'Generate Content'}
+                {isLoading ? 'Генерация...' : 'Сгенерировать контент'}
               </Button>
             </CardFooter>
           </Card>
@@ -129,26 +128,26 @@ export default function AICreatorPage() {
         <div className="lg:col-span-2">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle>Generated Content</CardTitle>
-              <CardDescription>Review and edit the AI-generated content below.</CardDescription>
+              <CardTitle>Сгенерированный контент</CardTitle>
+              <CardDescription>Просмотрите и отредактируйте сгенерированный AI контент ниже.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {isLoading && (
                   <div className="flex flex-col items-center justify-center h-96 rounded-lg bg-muted">
                     <Loader2 className="h-12 w-12 text-primary animate-spin mb-4"/>
-                    <p className="text-lg text-muted-foreground">Generating your content...</p>
+                    <p className="text-lg text-muted-foreground">Генерируем ваш контент...</p>
                   </div>
               )}
               {!isLoading && !generatedContent && (
                    <div className="flex flex-col items-center justify-center h-96 rounded-lg bg-muted/50">
                     <FileText className="h-12 w-12 text-muted-foreground/50 mb-4"/>
-                    <p className="text-lg text-muted-foreground">Your generated content will appear here.</p>
+                    <p className="text-lg text-muted-foreground">Ваш сгенерированный контент появится здесь.</p>
                   </div>
               )}
               {generatedContent && !isLoading && (
                   <div className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="generated-title">Title</Label>
+                        <Label htmlFor="generated-title">Заголовок</Label>
                         <Input 
                             id="generated-title"
                             value={editableTitle}
@@ -157,7 +156,7 @@ export default function AICreatorPage() {
                         />
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="generated-body">Body (Markdown)</Label>
+                        <Label htmlFor="generated-body">Тело (Markdown)</Label>
                         <Textarea 
                             id="generated-body"
                             value={editableBody}
@@ -167,7 +166,7 @@ export default function AICreatorPage() {
                         />
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="generated-tags">Tags</Label>
+                        <Label htmlFor="generated-tags">Теги</Label>
                         <div className="flex flex-wrap gap-2">
                           {editableTags.map((tag, index) => (
                             <Badge key={index} variant="secondary" className="flex items-center gap-1">
@@ -180,14 +179,14 @@ export default function AICreatorPage() {
                           id="generated-tags"
                           value={editableTags.join(', ')}
                           onChange={(e) => setEditableTags(e.target.value.split(',').map(t => t.trim()))}
-                          placeholder="tag1, tag2, tag3"
+                          placeholder="тег1, тег2, тег3"
                         />
                     </div>
                   </div>
               )}
             </CardContent>
             <CardFooter>
-                <Button onClick={handlePublish} disabled={!generatedContent}>Publish</Button>
+                <Button onClick={handlePublish} disabled={!generatedContent}>Опубликовать</Button>
             </CardFooter>
           </Card>
         </div>

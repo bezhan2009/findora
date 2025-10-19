@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,13 +11,13 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 const chartData = [
-  { name: 'Jan', views: 4000, likes: 2400, revenue: 2400 },
-  { name: 'Feb', views: 3000, likes: 1398, revenue: 2210 },
-  { name: 'Mar', views: 2000, likes: 9800, revenue: 2290 },
-  { name: 'Apr', views: 2780, likes: 3908, revenue: 2000 },
-  { name: 'May', views: 1890, likes: 4800, revenue: 2181 },
-  { name: 'Jun', views: 2390, likes: 3800, revenue: 2500 },
-  { name: 'Jul', views: 3490, likes: 4300, revenue: 2100 },
+  { name: 'Янв', views: 4000, likes: 2400, revenue: 2400 },
+  { name: 'Фев', views: 3000, likes: 1398, revenue: 2210 },
+  { name: 'Март', views: 2000, likes: 9800, revenue: 2290 },
+  { name: 'Апр', views: 2780, likes: 3908, revenue: 2000 },
+  { name: 'Май', views: 1890, likes: 4800, revenue: 2181 },
+  { name: 'Июнь', views: 2390, likes: 3800, revenue: 2500 },
+  { name: 'Июль', views: 3490, likes: 4300, revenue: 2100 },
 ];
 
 export default function DashboardPage() {
@@ -34,7 +33,7 @@ export default function DashboardPage() {
     if (role !== 'provider' || !user) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
-                <p>Loading or redirecting...</p>
+                <p>Загрузка или перенаправление...</p>
             </div>
         );
     }
@@ -50,11 +49,11 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div className="flex items-center gap-4">
             <BarChart className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold font-headline">Provider Dashboard</h1>
+            <h1 className="text-4xl font-bold font-headline">Панель управления</h1>
         </div>
         <div className="flex gap-2">
-            <Button>+ Add New Service</Button>
-            <Button variant="outline">+ Create New Post</Button>
+            <Button>+ Добавить новую услугу</Button>
+            <Button variant="outline">+ Создать новый пост</Button>
         </div>
       </div>
 
@@ -62,42 +61,42 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <CardTitle className="text-sm font-medium">Общий доход</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                <p className="text-xs text-muted-foreground">+20.1% с прошлого месяца</p>
             </CardContent>
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <CardTitle className="text-sm font-medium">Всего просмотров</CardTitle>
                 <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{totalViews.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+                <p className="text-xs text-muted-foreground">+180.1% с прошлого месяца</p>
             </CardContent>
         </Card>
          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
+                <CardTitle className="text-sm font-medium">Всего лайков</CardTitle>
                 <Heart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{totalLikes.toLocaleString()}</div>
-                 <p className="text-xs text-muted-foreground">+19% from last month</p>
+                 <p className="text-xs text-muted-foreground">+19% с прошлого месяца</p>
             </CardContent>
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">New Followers</CardTitle>
+                <CardTitle className="text-sm font-medium">Новые подписчики</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">+235</div>
-                <p className="text-xs text-muted-foreground">since last month</p>
+                <p className="text-xs text-muted-foreground">с прошлого месяца</p>
             </CardContent>
         </Card>
       </div>
@@ -107,7 +106,7 @@ export default function DashboardPage() {
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
                     <LineChartIcon className="h-5 w-5"/>
-                    Monthly Performance
+                    Месячная производительность
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
@@ -124,8 +123,8 @@ export default function DashboardPage() {
                             }}
                         />
                         <Legend />
-                        <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" activeDot={{ r: 8 }} />
-                        <Line type="monotone" dataKey="views" stroke="hsl(var(--accent))" />
+                        <Line type="monotone" dataKey="revenue" name="Доход" stroke="hsl(var(--primary))" activeDot={{ r: 8 }} />
+                        <Line type="monotone" dataKey="views" name="Просмотры" stroke="hsl(var(--accent))" />
                     </RechartsLineChart>
                 </ResponsiveContainer>
             </CardContent>
@@ -135,7 +134,7 @@ export default function DashboardPage() {
             <CardHeader>
                 <CardTitle className="font-headline flex items-center gap-2">
                     <Activity className="h-5 w-5"/>
-                    Recent Activity
+                    Последняя активность
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -146,10 +145,10 @@ export default function DashboardPage() {
                             <AvatarFallback>DP</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
-                            <p className="text-sm font-medium leading-none">Diana Prince placed an order.</p>
-                            <p className="text-sm text-muted-foreground">For "Custom Website Development".</p>
+                            <p className="text-sm font-medium leading-none">Диана Князева разместила заказ.</p>
+                            <p className="text-sm text-muted-foreground">На "Разработка сайта на заказ".</p>
                         </div>
-                        <div className="ml-auto font-medium text-xs text-muted-foreground">5m ago</div>
+                        <div className="ml-auto font-medium text-xs text-muted-foreground">5 мин назад</div>
                     </div>
                     <div className="flex items-center">
                         <Avatar className="h-9 w-9">
@@ -157,10 +156,10 @@ export default function DashboardPage() {
                             <AvatarFallback>CC</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
-                            <p className="text-sm font-medium leading-none">Client C left a 5-star review.</p>
-                            <p className="text-sm text-muted-foreground">On "Professional Logo Design".</p>
+                            <p className="text-sm font-medium leading-none">Клиент В оставил 5-звездочный отзыв.</p>
+                            <p className="text-sm text-muted-foreground">На "Профессиональный дизайн логотипа".</p>
                         </div>
-                        <div className="ml-auto font-medium text-xs text-muted-foreground">2h ago</div>
+                        <div className="ml-auto font-medium text-xs text-muted-foreground">2 часа назад</div>
                     </div>
                     <div className="flex items-center">
                         <Avatar className="h-9 w-9">
@@ -168,10 +167,10 @@ export default function DashboardPage() {
                             <AvatarFallback>CB</AvatarFallback>
                         </Avatar>
                         <div className="ml-4 space-y-1">
-                            <p className="text-sm font-medium leading-none">Client B liked your service.</p>
-                            <p className="text-sm text-muted-foreground">"E-commerce Store Setup".</p>
+                            <p className="text-sm font-medium leading-none">Клиент Б оценил вашу услугу.</p>
+                            <p className="text-sm text-muted-foreground">"Настройка E-commerce магазина".</p>
                         </div>
-                        <div className="ml-auto font-medium text-xs text-muted-foreground">1d ago</div>
+                        <div className="ml-auto font-medium text-xs text-muted-foreground">1 день назад</div>
                     </div>
                 </div>
             </CardContent>

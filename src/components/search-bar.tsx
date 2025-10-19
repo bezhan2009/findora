@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, Loader2 } from 'lucide-react';
 import { Input } from './ui/input';
@@ -15,6 +14,7 @@ export default function SearchBar() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const debouncedQuery = useDebounce(query, 300);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (debouncedQuery) {
@@ -23,7 +23,9 @@ export default function SearchBar() {
         .then(response => {
             if (response && response.suggestions) {
                 setSuggestions(response.suggestions);
-                setIsOpen(true);
+                if (response.suggestions.length > 0) {
+                    setIsOpen(true);
+                }
             }
         })
         .catch(console.error)
@@ -48,17 +50,28 @@ export default function SearchBar() {
     router.push(`/?q=${encodeURIComponent(query)}`);
   }
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={containerRef}>
       <form onSubmit={handleSubmit}>
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
             type="search"
-            placeholder="Search for services..."
+            placeholder="Поиск услуг..."
             className="w-full pl-10 pr-4 py-2"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onBlur={() => setTimeout(() => setIsOpen(false), 200)}
             onFocus={() => query && suggestions.length > 0 && setIsOpen(true)}
         />
       </form>

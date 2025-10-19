@@ -18,7 +18,7 @@ function ClientFormattedDate({ dateString }: { dateString: string }) {
   const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
-    setFormattedDate(new Date(dateString).toLocaleDateString());
+    setFormattedDate(new Date(dateString).toLocaleDateString('ru-RU'));
   }, [dateString]);
 
   return <>{formattedDate}</>;
@@ -41,7 +41,7 @@ function ServicePageContent({ params }: { params: { id: string } }) {
             <div className="flex items-center gap-1">
               <Star className="h-5 w-5 text-yellow-400 fill-current" />
               <span className="font-bold text-foreground">{service.rating.toFixed(1)}</span>
-              <span>({service.reviewsCount} reviews)</span>
+              <span>({service.reviewsCount} отзывов)</span>
             </div>
             <span>·</span>
             <Link href={`/profile/${service.provider.username}`} className="hover:text-primary transition-colors flex items-center gap-2">
@@ -60,7 +60,7 @@ function ServicePageContent({ params }: { params: { id: string } }) {
                   <Card className="overflow-hidden rounded-xl">
                     <Image
                       src={img}
-                      alt={`${service.title} - image ${index + 1}`}
+                      alt={`${service.title} - изображение ${index + 1}`}
                       width={800}
                       height={500}
                       className="w-full h-auto aspect-video object-cover"
@@ -74,12 +74,12 @@ function ServicePageContent({ params }: { params: { id: string } }) {
           </Carousel>
 
           <div className="prose max-w-none">
-            <h2 className="text-2xl font-bold font-headline">About this service</h2>
+            <h2 className="text-2xl font-bold font-headline">Об этой услуге</h2>
             <p>{service.description}</p>
           </div>
 
           <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6 font-headline">What people are saying</h2>
+            <h2 className="text-2xl font-bold mb-6 font-headline">Что говорят люди</h2>
             <div className="space-y-6">
               {allReviews.slice(0, 3).map((review) => (
                 <Card key={review.id}>
@@ -117,7 +117,7 @@ function ServicePageContent({ params }: { params: { id: string } }) {
               <span className="text-3xl font-bold text-foreground">${service.price}</span>
             </CardTitle>
             <CardContent className="p-0">
-              <p className="text-muted-foreground mb-6">Starting price for a standard project.</p>
+              <p className="text-muted-foreground mb-6">Начальная цена за стандартный проект.</p>
               <div className="flex flex-col gap-3">
                 <AddToCartButton service={service} />
                 <FavoriteButton service={service} as="button" />
@@ -135,7 +135,7 @@ export default function ServicePage({ params }: { params: Promise<{ id: string }
   const resolvedParams = use(params);
   
   return (
-    <Suspense fallback={<div>Loading service...</div>}>
+    <Suspense fallback={<div>Загрузка услуги...</div>}>
       <ServicePageContent params={resolvedParams} />
     </Suspense>
   );

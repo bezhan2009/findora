@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
@@ -23,8 +22,8 @@ function SearchResults({ services, query }: { services: Service[], query: string
     return (
         <div className="text-center py-20 bg-card rounded-xl">
             <SearchIcon className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-2xl font-semibold mb-2 font-headline">No services found for &quot;{query}&quot;</h3>
-            <p className="text-muted-foreground">Try a different search term or adjust your filters.</p>
+            <h3 className="text-2xl font-semibold mb-2 font-headline">По запросу "{query}" ничего не найдено</h3>
+            <p className="text-muted-foreground">Попробуйте другой поисковый запрос или измените фильтры.</p>
         </div>
     );
   }
@@ -129,10 +128,10 @@ function HomePageContent() {
         <div className="absolute inset-0 bg-black/60 z-10" />
         <div className="relative z-20 flex flex-col items-center text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight mb-4">
-            Find The Perfect Service, Instantly.
+            Найдите идеальную услугу. Мгновенно.
           </h1>
           <p className="text-lg md:text-xl text-white/80 max-w-3xl mb-8">
-            BizMart is your premier marketplace for discovering and booking high-quality services from trusted professionals.
+            BizMart - ваша главная площадка для поиска и заказа качественных услуг от проверенных профессионалов.
           </p>
           <div className="w-full max-w-2xl">
             <PageSearchInput />
@@ -146,7 +145,7 @@ function HomePageContent() {
              {isFiltering ? (
                 <div>
                     <h2 className="text-3xl font-bold font-headline mb-6">
-                        Results {searchQuery && `for "${searchQuery}"`} {categoryQuery && `in ${categoryQuery}`}
+                        Результаты {searchQuery && `по запросу "${searchQuery}"`} {categoryQuery && `в категории ${categoryQuery}`}
                     </h2>
                     <SearchResults services={filteredServices} query={searchQuery || categoryQuery || ""} />
                 </div>
@@ -156,10 +155,10 @@ function HomePageContent() {
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
                         <Zap className="h-7 w-7 text-primary" />
-                        Featured Services
+                        Рекомендуемые услуги
                     </h2>
                     <Button variant="outline" asChild>
-                        <Link href="#">View All</Link>
+                        <Link href="#">Смотреть все</Link>
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -173,17 +172,17 @@ function HomePageContent() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <PromoCard
                             image="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
-                            title="Grow Your Business"
-                            description="Find top-tier marketing and SEO experts to boost your brand."
-                            ctaText="Explore Marketing"
+                            title="Развивайте свой бизнес"
+                            description="Найдите лучших экспертов по маркетингу и SEO для продвижения вашего бренда."
+                            ctaText="Изучить маркетинг"
                             ctaLink="#"
                             data-ai-hint="marketing team"
                         />
                          <PromoCard
                             image="https://images.unsplash.com/photo-1626785774573-4b799315345d"
-                            title="Creative Design Solutions"
-                            description="From logos to full branding packages, find the right designer."
-                            ctaText="Discover Designers"
+                            title="Креативные дизайн-решения"
+                            description="От логотипов до полного брендинга — найдите подходящего дизайнера."
+                            ctaText="Найти дизайнеров"
                             ctaLink="#"
                             data-ai-hint="graphic design"
                         />
@@ -194,10 +193,10 @@ function HomePageContent() {
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
                             <Star className="h-7 w-7 text-primary" />
-                            Trending Services
+                            Популярные услуги
                         </h2>
                          <Button variant="outline" asChild>
-                            <Link href="#">View All</Link>
+                            <Link href="#">Смотреть все</Link>
                         </Button>
                     </div>
                     <Carousel opts={{ align: "start", loop: true }} className="w-full">
@@ -219,7 +218,7 @@ function HomePageContent() {
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
                             <Award className="h-7 w-7 text-primary" />
-                           Popular Categories
+                           Популярные категории
                         </h2>
                     </div>
                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -241,9 +240,9 @@ function HomePageContent() {
                 <section>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-1">
-                             <h2 className="text-3xl font-bold font-headline mb-4">New Arrivals</h2>
-                             <p className="text-muted-foreground mb-6">Check out the latest services added by our talented providers.</p>
-                             <Button>Browse All New Services</Button>
+                             <h2 className="text-3xl font-bold font-headline mb-4">Новые поступления</h2>
+                             <p className="text-muted-foreground mb-6">Ознакомьтесь с последними услугами, добавленными нашими талантливыми исполнителями.</p>
+                             <Button>Просмотреть все новые услуги</Button>
                         </div>
                         <div className="lg:col-span-2">
                             <div className="space-y-4">
@@ -289,4 +288,3 @@ export default function Home() {
         </Suspense>
     )
 }
-    

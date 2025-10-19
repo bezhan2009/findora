@@ -10,7 +10,7 @@ import { CartProvider } from '@/context/cart-provider';
 
 export const metadata: Metadata = {
   title: 'BizMart',
-  description: 'Find and book services from trusted providers.',
+  description: 'Находите и заказывайте услуги от проверенных исполнителей.',
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
