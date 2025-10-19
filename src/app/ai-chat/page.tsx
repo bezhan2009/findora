@@ -4,6 +4,8 @@
 import { useState, useRef, useEffect, memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +47,7 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
     return () => clearInterval(intervalId);
   }, [text, onComplete]);
 
-  return <p className="text-sm">{displayedText}</p>;
+  return <ReactMarkdown className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>;
 };
 
 const ServiceCardComponent = memo(({ service }: { service: Service }) => (
@@ -81,7 +83,7 @@ const MessageContent = ({ content }: { content: string }) => {
         }
     }
     
-    return <p className="text-sm">{content}</p>;
+    return <ReactMarkdown className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
 };
 
 const ModelMessage = ({ content }: { content: string }) => {
@@ -97,7 +99,7 @@ const ModelMessage = ({ content }: { content: string }) => {
                 if (isTyping && index === parts.length - 1) {
                     return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
                 }
-                return <p key={index} className="text-sm">{part}</p>;
+                return <ReactMarkdown key={index} className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>;
             })}
         </>
     );
@@ -111,6 +113,8 @@ export default function AIChatPage() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
 
   const scrollToBottom = () => {
     if (scrollViewportRef.current) {
@@ -148,6 +152,7 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -216,6 +221,7 @@ export default function AIChatPage() {
             <div className="p-4 border-t bg-background">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
                 <Input
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Спросите что-нибудь..."
@@ -232,5 +238,3 @@ export default function AIChatPage() {
     </div>
   );
 }
-
-    

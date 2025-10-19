@@ -21,6 +21,7 @@ export default function ChatPage() {
   const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const scrollViewportRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     if (scrollViewportRef.current) {
@@ -64,6 +65,7 @@ export default function ChatPage() {
     
     addMessageToConversation(selectedConversation.id, message);
     setNewMessage('');
+    inputRef.current?.focus();
   };
 
   return (
@@ -156,6 +158,7 @@ export default function ChatPage() {
               <div className="p-4 border-t bg-background">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
                   <Input 
+                    ref={inputRef}
                     placeholder="Напишите сообщение..." 
                     className="flex-grow" 
                     value={newMessage}

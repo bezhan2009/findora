@@ -4,6 +4,8 @@
 import { useState, useRef, useEffect, memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,7 +50,7 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
     return () => clearInterval(intervalId);
   }, [text, onComplete]);
 
-  return <p className="text-sm">{displayedText}</p>;
+  return <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-full" remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>;
 };
 
 const ServiceCard = memo(({ service }: { service: Service }) => (
@@ -85,7 +87,7 @@ const MessageContent = ({ content }: { content: string }) => {
         }
     }
     
-    return <p className="text-sm">{content}</p>;
+    return <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-full" remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
 };
 
 
@@ -103,7 +105,7 @@ const ModelMessage = ({ content }: { content: string }) => {
                 if (isTyping && index === parts.length - 1) {
                     return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
                 }
-                return <p key={index} className="text-sm">{part}</p>;
+                return <ReactMarkdown key={index} className="prose prose-sm dark:prose-invert max-w-full" remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>;
             })}
         </>
     );
@@ -117,6 +119,8 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
 
   const scrollToBottom = () => {
     if (scrollViewportRef.current) {
@@ -154,6 +158,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -220,6 +225,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
             <div className="p-3 border-t bg-background">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
                 <Input
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Спросите что-нибудь..."
