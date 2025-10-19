@@ -12,6 +12,7 @@ import { ThemeToggle } from './theme-toggle';
 import SearchBar from './search-bar';
 import { useCart } from '@/hooks/use-cart';
 import { Badge } from './ui/badge';
+import { useState } from 'react';
 
 
 const navLinks = [
@@ -23,11 +24,18 @@ const navLinks = [
 export default function Header() {
   const { user, logout, role } = useAuth();
   const { cartCount } = useCart();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 
   const getNavLinks = () => {
       if (!user) return [];
       return navLinks.filter(link => link.roles.includes(role || 'customer'));
   }
+  
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -37,7 +45,7 @@ export default function Header() {
             <Logo />
           </div>
           {/* Mobile Menu */}
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
@@ -48,11 +56,12 @@ export default function Header() {
               <div className="flex flex-col gap-6 p-4">
                 <Logo />
                 <nav className="flex flex-col gap-4">
-                  <Link href="/" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">Главная</Link>
+                  <Link onClick={handleLinkClick} href="/" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">Главная</Link>
                   {getNavLinks().map(({ href, label, icon: Icon }) => (
                     <Link
                       key={href}
                       href={href}
+                      onClick={handleLinkClick}
                       className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground"
                     >
                       <Icon className="h-5 w-5" />
@@ -61,11 +70,11 @@ export default function Header() {
                   ))}
                    {!user && (
                      <>
-                      <Link href="/login" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">
+                      <Link href="/login" onClick={handleLinkClick} className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">
                         <LogIn className="h-5 w-5" />
                         Войти
                       </Link>
-                      <Link href="/register" className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">
+                      <Link href="/register" onClick={handleLinkClick} className="flex items-center gap-2 rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground">
                         <User className="h-5 w-5" />
                         Регистрация
                       </Link>

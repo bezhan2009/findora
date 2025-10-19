@@ -47,8 +47,14 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
     return () => clearInterval(intervalId);
   }, [text, onComplete]);
 
-  return <ReactMarkdown className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>;
+  return (
+    <div className="prose prose-sm dark:prose-invert">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>
+      <span className="typing-cursor"></span>
+    </div>
+  );
 };
+
 
 const ServiceCardComponent = memo(({ service }: { service: Service }) => (
     <Link href={`/services/${service.id}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">

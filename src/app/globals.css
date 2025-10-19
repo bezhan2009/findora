@@ -77,3 +77,16 @@
     border-color: hsl(var(--border) / 0.2);
   }
 }
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: hsl(var(--primary)) }
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 0;
+  border-left: 2px solid hsl(var(--primary));
+  animation: blink-caret .75s step-end infinite;
+  margin-left: 2px;
+}

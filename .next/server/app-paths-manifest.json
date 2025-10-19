@@ -1,7 +1,7 @@
 {
-  "/ai-chat/page": "app/ai-chat/page.js",
   "/services/[id]/page": "app/services/[id]/page.js",
-  "/chat/page": "app/chat/page.js",
   "/cart/page": "app/cart/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/service/edit/page": "app/dashboard/service/edit/page.js"
 }
