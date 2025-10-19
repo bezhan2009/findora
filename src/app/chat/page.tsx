@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { useData } from '@/hooks/use-data';
 import { useAuth } from '@/hooks/use-auth';
 
-export default function ChatPage() {
+function ChatPageContent() {
   const { conversations, addMessageToConversation } = useData();
   const { user: authUser } = useAuth();
   const searchParams = useSearchParams();
@@ -183,4 +183,12 @@ export default function ChatPage() {
         </Card>
     </div>
   );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={<div>Загрузка чатов...</div>}>
+      <ChatPageContent />
+    </Suspense>
+  )
 }
