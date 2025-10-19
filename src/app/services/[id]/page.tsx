@@ -35,6 +35,15 @@ function ServicePageContent({ id }: { id: string }) {
   }
 
   const serviceReviews = allReviews.filter(review => service.reviews?.includes(review.id));
+  
+  const [imageSources, setImageSources] = useState(service.images);
+  
+  const handleImageError = (index: number) => {
+    const newImageSources = [...imageSources];
+    newImageSources[index] = 'https://placehold.co/800x500/F9F9F9/333333?text=Image+Not+Found';
+    setImageSources(newImageSources);
+  };
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -59,7 +68,7 @@ function ServicePageContent({ id }: { id: string }) {
 
           <Carousel className="w-full mb-8">
             <CarouselContent>
-              {service.images.map((img, index) => (
+              {imageSources.map((img, index) => (
                 <CarouselItem key={index}>
                   <Card className="overflow-hidden rounded-xl">
                     <Image
@@ -68,6 +77,7 @@ function ServicePageContent({ id }: { id: string }) {
                       width={800}
                       height={500}
                       className="w-full h-auto aspect-video object-cover"
+                      onError={() => handleImageError(index)}
                     />
                   </Card>
                 </CarouselItem>
