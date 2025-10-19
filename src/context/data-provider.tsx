@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, ReactNode } from 'react';
 import { initialData } from '@/lib/data';
-import type { User, Service, Review, Category, Conversation } from '@/lib/types';
+import type { User, Service, Review, Category, Conversation, ChatMessage } from '@/lib/types';
 
 interface DataContextType {
   users: User[];
@@ -11,7 +11,7 @@ interface DataContextType {
   categories: Category[];
   conversations: Conversation[];
   addConversation: (conversation: Conversation) => void;
-  // Add setter functions here later for CRUD operations
+  addMessageToConversation: (conversationId: string, message: ChatMessage) => void;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -26,6 +26,31 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const addMessageToConversation = (conversationId: string, message: ChatMessage) => {
+    setData(prevData => {
+      const newConversations = prevData.conversations.map(convo => {
+        if (convo.id === conversationId) {
+          return {
+            ...convo,
+            messages: [...convo.messages, message],
+            lastMessage: message.text,
+            timestamp: message.timestamp,
+          };
+        }
+        return convo;
+      });
+
+      // Move the updated conversation to the top
+      const updatedConvo = newConversations.find(c => c.id === conversationId);
+      const otherConvos = newConversations.filter(c => c.id !== conversationId);
+      
+      return {
+        ...prevData,
+        conversations: updatedConvo ? [updatedConvo, ...otherConvos] : newConversations
+      };
+    });
+  };
+
   const value = {
     users: data.users,
     services: data.services,
@@ -33,6 +58,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     categories: data.categories,
     conversations: data.conversations,
     addConversation,
+    addMessageToConversation,
   };
 
   return (
