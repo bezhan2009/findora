@@ -1,13 +1,13 @@
 "use client";
 
-import { use, Suspense, useState } from 'react';
+import { use, Suspense, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { users, services as allServices, reviews as allReviewsData } from '@/lib/data';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase, Instagram, Linkedin, Globe, Mail, Phone } from 'lucide-react';
+import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase, Instagram, Linkedin, Globe, Mail, Phone, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/hooks/use-auth';
@@ -169,6 +169,13 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
   
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(user.followers);
+  const [formattedFollowerCount, setFormattedFollowerCount] = useState<string | number>(user.followers);
+
+  useEffect(() => {
+    // Format the number on the client side to avoid hydration mismatch
+    setFormattedFollowerCount(followerCount.toLocaleString());
+  }, [followerCount]);
+
 
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -250,7 +257,7 @@ function ProfilePageContent({ params }: { params: { username: string } }) {
                 </Avatar>
                 <div className="mt-4 flex items-center justify-center gap-6 w-full">
                     <div className="text-center">
-                        <p className="text-2xl font-bold">{followerCount.toLocaleString()}</p>
+                        <p className="text-2xl font-bold">{formattedFollowerCount}</p>
                         <p className="text-sm text-muted-foreground">Подписчики</p>
                     </div>
                     <div className="text-center">
