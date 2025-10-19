@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { createContent, type ContentCreatorInput, type ContentCreatorOutput } from '@/ai/flows/content-creator-flow';
-import { Loader2, PenSquare, Sparkles, Tag, FileText, Image as ImageIcon } from 'lucide-react';
+import { Loader2, PenSquare, Sparkles, Tag, FileText, Image as ImageIcon, PlusCircle, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useData } from '@/hooks/use-data';
 import { useRouter } from 'next/navigation';
@@ -94,7 +94,7 @@ export default function AICreatorPage() {
       description: generatedContent.meta.summary, // Using summary for short description
       category: editableCategory,
       price: editablePrice,
-      images: editableImages.map(img => img.url),
+      images: editableImages.map(img => img.url).filter(url => url.trim() !== ''),
       rating: 0,
       reviewsCount: 0,
       reviews: [],
@@ -109,10 +109,18 @@ export default function AICreatorPage() {
     router.push(`/services/${newService.id}`);
   };
 
-  const handleImageURLChange = (index: number, newUrl: string) => {
+  const handleImageMetaChange = (index: number, field: keyof ImageMeta, value: string) => {
     const updatedImages = [...editableImages];
-    updatedImages[index].url = newUrl;
+    updatedImages[index][field] = value;
     setEditableImages(updatedImages);
+  }
+
+  const handleAddImageField = () => {
+    setEditableImages(prev => [...prev, { url: '', alt: 'Новое изображение', caption: '' }]);
+  }
+
+  const handleRemoveImageField = (index: number) => {
+    setEditableImages(prev => prev.filter((_, i) => i !== index));
   }
 
   return (
@@ -241,25 +249,46 @@ export default function AICreatorPage() {
                             rows={10}
                         />
                     </div>
-                     <div className="space-y-2">
+                     <div className="space-y-4">
                         <Label>Изображения</Label>
                         <div className="space-y-4">
                             {editableImages.map((image, index) => (
-                                <div key={index} className="flex items-start gap-4">
+                                <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
                                     <div className="relative w-24 h-24 rounded-md overflow-hidden shrink-0">
-                                        <Image src={image.url} alt={image.alt} fill className="object-cover" />
+                                        <Image 
+                                            src={image.url || 'https://placehold.co/100x100/F9F9F9/333333?text=?'} 
+                                            alt={image.alt} 
+                                            fill 
+                                            className="object-cover" 
+                                        />
                                     </div>
                                     <div className="flex-grow space-y-2">
                                         <Input 
                                             value={image.url}
-                                            onChange={(e) => handleImageURLChange(index, e.target.value)}
+                                            onChange={(e) => handleImageMetaChange(index, 'url', e.target.value)}
                                             placeholder="URL изображения"
                                         />
-                                        <p className="text-xs text-muted-foreground px-2">{image.caption}</p>
+                                        <Input 
+                                            value={image.alt}
+                                            onChange={(e) => handleImageMetaChange(index, 'alt', e.target.value)}
+                                            placeholder="Alt текст"
+                                        />
+                                        <Input 
+                                            value={image.caption}
+                                            onChange={(e) => handleImageMetaChange(index, 'caption', e.target.value)}
+                                            placeholder="Подпись"
+                                        />
                                     </div>
+                                     <Button variant="ghost" size="icon" onClick={() => handleRemoveImageField(index)}>
+                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
                                 </div>
                             ))}
                         </div>
+                        <Button variant="outline" onClick={handleAddImageField}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Добавить изображение
+                        </Button>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="generated-tags">Теги</Label>
