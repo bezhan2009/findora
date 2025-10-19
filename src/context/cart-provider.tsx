@@ -50,39 +50,37 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addToCart = (service: Service) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((i) => i.id === service.id);
-      let newItems;
-      if (existingItem) {
-        newItems = prevItems.map((i) =>
-          i.id === service.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      } else {
-        const newItem: CartItem = {
-          id: service.id,
-          name: service.title,
-          price: service.price,
-          quantity: 1,
-          image: service.images[0],
-        };
-        newItems = [...prevItems, newItem];
-      }
-      updateLocalStorage(newItems);
-      toast({ title: 'Добавлено в корзину!', description: service.title });
-      return newItems;
-    });
+    let newItems: CartItem[];
+    const existingItem = cartItems.find((i) => i.id === service.id);
+    
+    if (existingItem) {
+      newItems = cartItems.map((i) =>
+        i.id === service.id ? { ...i, quantity: i.quantity + 1 } : i
+      );
+    } else {
+      const newItem: CartItem = {
+        id: service.id,
+        name: service.title,
+        price: service.price,
+        quantity: 1,
+        image: service.images[0],
+      };
+      newItems = [...cartItems, newItem];
+    }
+    
+    setCartItems(newItems);
+    updateLocalStorage(newItems);
+    toast({ title: 'Добавлено в корзину!', description: service.title });
   };
 
   const removeFromCart = (id: string) => {
-    setCartItems((prevItems) => {
-      const itemToRemove = prevItems.find(item => item.id === id);
-      if (!itemToRemove) return prevItems;
-      
-      const newItems = prevItems.filter((item) => item.id !== id);
-      updateLocalStorage(newItems);
-      toast({ title: 'Удалено из корзины', description: itemToRemove.name });
-      return newItems;
-    });
+    const itemToRemove = cartItems.find(item => item.id === id);
+    if (!itemToRemove) return;
+
+    const newItems = cartItems.filter((item) => item.id !== id);
+    setCartItems(newItems);
+    updateLocalStorage(newItems);
+    toast({ title: 'Удалено из корзины', description: itemToRemove.name });
   };
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -90,13 +88,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       removeFromCart(id);
       return;
     }
-    setCartItems((prevItems) => {
-      const newItems = prevItems.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      );
-      updateLocalStorage(newItems);
-      return newItems;
-    });
+    const newItems = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity } : item
+    );
+    setCartItems(newItems);
+    updateLocalStorage(newItems);
   };
 
   const clearCart = () => {
