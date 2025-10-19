@@ -1,6 +1,6 @@
 "use client";
 
-import { use, Suspense } from 'react';
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -135,11 +135,9 @@ function ServicePageContent({ params }: { params: { id: string } }) {
 
 
 export default function ServicePage({ params }: { params: { id: string } }) {
-  const resolvedParams = use(Promise.resolve(params));
-  
   return (
     <Suspense fallback={<div>Загрузка услуги...</div>}>
-      <ServicePageContent params={resolvedParams} />
+      <ServicePageContent params={params} />
     </Suspense>
   );
 }
