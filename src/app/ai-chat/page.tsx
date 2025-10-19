@@ -170,7 +170,7 @@ export default function AIChatPage() {
                 {messages.map((msg, index) => (
                     <div
                         key={index}
-                        className={cn("flex items-start gap-4")}
+                        className={cn("flex items-start gap-4", msg.role === 'user' && 'justify-end')}
                     >
                     {msg.role === 'model' ? (
                         <>
@@ -185,14 +185,14 @@ export default function AIChatPage() {
                         </>
                     ) : (
                         <div className="flex items-start gap-4">
+                            <div className="prose prose-sm dark:prose-invert bg-muted px-4 py-3 rounded-2xl">
+                                <p className="text-base">{msg.content}</p>
+                            </div>
                             <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
                                 <AvatarFallback>
                                     <User className="h-5 w-5 text-muted-foreground"/>
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="prose prose-sm dark:prose-invert">
-                                <p className="text-base">{msg.content}</p>
-                            </div>
                         </div>
                     )}
                     </div>
@@ -204,7 +204,7 @@ export default function AIChatPage() {
                                 <Sparkles className="h-5 w-5 text-primary animate-pulse"/>
                             </AvatarFallback>
                         </Avatar>
-                        <div className="max-w-md rounded-2xl px-4 py-3 bg-muted rounded-bl-none">
+                        <div className="max-w-md rounded-2xl px-4 py-3 bg-muted">
                             <p className="text-sm text-muted-foreground animate-pulse">Думаю...</p>
                         </div>
                     </div>
