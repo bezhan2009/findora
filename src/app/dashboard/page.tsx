@@ -9,6 +9,7 @@ import { Bar, BarChart as RechartsBarChart, Line, LineChart as RechartsLineChart
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const chartData = [
   { name: 'Янв', views: 4000, likes: 2400, revenue: 2400 },
@@ -53,8 +54,8 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-bold font-headline">Панель управления</h1>
         </div>
         <div className="flex gap-2">
-            <Button>+ Добавить новую услугу</Button>
-            <Button variant="outline">+ Создать новый пост</Button>
+            <Button asChild><Link href="/dashboard/service/edit">+ Добавить новую услугу</Link></Button>
+            <Button asChild variant="outline"><Link href="/dashboard/post/edit">+ Создать новый пост</Link></Button>
         </div>
       </div>
 

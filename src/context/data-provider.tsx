@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, ReactNode } from 'react';
 import { initialData } from '@/lib/data';
-import type { User, Service, Review, Category, Conversation, ChatMessage } from '@/lib/types';
+import type { User, Service, Review, Category, Conversation, ChatMessage, Post } from '@/lib/types';
 
 interface DataContextType {
   users: User[];
@@ -12,6 +12,8 @@ interface DataContextType {
   conversations: Conversation[];
   addConversation: (conversation: Conversation) => void;
   addMessageToConversation: (conversationId: string, message: ChatMessage) => void;
+  addService: (service: Service) => void;
+  addPost: (username: string, post: Post) => void;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -51,6 +53,26 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const addService = (service: Service) => {
+    setData(prevData => ({
+      ...prevData,
+      services: [service, ...prevData.services]
+    }));
+  };
+
+  const addPost = (username: string, post: Post) => {
+    setData(prevData => {
+      const newUsers = prevData.users.map(user => {
+        if (user.username === username) {
+          const updatedPosts = user.posts ? [post, ...user.posts] : [post];
+          return { ...user, posts: updatedPosts };
+        }
+        return user;
+      });
+      return { ...prevData, users: newUsers };
+    });
+  };
+
   const value = {
     users: data.users,
     services: data.services,
@@ -59,6 +81,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     conversations: data.conversations,
     addConversation,
     addMessageToConversation,
+    addService,
+    addPost
   };
 
   return (
