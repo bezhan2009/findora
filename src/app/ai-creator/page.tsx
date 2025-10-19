@@ -33,6 +33,8 @@ export default function AICreatorPage() {
   const [editableBody, setEditableBody] = useState('');
   const [editableTags, setEditableTags] = useState<string[]>([]);
   const [editableImages, setEditableImages] = useState<ImageMeta[]>([]);
+  const [editablePrice, setEditablePrice] = useState(100);
+  const [editableCategory, setEditableCategory] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
@@ -52,6 +54,8 @@ export default function AICreatorPage() {
     setEditableBody('');
     setEditableTags([]);
     setEditableImages([]);
+    setEditablePrice(100);
+    setEditableCategory(categories[0]?.name || '');
 
     try {
       const input: ContentCreatorInput = {
@@ -65,6 +69,9 @@ export default function AICreatorPage() {
       setEditableBody(result.markdown);
       setEditableTags(result.meta.tags);
       setEditableImages(result.meta.images);
+      const guessedCategory = categories.find(cat => result.meta.tags.some(tag => cat.name.toLowerCase().includes(tag.toLowerCase())))?.name || categories[0]?.name;
+      setEditableCategory(guessedCategory || '');
+
     } catch (error) {
       console.error('Ошибка генерации контента:', error);
       setEditableBody('К сожалению, при генерации контента произошла ошибка. Пожалуйста, попробуйте еще раз.');
@@ -74,17 +81,14 @@ export default function AICreatorPage() {
   };
   
   const handlePublish = () => {
-    if (!generatedContent || !user) return;
-
-    // A simple heuristic to pick a category based on tags
-    const categoryName = categories.find(cat => editableTags.some(tag => cat.name.toLowerCase().includes(tag.toLowerCase())))?.name || categories[0]?.name || "General";
+    if (!generatedContent || !user || !editableCategory) return;
 
     const newService: Service = {
       id: `service-${Date.now()}`,
       title: editableTitle,
       description: generatedContent.meta.summary, // Using summary for short description
-      category: categoryName,
-      price: Math.floor(Math.random() * (200 - 50 + 1)) + 50, // Random price for demo
+      category: editableCategory,
+      price: editablePrice,
       images: editableImages.map(img => img.url),
       rating: 0,
       reviewsCount: 0,
@@ -197,6 +201,31 @@ export default function AICreatorPage() {
                             className="text-2xl font-bold font-headline h-auto p-2"
                         />
                     </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="price">Цена ($)</Label>
+                            <Input
+                                id="price"
+                                type="number"
+                                value={editablePrice}
+                                onChange={(e) => setEditablePrice(Number(e.target.value))}
+                                placeholder="100"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="category">Категория</Label>
+                             <Select value={editableCategory} onValueChange={setEditableCategory}>
+                              <SelectTrigger id="category">
+                                <SelectValue placeholder="Выберите категорию" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {categories.map(cat => (
+                                    <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
                      <div className="space-y-2">
                         <Label htmlFor="generated-body">Тело (Markdown)</Label>
                         <Textarea 
@@ -248,7 +277,7 @@ export default function AICreatorPage() {
               )}
             </CardContent>
             <CardFooter>
-                <Button onClick={handlePublish} disabled={!generatedContent}>Опубликовать как товар/услугу</Button>
+                <Button onClick={handlePublish} disabled={!generatedContent || !editableCategory}>Опубликовать как товар/услугу</Button>
             </CardFooter>
           </Card>
         </div>
@@ -256,5 +285,3 @@ export default function AICreatorPage() {
     </div>
   );
 }
-
-    
