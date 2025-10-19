@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { aiChat } from '@/ai/flows/ai-chat';
 import type { AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
-import type { Service } from '@/lib/types';
+import type { Service, User as ProviderUser } from '@/lib/types';
 
 interface Message {
   role: 'user' | 'model';
@@ -31,7 +31,7 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
   const [displayedText, setDisplayedText] = useState('');
   
   useEffect(() => {
-    if (text.startsWith('SERVICE_CARD')) {
+    if (text.startsWith('SERVICE_CARD') || text.startsWith('PROVIDER_CARD')) {
         setDisplayedText(text);
         onComplete();
         return;
@@ -64,7 +64,7 @@ const ServiceCard = memo(({ service }: { service: Service }) => (
             <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center gap-1 text-xs">
                     <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                    <span>{service.rating}</span>
+                    <span>{service.rating.toFixed(1)}</span>
                 </div>
                 <p className="text-sm font-bold">${service.price}</p>
             </div>
@@ -73,9 +73,38 @@ const ServiceCard = memo(({ service }: { service: Service }) => (
 ));
 ServiceCard.displayName = 'ServiceCard';
 
+const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
+    const totalRating = (provider.services ?? [])
+        .map(serviceId => useData().services.find(s => s.id === serviceId))
+        .filter(Boolean)
+        .reduce((acc, service) => acc + (service?.rating ?? 0), 0);
+    const avgRating = (provider.services?.length ?? 0) > 0 ? totalRating / (provider.services?.length ?? 1) : 0;
+
+    return (
+        <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
+            <div className="p-3 flex items-center gap-3">
+                 <Avatar className="h-12 w-12">
+                    <AvatarImage src={provider.avatar} alt={provider.name} />
+                    <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-grow">
+                    <h4 className="font-semibold text-sm truncate">{provider.name}</h4>
+                     <p className="text-xs text-muted-foreground line-clamp-1">{provider.bio}</p>
+                    <div className="flex items-center gap-1 text-xs mt-1">
+                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                        <span>{avgRating.toFixed(1)}</span>
+                        <span className="text-muted-foreground">({provider.followers} подписчиков)</span>
+                    </div>
+                </div>
+            </div>
+        </Link>
+    )
+});
+ProviderCard.displayName = 'ProviderCard';
+
 
 const MessageContent = ({ content }: { content: string }) => {
-    const { services } = useData();
+    const { services, users } = useData();
 
     if (content.startsWith('SERVICE_CARD')) {
         const serviceId = content.match(/\[(.*?)\]/)?.[1];
@@ -83,6 +112,16 @@ const MessageContent = ({ content }: { content: string }) => {
             const service = services.find(s => s.id === serviceId);
             if (service) {
                 return <ServiceCard service={service} />;
+            }
+        }
+    }
+
+    if (content.startsWith('PROVIDER_CARD')) {
+        const username = content.match(/\[(.*?)\]/)?.[1];
+        if (username) {
+            const provider = users.find(u => u.username === username);
+            if (provider) {
+                return <ProviderCard provider={provider} />;
             }
         }
     }
@@ -94,12 +133,12 @@ const MessageContent = ({ content }: { content: string }) => {
 const ModelMessage = ({ content }: { content: string }) => {
     const [isTyping, setIsTyping] = useState(true);
 
-    const parts = content.split(/(SERVICE_CARD\[.*?\])/g).filter(Boolean);
+    const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
     return (
         <>
             {parts.map((part, index) => {
-                if (part.startsWith('SERVICE_CARD')) {
+                if (part.startsWith('SERVICE_CARD') || part.startsWith('PROVIDER_CARD')) {
                     return <MessageContent key={index} content={part} />;
                 }
                 if (isTyping && index === parts.length - 1) {
@@ -120,7 +159,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { services } = useData();
+  const { services, users } = useData();
 
 
   const scrollToBottom = () => {
@@ -143,6 +182,23 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
     setIsLoading(true);
 
     try {
+      const providers = users
+        .filter(u => u.role === 'provider')
+        .map(u => {
+            const totalRating = (u.services ?? [])
+                .map(serviceId => services.find(s => s.id === serviceId))
+                .filter(Boolean)
+                .reduce((acc, service) => acc + (service?.rating ?? 0), 0);
+            const avgRating = (u.services?.length ?? 0) > 0 ? totalRating / (u.services?.length ?? 1) : 0;
+            return {
+                username: u.username,
+                name: u.name,
+                bio: u.bio,
+                role: u.role,
+                rating: avgRating,
+            }
+        });
+
       const chatRequest: AIChatInput = {
         history: messages,
         message: input,
@@ -153,6 +209,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
             price: s.price,
             category: s.category
         })),
+        providers,
       };
       
       const result = await aiChat(chatRequest);
