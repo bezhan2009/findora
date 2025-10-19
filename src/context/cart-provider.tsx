@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
@@ -99,13 +100,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearCart = () => {
-    setCartItems((prevItems) => {
-      if(prevItems.length > 0) {
+    if (cartItems.length > 0) {
+        setCartItems([]);
         updateLocalStorage([]);
         toast({ title: 'Корзина очищена' });
-      }
-      return [];
-    });
+    }
   };
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
