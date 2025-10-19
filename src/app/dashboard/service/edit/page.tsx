@@ -70,10 +70,10 @@ export default function EditServicePage() {
           <CardHeader>
             <div className="flex items-center gap-4 mb-2">
                 <Briefcase className="h-8 w-8 text-primary" />
-                <h1 className="text-3xl font-bold font-headline">Добавить новую услугу</h1>
+                <h1 className="text-3xl font-bold font-headline">Добавить новый товар/услугу</h1>
             </div>
             <CardDescription>
-              Заполните детали ниже, чтобы разместить вашу услугу на BizMart.
+              Заполните детали ниже, чтобы разместить ваш товар или услугу на BizMart.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -84,7 +84,7 @@ export default function EditServicePage() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Название услуги</FormLabel>
+                      <FormLabel>Название товара/услуги</FormLabel>
                       <FormControl>
                         <Input placeholder="например, 'Профессиональный дизайн логотипа'" {...field} />
                       </FormControl>
@@ -99,7 +99,7 @@ export default function EditServicePage() {
                     <FormItem>
                       <FormLabel>Подробное описание</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Опишите, что входит в вашу услугу..." rows={5} {...field} />
+                        <Textarea placeholder="Опишите, что входит в вашу услугу или характеристики товара..." rows={5} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -159,7 +159,7 @@ export default function EditServicePage() {
 
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                    {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  Опубликовать услугу
+                  Опубликовать
                 </Button>
               </form>
             </Form>

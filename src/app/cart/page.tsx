@@ -23,9 +23,9 @@ export default function CartPage() {
         <div className="text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
           <Package className="h-16 w-16 text-muted-foreground/50 mb-4" />
           <h2 className="text-2xl font-semibold mb-2 font-headline">Ваша корзина пуста</h2>
-          <p className="text-muted-foreground mb-6">Похоже, вы еще не добавили ни одной услуги.</p>
+          <p className="text-muted-foreground mb-6">Похоже, вы еще не добавили ни одного товара.</p>
           <Button asChild>
-            <Link href="/">Посмотреть услуги</Link>
+            <Link href="/">Посмотреть товары</Link>
           </Button>
         </div>
       ) : (
@@ -33,7 +33,7 @@ export default function CartPage() {
           <div className="lg:col-span-2">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>{cartCount} {cartCount === 1 ? 'Услуга' : (cartCount > 1 && cartCount < 5 ? 'Услуги' : 'Услуг')} в корзине</CardTitle>
+                    <CardTitle>{cartCount} {cartCount === 1 ? 'Товар' : (cartCount > 1 && cartCount < 5 ? 'Товара' : 'Товаров')} в корзине</CardTitle>
                     <Button variant="outline" size="sm" onClick={clearCart}>
                         <Trash2 className="mr-2 h-4 w-4" />
                         Очистить корзину

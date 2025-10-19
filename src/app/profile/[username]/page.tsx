@@ -7,7 +7,7 @@ import { notFound, useRouter } from 'next/navigation';
 import ServiceCard from '@/components/service-card';
 import ReviewCard from '@/components/review-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase, Instagram, Linkedin, Globe, Mail, Phone, Play } from 'lucide-react';
+import { MapPin, UserPlus, UserCheck, Edit, Grid3x3, MessageSquare, Video, ShoppingBag, UserRound, Package, Briefcase, Instagram, Linkedin, Globe, Mail, Phone, Heart, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/hooks/use-auth';
@@ -16,6 +16,35 @@ import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { useData } from '@/hooks/use-data';
+
+function PostInteraction({ post }: { post: Post }) {
+    const [liked, setLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(post.likes);
+
+    const handleLike = () => {
+        setLiked(!liked);
+        setLikeCount(prev => liked ? prev - 1 : prev + 1);
+    }
+    
+    return (
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+            <div className="flex flex-col items-center justify-center text-white text-center">
+                <p className="text-sm mb-4">{post.caption}</p>
+                <div className="flex items-center gap-6">
+                    <button onClick={handleLike} className="flex items-center gap-1.5 transition-colors hover:text-rose-400">
+                        <Heart className={liked ? "fill-current text-rose-500" : ""} />
+                        <span className="font-semibold">{likeCount.toLocaleString()}</span>
+                    </button>
+                    <button className="flex items-center gap-1.5 transition-colors hover:text-cyan-400">
+                        <MessageCircle />
+                        <span className="font-semibold">{post.comments.toLocaleString()}</span>
+                    </button>
+                </div>
+            </div>
+             {post.type === 'video' && <Video className="absolute top-2 right-2 h-6 w-6 text-white drop-shadow-lg" />}
+        </div>
+    );
+}
 
 function PostsGrid({ posts }: { posts: Post[] }) {
     if (!posts || posts.length === 0) {
@@ -32,7 +61,7 @@ function PostsGrid({ posts }: { posts: Post[] }) {
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-4">
             {posts.map(post => (
-                <div key={post.id} className="relative aspect-square group overflow-hidden rounded-lg">
+                <div key={post.id} className="relative aspect-square group overflow-hidden rounded-lg cursor-pointer">
                     <Image
                         src={post.url}
                         alt={post.caption}
@@ -40,10 +69,7 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                         data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
                     />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                        <p className="text-white text-center text-sm">{post.caption}</p>
-                    </div>
-                    {post.type === 'video' && <Video className="absolute top-2 right-2 h-6 w-6 text-white drop-shadow-lg" />}
+                    <PostInteraction post={post} />
                 </div>
             ))}
         </div>
@@ -57,7 +83,7 @@ function FollowingList({ following }: { following: UserStub[] }) {
                 <UserRound className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold mb-2 font-headline">Нет подписок</h3>
                 <p className="text-muted-foreground mb-6">Подпишитесь на исполнителей, чтобы видеть их обновления здесь.</p>
-                <Button asChild><Link href="/">Найти услуги</Link></Button>
+                <Button asChild><Link href="/">Найти товары</Link></Button>
             </div>
         )
     }
@@ -91,8 +117,8 @@ function OrdersList({ orders }: { orders: Order[] }) {
             <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                 <Package className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет заказов</h3>
-                <p className="text-muted-foreground mb-6">Приобретенные вами услуги появятся здесь.</p>
-                <Button asChild><Link href="/">Найти услуги</Link></Button>
+                <p className="text-muted-foreground mb-6">Приобретенные вами товары и услуги появятся здесь.</p>
+                <Button asChild><Link href="/">Найти товары</Link></Button>
             </div>
         )
     }
@@ -227,7 +253,7 @@ function ProfilePageContent({ username }: { username: string }) {
     return (
         <Tabs defaultValue="services" className="w-full">
             <TabsList className="grid w-full grid-cols-3 md:w-[28rem] mx-auto">
-              <TabsTrigger value="services"><Briefcase className="mr-2 h-4 w-4"/> Услуги</TabsTrigger>
+              <TabsTrigger value="services"><Briefcase className="mr-2 h-4 w-4"/> Товары</TabsTrigger>
               <TabsTrigger value="posts"><Grid3x3 className="mr-2 h-4 w-4"/> Посты</TabsTrigger>
               <TabsTrigger value="reviews"><MessageSquare className="mr-2 h-4 w-4"/> Отзывы</TabsTrigger>
             </TabsList>
@@ -238,9 +264,9 @@ function ProfilePageContent({ username }: { username: string }) {
                   ) : (
                     <div className="col-span-full text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
                         <Briefcase className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                        <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет услуг</h3>
-                        <p className="text-muted-foreground mb-6">Этот исполнитель еще не разместил ни одной услуги.</p>
-                        {isOwnProfile && <Button>Добавить первую услугу</Button>}
+                        <h3 className="text-2xl font-semibold mb-2 font-headline">Пока нет товаров</h3>
+                        <p className="text-muted-foreground mb-6">Этот исполнитель еще не разместил ни одного товара или услуги.</p>
+                        {isOwnProfile && <Button>Добавить первый товар</Button>}
                     </div>
                   )}
                 </div>

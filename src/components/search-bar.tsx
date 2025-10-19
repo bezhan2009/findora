@@ -71,7 +71,7 @@ export default function SearchBar() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
             type="search"
-            placeholder="Поиск услуг..."
+            placeholder="Поиск товаров и услуг..."
             className="w-full pl-10 pr-4 py-2"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

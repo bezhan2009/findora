@@ -129,10 +129,10 @@ function HomePageContent() {
         <div className="absolute inset-0 bg-black/60 z-10" />
         <div className="relative z-20 flex flex-col items-center text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight mb-4">
-            Найдите идеальную услугу. Мгновенно.
+            Найдите идеальные товары и услуги. Мгновенно.
           </h1>
           <p className="text-lg md:text-xl text-white/80 max-w-3xl mb-8">
-            BizMart - ваша главная площадка для поиска и заказа качественных услуг от проверенных профессионалов.
+            BizMart - ваша главная площадка для поиска и заказа качественных товаров и услуг от проверенных профессионалов.
           </p>
           <div className="w-full max-w-2xl">
             <PageSearchInput />
@@ -156,7 +156,7 @@ function HomePageContent() {
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
                         <Zap className="h-7 w-7 text-primary" />
-                        Рекомендуемые услуги
+                        Рекомендуемые товары и услуги
                     </h2>
                     <Button variant="outline" asChild>
                         <Link href="#">Смотреть все</Link>
@@ -194,7 +194,7 @@ function HomePageContent() {
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
                             <Star className="h-7 w-7 text-primary" />
-                            Популярные услуги
+                            Популярные товары
                         </h2>
                          <Button variant="outline" asChild>
                             <Link href="#">Смотреть все</Link>
@@ -242,8 +242,8 @@ function HomePageContent() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-1">
                              <h2 className="text-3xl font-bold font-headline mb-4">Новые поступления</h2>
-                             <p className="text-muted-foreground mb-6">Ознакомьтесь с последними услугами, добавленными нашими талантливыми исполнителями.</p>
-                             <Button>Просмотреть все новые услуги</Button>
+                             <p className="text-muted-foreground mb-6">Ознакомьтесь с последними товарами и услугами, добавленными нашими талантливыми исполнителями.</p>
+                             <Button>Просмотреть все новинки</Button>
                         </div>
                         <div className="lg:col-span-2">
                             <div className="space-y-4">

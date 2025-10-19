@@ -7,6 +7,8 @@ export interface Post {
   type: 'photo' | 'video';
   url: string;
   caption: string;
+  likes: number;
+  comments: number;
 }
 
 export interface Order {

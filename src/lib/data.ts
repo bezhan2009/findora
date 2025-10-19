@@ -14,9 +14,9 @@ const users: User[] = [
     followers: 9999,
     following: [],
      posts: [
-      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Проведение командной встречи' },
-      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop', caption: 'Наставничество следующего поколения лидеров' },
-      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop', caption: 'Заключение сделки' },
+      { id: 'p1', type: 'photo', url: 'https://images.unsplash.com/photo-1542744095-291d1f67b221?w=400&h=400&fit=crop', caption: 'Проведение командной встречи', likes: 120, comments: 12 },
+      { id: 'p2', type: 'photo', url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop', caption: 'Наставничество следующего поколения лидеров', likes: 256, comments: 34 },
+      { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop', caption: 'Заключение сделки', likes: 512, comments: 50 },
     ],
     socials: {
         instagram: "https://instagram.com/bizmart",
@@ -38,9 +38,9 @@ const users: User[] = [
     followers: 1250,
     following: [],
     posts: [
-      { id: 'p1-1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Недавний проект по UI/UX дизайну' },
-      { id: 'p1-2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'Мое текущее рабочее место' },
-      { id: 'p1-3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Код, код и еще раз код.' },
+      { id: 'p1-1', type: 'photo', url: 'https://images.unsplash.com/photo-1519241047957-be31d7379a5d?w=400&h=400&fit=crop', caption: 'Недавний проект по UI/UX дизайну', likes: 88, comments: 5 },
+      { id: 'p1-2', type: 'photo', url: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop', caption: 'Мое текущее рабочее место', likes: 150, comments: 18 },
+      { id: 'p1-3', type: 'photo', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=400&fit=crop', caption: 'Код, код и еще раз код.', likes: 230, comments: 25 },
     ],
     socials: {
         linkedin: "https://linkedin.com/in/alicej",
@@ -61,7 +61,7 @@ const users: User[] = [
     followers: 840,
     following: [],
     posts: [
-       { id: 'p2-1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Проект по брендингу логотипа' },
+       { id: 'p2-1', type: 'photo', url: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop', caption: 'Проект по брендингу логотипа', likes: 402, comments: 45 },
     ]
   },
   {
@@ -77,7 +77,7 @@ const users: User[] = [
     followers: 530,
     following: [],
     posts: [
-       { id: 'p3-1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'Сила хорошего контента.' },
+       { id: 'p3-1', type: 'photo', url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=400&fit=crop', caption: 'Сила хорошего контента.', likes: 189, comments: 22 },
     ]
   },
    {
@@ -119,8 +119,8 @@ const users: User[] = [
     followers: 2100,
     following: [],
     posts: [
-       { id: 'p5-1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Мозговой штурм следующей большой кампании.' },
-       { id: 'p5-2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Анализ последних рыночных тенденций.' },
+       { id: 'p5-1', type: 'photo', url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=400&fit=crop', caption: 'Мозговой штурм следующей большой кампании.', likes: 350, comments: 40 },
+       { id: 'p5-2', type: 'photo', url: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&h=400&fit=crop', caption: 'Анализ последних рыночных тенденций.', likes: 180, comments: 15 },
     ],
     socials: {
         linkedin: "https://linkedin.com/in/evamartinez",

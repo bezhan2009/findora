@@ -29,9 +29,9 @@ export default function FavoritesPage() {
         <div className="text-center py-20 bg-card rounded-xl flex flex-col items-center justify-center">
             <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" />
           <h2 className="text-2xl font-semibold mb-2 font-headline">Пока нет избранного</h2>
-          <p className="text-muted-foreground mb-6">Нажмите на сердечко на любой услуге, чтобы сохранить ее здесь.</p>
+          <p className="text-muted-foreground mb-6">Нажмите на сердечко на любом товаре, чтобы сохранить его здесь.</p>
           <Button asChild>
-            <Link href="/">Посмотреть услуги</Link>
+            <Link href="/">Посмотреть товары</Link>
           </Button>
         </div>
       )}

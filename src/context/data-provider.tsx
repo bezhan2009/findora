@@ -14,6 +14,7 @@ interface DataContextType {
   addMessageToConversation: (conversationId: string, message: ChatMessage) => void;
   addService: (service: Service) => void;
   addPost: (username: string, post: Post) => void;
+  addReview: (serviceId: string, review: Review) => void;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -73,6 +74,31 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const addReview = (serviceId: string, review: Review) => {
+    setData(prevData => {
+        const newReviews = [review, ...prevData.reviews];
+        const newServices = prevData.services.map(service => {
+            if (service.id === serviceId) {
+                const newReviewsCount = service.reviewsCount + 1;
+                const totalRating = (service.rating * service.reviewsCount) + review.rating;
+                const newRating = totalRating / newReviewsCount;
+                return {
+                    ...service,
+                    reviews: [review.id, ...service.reviews],
+                    reviewsCount: newReviewsCount,
+                    rating: newRating,
+                };
+            }
+            return service;
+        });
+        return {
+            ...prevData,
+            reviews: newReviews,
+            services: newServices,
+        };
+    });
+  };
+
   const value = {
     users: data.users,
     services: data.services,
@@ -82,7 +108,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     addConversation,
     addMessageToConversation,
     addService,
-    addPost
+    addPost,
+    addReview
   };
 
   return (
