@@ -42,7 +42,7 @@ const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => vo
         clearInterval(intervalId);
         onComplete();
       }
-    }, 20);
+    }, 10); // Speed up typing animation
 
     return () => clearInterval(intervalId);
   }, [text, onComplete]);
@@ -304,3 +304,5 @@ export default function AIChatPage() {
     </div>
   );
 }
+
+    
