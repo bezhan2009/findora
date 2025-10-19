@@ -131,9 +131,7 @@ function PostsGrid({ posts }: { posts: Post[] }) {
                                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                                     data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
                                 />
-                                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                                    <PostInteraction post={post} onCommentClick={() => {}} />
-                                </div>
+                                <PostInteraction post={post} onCommentClick={() => {}} />
                                 {isVideo && (
                                     <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1">
                                         <Video className="h-4 w-4 text-white" />
