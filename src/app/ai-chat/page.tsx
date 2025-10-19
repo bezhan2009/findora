@@ -162,8 +162,8 @@ export default function AIChatPage() {
         <Sparkles className="h-8 w-8 text-primary" />
         <h1 className="text-4xl font-bold font-headline">AI Ассистент</h1>
       </div>
-      <Card className="flex-grow flex flex-col shadow-lg rounded-xl">
-        <CardContent className="p-0 flex flex-col flex-grow overflow-hidden">
+      <Card className="flex-grow flex flex-col shadow-lg rounded-xl overflow-hidden">
+        <CardContent className="p-0 flex flex-col flex-grow">
             <ScrollArea className="flex-grow p-6" viewportRef={scrollViewportRef}>
                 <div className="space-y-6">
                 {messages.map((msg, index) => (
