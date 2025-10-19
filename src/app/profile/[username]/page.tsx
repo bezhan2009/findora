@@ -19,7 +19,7 @@ import { useData } from '@/hooks/use-data';
 
 function PostInteraction({ post }: { post: Post }) {
     const [liked, setLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(post.likes);
+    const [likeCount, setLikeCount] = useState(post.likes ?? 0);
 
     const handleLike = () => {
         setLiked(!liked);
@@ -37,7 +37,7 @@ function PostInteraction({ post }: { post: Post }) {
                     </button>
                     <button className="flex items-center gap-1.5 transition-colors hover:text-cyan-400">
                         <MessageCircle />
-                        <span className="font-semibold">{post.comments.toLocaleString()}</span>
+                        <span className="font-semibold">{post.comments?.toLocaleString() ?? 0}</span>
                     </button>
                 </div>
             </div>
@@ -58,20 +58,41 @@ function PostsGrid({ posts }: { posts: Post[] }) {
         )
     }
 
+    const getYouTubeThumbnail = (url: string) => {
+        const videoId = url.split('v=')[1] || url.split('/').pop();
+        const ampersandPosition = videoId?.indexOf('&');
+        if (videoId && ampersandPosition !== -1) {
+            return `https://img.youtube.com/vi/${videoId.substring(0, ampersandPosition)}/0.jpg`;
+        }
+        return `https://img.youtube.com/vi/${videoId}/0.jpg`;
+    };
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-1 md:gap-4">
-            {posts.map(post => (
-                <div key={post.id} className="relative aspect-square group overflow-hidden rounded-lg cursor-pointer">
-                    <Image
-                        src={post.url}
-                        alt={post.caption}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
-                    />
-                    <PostInteraction post={post} />
-                </div>
-            ))}
+            {posts.map(post => {
+                const isVideo = post.type === 'video';
+                const imageUrl = isVideo ? getYouTubeThumbnail(post.url) : post.url;
+
+                return (
+                    <div key={post.id} className="relative aspect-square group overflow-hidden rounded-lg cursor-pointer">
+                         <a href={post.url} target="_blank" rel="noopener noreferrer">
+                            <Image
+                                src={imageUrl}
+                                alt={post.caption}
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={post.type === 'photo' ? 'photo' : 'video'}
+                            />
+                            <PostInteraction post={post} />
+                             {isVideo && (
+                                <div className="absolute top-2 right-2 bg-black/50 rounded-full p-1">
+                                    <Video className="h-4 w-4 text-white" />
+                                </div>
+                            )}
+                        </a>
+                    </div>
+                );
+            })}
         </div>
     )
 }

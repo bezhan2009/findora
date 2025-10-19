@@ -1,8 +1,3 @@
 {
-  "/services/[id]/page": "app/services/[id]/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/service/edit/page": "app/dashboard/service/edit/page.js",
-  "/profile/[username]/page": "app/profile/[username]/page.js",
-  "/dashboard/post/edit/page": "app/dashboard/post/edit/page.js",
   "/page": "app/page.js"
 }
