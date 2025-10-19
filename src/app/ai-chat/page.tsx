@@ -157,13 +157,13 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 h-[calc(100vh-8rem)] flex flex-col">
+    <div className="container mx-auto px-4 py-8 flex flex-col flex-grow">
        <div className="flex items-center gap-4 mb-8">
         <Sparkles className="h-8 w-8 text-primary" />
         <h1 className="text-4xl font-bold font-headline">AI Ассистент</h1>
       </div>
       <Card className="flex-grow flex flex-col shadow-lg rounded-xl overflow-hidden">
-        <CardContent className="p-0 flex flex-col flex-grow">
+        <CardContent className="p-0 flex flex-col flex-grow overflow-hidden">
             <ScrollArea className="flex-grow p-6" viewportRef={scrollViewportRef}>
                 <div className="space-y-6">
                 {messages.map((msg, index) => (
