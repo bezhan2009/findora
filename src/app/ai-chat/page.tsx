@@ -1,20 +1,108 @@
+
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Sparkles, User, MessageSquare } from 'lucide-react';
+import { Send, Sparkles, User, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { aiChat } from '@/ai/flows/ai-chat';
-import type { AIChatInput } from '@/ai/flows/ai-chat';
+import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
+import { useData } from '@/hooks/use-data';
+import type { Service } from '@/lib/types';
 
 interface Message {
   role: 'user' | 'model';
   content: string;
 }
+
+// --- Reusable components for displaying AI responses ---
+
+const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    if (text.startsWith('SERVICE_CARD')) {
+        setDisplayedText(text);
+        onComplete();
+        return;
+    }
+
+    let i = 0;
+    const intervalId = setInterval(() => {
+      setDisplayedText(text.substring(0, i + 1));
+      i++;
+      if (i > text.length) {
+        clearInterval(intervalId);
+        onComplete();
+      }
+    }, 20);
+
+    return () => clearInterval(intervalId);
+  }, [text, onComplete]);
+
+  return <p className="text-sm">{displayedText}</p>;
+};
+
+const ServiceCardComponent = memo(({ service }: { service: Service }) => (
+    <Link href={`/services/${service.id}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
+        <div className="relative h-40 w-full">
+            <Image src={service.images[0]} alt={service.title} fill className="object-cover" />
+        </div>
+        <div className="p-3">
+            <h4 className="font-semibold text-base truncate">{service.title}</h4>
+            <p className="text-sm text-muted-foreground line-clamp-2">{service.description}</p>
+            <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center gap-1 text-sm">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span>{service.rating}</span>
+                </div>
+                <p className="text-base font-bold">${service.price}</p>
+            </div>
+        </div>
+    </Link>
+));
+ServiceCardComponent.displayName = 'ServiceCardComponent';
+
+const MessageContent = ({ content }: { content: string }) => {
+    const { services } = useData();
+
+    if (content.startsWith('SERVICE_CARD')) {
+        const serviceId = content.match(/\[(.*?)\]/)?.[1];
+        if (serviceId) {
+            const service = services.find(s => s.id === serviceId);
+            if (service) {
+                return <ServiceCardComponent service={service} />;
+            }
+        }
+    }
+    
+    return <p className="text-sm">{content}</p>;
+};
+
+const ModelMessage = ({ content }: { content: string }) => {
+    const [isTyping, setIsTyping] = useState(true);
+    const parts = content.split(/(SERVICE_CARD\[.*?\])/g).filter(Boolean);
+
+    return (
+        <>
+            {parts.map((part, index) => {
+                if (part.startsWith('SERVICE_CARD')) {
+                    return <MessageContent key={index} content={part} />;
+                }
+                if (isTyping && index === parts.length - 1) {
+                    return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
+                }
+                return <p key={index} className="text-sm">{part}</p>;
+            })}
+        </>
+    );
+};
+
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([
@@ -45,7 +133,7 @@ export default function AIChatPage() {
 
     try {
       const chatRequest: AIChatInput = {
-        history: messages.map(msg => ({ role: msg.role, content: msg.content })),
+        history: messages,
         message: input,
       };
       
@@ -96,7 +184,11 @@ export default function AIChatPage() {
                             : "bg-primary text-primary-foreground rounded-br-none"
                         )}
                     >
-                        <p className="text-sm">{msg.content}</p>
+                        {msg.role === 'model' ? (
+                            <ModelMessage content={msg.content} />
+                        ) : (
+                            <p className="text-sm">{msg.content}</p>
+                        )}
                     </div>
                       {msg.role === 'user' && (
                         <Avatar className="h-9 w-9 border-2 border-muted">
@@ -140,3 +232,5 @@ export default function AIChatPage() {
     </div>
   );
 }
+
+    
