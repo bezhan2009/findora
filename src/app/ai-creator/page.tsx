@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -8,10 +9,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { createContent, type ContentCreatorInput, type ContentCreatorOutput } from '@/ai/flows/content-creator-flow';
-import { Loader2, PenSquare, Sparkles, Tag, FileText } from 'lucide-react';
+import { Loader2, PenSquare, Sparkles, Tag, FileText, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { useData } from '@/hooks/use-data';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import type { Service } from '@/lib/types';
+import Image from 'next/image';
+
+type ImageMeta = {
+    url: string;
+    alt: string;
+    caption: string;
+}
 
 export default function AICreatorPage() {
   const [prompt, setPrompt] = useState('');
@@ -22,9 +32,11 @@ export default function AICreatorPage() {
   const [editableTitle, setEditableTitle] = useState('');
   const [editableBody, setEditableBody] = useState('');
   const [editableTags, setEditableTags] = useState<string[]>([]);
+  const [editableImages, setEditableImages] = useState<ImageMeta[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const { addService, categories } = useData();
   const router = useRouter();
 
   if (!user) {
@@ -39,6 +51,7 @@ export default function AICreatorPage() {
     setEditableTitle('');
     setEditableBody('');
     setEditableTags([]);
+    setEditableImages([]);
 
     try {
       const input: ContentCreatorInput = {
@@ -51,6 +64,7 @@ export default function AICreatorPage() {
       setEditableTitle(result.meta.title);
       setEditableBody(result.markdown);
       setEditableTags(result.meta.tags);
+      setEditableImages(result.meta.images);
     } catch (error) {
       console.error('Ошибка генерации контента:', error);
       setEditableBody('К сожалению, при генерации контента произошла ошибка. Пожалуйста, попробуйте еще раз.');
@@ -60,9 +74,37 @@ export default function AICreatorPage() {
   };
   
   const handlePublish = () => {
-      // Placeholder for publish logic as per user request
-      alert('Функция публикации с реальным бэкендом еще не реализована.');
+    if (!generatedContent || !user) return;
+
+    // A simple heuristic to pick a category based on tags
+    const categoryName = categories.find(cat => editableTags.some(tag => cat.name.toLowerCase().includes(tag.toLowerCase())))?.name || categories[0]?.name || "General";
+
+    const newService: Service = {
+      id: `service-${Date.now()}`,
+      title: editableTitle,
+      description: generatedContent.meta.summary, // Using summary for short description
+      category: categoryName,
+      price: Math.floor(Math.random() * (200 - 50 + 1)) + 50, // Random price for demo
+      images: editableImages.map(img => img.url),
+      rating: 0,
+      reviewsCount: 0,
+      reviews: [],
+      provider: {
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar,
+      },
+    };
+
+    addService(newService);
+    router.push(`/services/${newService.id}`);
   };
+
+  const handleImageURLChange = (index: number, newUrl: string) => {
+    const updatedImages = [...editableImages];
+    updatedImages[index].url = newUrl;
+    setEditableImages(updatedImages);
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -161,9 +203,29 @@ export default function AICreatorPage() {
                             id="generated-body"
                             value={editableBody}
                             onChange={(e) => setEditableBody(e.target.value)}
-                            className="min-h-[400px] leading-relaxed font-mono text-sm"
-                            rows={15}
+                            className="min-h-[250px] leading-relaxed font-mono text-sm"
+                            rows={10}
                         />
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Изображения</Label>
+                        <div className="space-y-4">
+                            {editableImages.map((image, index) => (
+                                <div key={index} className="flex items-start gap-4">
+                                    <div className="relative w-24 h-24 rounded-md overflow-hidden shrink-0">
+                                        <Image src={image.url} alt={image.alt} fill className="object-cover" />
+                                    </div>
+                                    <div className="flex-grow space-y-2">
+                                        <Input 
+                                            value={image.url}
+                                            onChange={(e) => handleImageURLChange(index, e.target.value)}
+                                            placeholder="URL изображения"
+                                        />
+                                        <p className="text-xs text-muted-foreground px-2">{image.caption}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="generated-tags">Теги</Label>
@@ -186,7 +248,7 @@ export default function AICreatorPage() {
               )}
             </CardContent>
             <CardFooter>
-                <Button onClick={handlePublish} disabled={!generatedContent}>Опубликовать</Button>
+                <Button onClick={handlePublish} disabled={!generatedContent}>Опубликовать как товар/услугу</Button>
             </CardFooter>
           </Card>
         </div>
@@ -194,3 +256,5 @@ export default function AICreatorPage() {
     </div>
   );
 }
+
+    

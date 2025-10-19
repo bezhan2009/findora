@@ -3,5 +3,6 @@
   "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/dashboard/service/edit/page": "app/dashboard/service/edit/page.js",
-  "/ai-chat/page": "app/ai-chat/page.js"
+  "/ai-chat/page": "app/ai-chat/page.js",
+  "/ai-creator/page": "app/ai-creator/page.js"
 }
