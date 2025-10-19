@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface FavoritesContextType {
@@ -27,32 +28,30 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const updateLocalStorage = (ids: string[]) => {
+  const updateLocalStorage = useCallback((ids: string[]) => {
     try {
       localStorage.setItem('bizmart-favorites', JSON.stringify(ids));
     } catch (error) {
       console.error("Не удалось сохранить избранное в localStorage", error);
     }
-  };
+  }, []);
 
   const addFavorite = (id: string) => {
-    setFavoriteIds((prevIds) => {
-      if (prevIds.includes(id)) return prevIds;
-      const newIds = [...prevIds, id];
-      updateLocalStorage(newIds);
-      toast({ title: 'Добавлено в избранное!' });
-      return newIds;
-    });
+    if (favoriteIds.includes(id)) return;
+    
+    const newIds = [...favoriteIds, id];
+    setFavoriteIds(newIds);
+    updateLocalStorage(newIds);
+    toast({ title: 'Добавлено в избранное!' });
   };
 
   const removeFavorite = (id: string) => {
-    setFavoriteIds((prevIds) => {
-      if (!prevIds.includes(id)) return prevIds;
-      const newIds = prevIds.filter((favId) => favId !== id);
-      updateLocalStorage(newIds);
-      toast({ title: 'Удалено из избранного' });
-      return newIds;
-    });
+    if (!favoriteIds.includes(id)) return;
+
+    const newIds = favoriteIds.filter((favId) => favId !== id);
+    setFavoriteIds(newIds);
+    updateLocalStorage(newIds);
+    toast({ title: 'Удалено из избранного' });
   };
 
   const isFavorite = (id: string) => {
