@@ -79,11 +79,10 @@ const ServiceCardComponent = memo(({ service }: { service: Service }) => (
 ServiceCardComponent.displayName = 'ServiceCardComponent';
 
 const ProviderCardComponent = memo(({ provider }: { provider: ProviderUser }) => {
-    const totalRating = (provider.services ?? [])
-        .map(serviceId => useData().services.find(s => s.id === serviceId))
-        .filter(Boolean)
-        .reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-    const avgRating = (provider.services?.length ?? 0) > 0 ? totalRating / (provider.services?.length ?? 1) : 0;
+    const { services } = useData();
+    const providerServices = services.filter(s => provider.services?.includes(s.id));
+    const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
+    const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
 
     return (
         <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
@@ -189,11 +188,9 @@ export default function AIChatPage() {
       const providers = users
         .filter(u => u.role === 'provider')
         .map(u => {
-            const totalRating = (u.services ?? [])
-                .map(serviceId => services.find(s => s.id === serviceId))
-                .filter(Boolean)
-                .reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-            const avgRating = (u.services?.length ?? 0) > 0 ? totalRating / (u.services?.length ?? 1) : 0;
+            const providerServices = services.filter(s => u.services?.includes(s.id));
+            const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
+            const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
             return {
                 username: u.username,
                 name: u.name,
@@ -211,7 +208,8 @@ export default function AIChatPage() {
             title: s.title,
             description: s.description,
             price: s.price,
-            category: s.category
+            category: s.category,
+            rating: s.rating,
         })),
         providers,
       };
@@ -309,3 +307,5 @@ export default function AIChatPage() {
     </div>
   );
 }
+
+    

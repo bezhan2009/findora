@@ -27,6 +27,12 @@ interface AIChatWidgetProps {
   onClose: () => void;
 }
 
+const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
+    <div className="animate-card-in opacity-0" style={{ animationFillMode: 'forwards' }}>
+        {children}
+    </div>
+);
+
 const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
     useEffect(() => {
         if (text) {
@@ -70,7 +76,7 @@ const ServiceCard = memo(({ service }: { service: Service }) => (
                     <Star className="h-3 w-3 text-yellow-400 fill-current" />
                     <span>{service.rating.toFixed(1)}</span>
                 </div>
-                <p className="text-sm font-bold">${service.price}</p>
+                <p className="text-sm font-bold">{service.price} TJS</p>
             </div>
         </div>
     </Link>
@@ -78,11 +84,10 @@ const ServiceCard = memo(({ service }: { service: Service }) => (
 ServiceCard.displayName = 'ServiceCard';
 
 const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
-    const totalRating = (provider.services ?? [])
-        .map(serviceId => useData().services.find(s => s.id === serviceId))
-        .filter(Boolean)
-        .reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-    const avgRating = (provider.services?.length ?? 0) > 0 ? totalRating / (provider.services?.length ?? 1) : 0;
+    const { services } = useData();
+    const providerServices = services.filter(s => provider.services?.includes(s.id));
+    const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
+    const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
 
     return (
         <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
@@ -115,7 +120,7 @@ const MessageContent = ({ content }: { content: string }) => {
         if (serviceId) {
             const service = services.find(s => s.id === serviceId);
             if (service) {
-                return <ServiceCard service={service} />;
+                return <AnimatedCard><ServiceCard service={service} /></AnimatedCard>;
             }
         }
     }
@@ -125,7 +130,7 @@ const MessageContent = ({ content }: { content: string }) => {
         if (username) {
             const provider = users.find(u => u.username === username);
             if (provider) {
-                return <ProviderCard provider={provider} />;
+                return <AnimatedCard><ProviderCard provider={provider} /></AnimatedCard>;
             }
         }
     }
@@ -164,6 +169,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { services, users } = useData();
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
 
   const scrollToBottom = () => {
@@ -189,11 +195,9 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
       const providers = users
         .filter(u => u.role === 'provider')
         .map(u => {
-            const totalRating = (u.services ?? [])
-                .map(serviceId => services.find(s => s.id === serviceId))
-                .filter(Boolean)
-                .reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-            const avgRating = (u.services?.length ?? 0) > 0 ? totalRating / (u.services?.length ?? 1) : 0;
+            const providerServices = services.filter(s => u.services?.includes(s.id));
+            const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
+            const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
             return {
                 username: u.username,
                 name: u.name,
@@ -211,7 +215,8 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
             title: s.title,
             description: s.description,
             price: s.price,
-            category: s.category
+            category: s.category,
+            rating: s.rating
         })),
         providers,
       };
@@ -292,16 +297,18 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                 </div>
             </ScrollArea>
             <div className="p-3 border-t bg-background">
-                <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                <form onSubmit={handleSendMessage} className={cn("relative", isInputFocused && "focused")}>
                 <Input
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
                     placeholder="Спросите что-нибудь..."
-                    className="flex-grow"
+                    className="flex-grow pr-10"
                     disabled={isLoading}
                 />
-                <Button type="submit" size="icon" disabled={isLoading}>
+                <Button type="submit" size="icon" disabled={isLoading} className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
                     <Send className="h-4 w-4" />
                 </Button>
                 </form>
@@ -310,3 +317,5 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
     </Card>
   );
 }
+
+    
