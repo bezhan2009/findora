@@ -12,6 +12,7 @@ import type { Service } from '@/lib/types';
 const ChatMessageSchema = z.object({
   role: z.enum(['user', 'model']),
   content: z.string(),
+  photoDataUri: z.string().optional(),
 });
 
 // Define the service schema for the input
@@ -101,21 +102,25 @@ export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
   promptParts.push(`
 Here is the conversation history:
 {{#each history}}
-{{role}}: {{content}}
+**{{role}}**: 
+{{#if photoDataUri}}
+{{media url=photoDataUri}}
+{{/if}}
+{{{content}}}
 {{/each}}
 
-User: {{{message}}}
+**user**: 
+{{#if photoDataUri}}
+{{media url=photoDataUri}}
+{{/if}}
+{{{message}}}
 `);
 
-  if (input.photoDataUri) {
-    promptParts.push(`{{media url=photoDataUri}}`);
-  }
-
-  promptParts.push(`AI Assistant:`);
+  promptParts.push(`**model**:`);
 
   const chatPrompt = ai.definePrompt(
     {
-      name: 'aiChatPrompt_dynamic_v4',
+      name: 'aiChatPrompt_dynamic_v5_with_image_in_history',
       input: {schema: z.object({
         history: z.array(ChatMessageSchema),
         message: z.string(),

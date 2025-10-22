@@ -19,10 +19,11 @@ import Logo from '@/components/logo';
 interface Message {
   role: 'user' | 'model';
   content: string;
+  photoDataUri?: string;
 }
 
 const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
-    <div className="animate-card-in opacity-0" style={{ animationFillMode: 'forwards' }}>
+    <div className="animate-card-in" style={{ animationFillMode: 'forwards' }}>
         {children}
     </div>
 );
@@ -194,7 +195,9 @@ export default function AIChatPage() {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => scrollToBottom('auto'), 100);
+    if (!isLoading) {
+      setTimeout(() => scrollToBottom('auto'), 100);
+    }
   }, [messages, isLoading]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -214,9 +217,13 @@ export default function AIChatPage() {
     e.preventDefault();
     if ((!input.trim() && !imageDataUri) || isLoading) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: Message = { role: 'user', content: input, photoDataUri: imageDataUri || undefined };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setImagePreview(null);
+    setImageDataUri(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    
     setIsLoading(true);
 
     try {
@@ -261,9 +268,6 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-      setImagePreview(null);
-      setImageDataUri(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
       inputRef.current?.focus();
     }
   };
@@ -284,7 +288,10 @@ export default function AIChatPage() {
                 {messages.map((msg, index) => (
                     <div
                         key={index}
-                        className={cn("flex items-start gap-4", msg.role === 'user' && 'justify-end')}
+                        className={cn(
+                            "flex items-start gap-4 animate-card-in", 
+                            msg.role === 'user' ? 'justify-end' : ''
+                        )}
                     >
                     {msg.role === 'model' ? (
                         <>
@@ -298,21 +305,26 @@ export default function AIChatPage() {
                             </div>
                         </>
                     ) : (
-                        <div className="flex items-start gap-4">
-                            <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl">
-                                <p className="text-base">{msg.content}</p>
+                        <>
+                            <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl max-w-[80%]">
+                                {msg.photoDataUri && (
+                                  <div className="relative w-full aspect-video rounded-md overflow-hidden mb-2">
+                                    <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
+                                  </div>
+                                )}
+                                {msg.content && <p className="text-base">{msg.content}</p>}
                             </div>
                             <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
                                 <AvatarFallback>
                                     <User className="h-5 w-5 text-muted-foreground"/>
                                 </AvatarFallback>
                             </Avatar>
-                        </div>
+                        </>
                     )}
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-4 animate-card-in">
                         <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
                             <AvatarFallback>
                                 <Sparkles className="h-5 w-5 text-primary animate-pulse"/>
