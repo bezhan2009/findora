@@ -177,12 +177,13 @@ export default function AIChatPage() {
   };
   
   const handleScroll = () => {
-    if (scrollAreaRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
-        // Show button if user has scrolled up significantly
-        setShowScrollDown(scrollHeight - scrollTop > clientHeight + 100);
+    const scrollDiv = scrollAreaRef.current;
+    if (scrollDiv) {
+        const isAtBottom = scrollDiv.scrollHeight - scrollDiv.scrollTop <= scrollDiv.clientHeight + 1;
+        setShowScrollDown(!isAtBottom);
     }
   };
+
 
   useEffect(() => {
     const scrollDiv = scrollAreaRef.current;
@@ -308,26 +309,24 @@ export default function AIChatPage() {
                             </div>
                         </>
                     ) : (
-                       <div className="flex flex-col items-end max-w-[80%] animate-card-in">
-                         <div className="flex items-start gap-4">
-                           <div className="flex flex-col items-end gap-2 order-2">
+                       <div className="flex items-start gap-4 animate-card-in max-w-[80%]">
+                           <div className="flex flex-col items-end gap-2 w-full">
                               {msg.photoDataUri && (
                                   <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
                                       <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
                                   </div>
                               )}
                                {msg.content && (
-                                  <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl">
+                                  <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl self-end">
                                       <p className="text-base">{msg.content}</p>
                                   </div>
                                )}
                            </div>
-                           <Avatar className="h-9 w-9 border shrink-0 order-1">
+                           <Avatar className="h-9 w-9 border shrink-0 order-last">
                               <AvatarFallback>
                                   <User className="h-5 w-5 text-muted-foreground"/>
                               </AvatarFallback>
                           </Avatar>
-                         </div>
                        </div>
                     )}
                     </div>
@@ -413,5 +412,7 @@ export default function AIChatPage() {
     </div>
   );
 }
+
+    
 
     
