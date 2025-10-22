@@ -1,6 +1,4 @@
 {
-  "/dashboard/page": "app/dashboard/page.js",
-  "/services/[id]/page": "app/services/[id]/page.js",
   "/ai-creator/page": "app/ai-creator/page.js",
   "/profile/[username]/page": "app/profile/[username]/page.js",
   "/cart/page": "app/cart/page.js",

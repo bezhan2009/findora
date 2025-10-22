@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -12,7 +13,8 @@ import { ThemeToggle } from './theme-toggle';
 import SearchBar from './search-bar';
 import { useCart } from '@/hooks/use-cart';
 import { Badge } from './ui/badge';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useData } from '@/hooks/use-data';
 
 
 const navLinks = [
@@ -24,7 +26,28 @@ const navLinks = [
 export default function Header() {
   const { user, logout, role } = useAuth();
   const { cartCount } = useCart();
+  const { services, users: allUsers } = useData();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const recentActivity = useMemo(() => {
+    if (!user || role !== 'provider') return [];
+    
+    const providerServices = services.filter(s => s.provider.username === user.username);
+    const providerServiceIds = new Set(providerServices.map(s => s.id));
+
+    return allUsers
+        .flatMap(u => (u.orders || []).map(order => ({...order, customer: u})))
+        .filter(order => providerServices.some(s => s.title === order.serviceTitle))
+        .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5)
+        .map(order => ({
+            name: order.customer.name,
+            action: 'разместил(а) заказ.',
+            service: `На "${order.serviceTitle}".`,
+            time: `${Math.round((new Date().getTime() - new Date(order.date).getTime()) / (1000 * 60 * 60))} ч. назад`,
+            avatar: order.customer.avatar,
+        }));
+  }, [user, role, services, allUsers]);
 
 
   const getNavLinks = () => {
@@ -127,34 +150,33 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute -top-0 -right-0 flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                  </span>
+                   {recentActivity.length > 0 && (
+                    <span className="absolute -top-0 -right-0 flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                   )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80">
                 <DropdownMenuLabel>Уведомления</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-start gap-3">
-                  <Avatar className="h-8 w-8 mt-1">
-                    <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" />
-                    <AvatarFallback>DP</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">Новый заказ!</p>
-                    <p className="text-xs text-muted-foreground">Diana Prince только что заказала "Разработка сайта на заказ".</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-start gap-3">
-                    <div className="w-8 h-8 flex items-center justify-center mt-1">
-                        <Heart className="h-5 w-5 text-rose-500" />
-                    </div>
-                  <div>
-                    <p className="text-sm font-medium">Новый лайк</p>
-                    <p className="text-xs text-muted-foreground">Кто-то оценил вашу услугу "Настройка E-commerce магазина".</p>
-                  </div>
-                </DropdownMenuItem>
+                {recentActivity.length > 0 ? (
+                    recentActivity.map((activity, index) => (
+                        <DropdownMenuItem key={index} className="flex items-start gap-3">
+                             <Avatar className="h-8 w-8 mt-1">
+                                <AvatarImage src={activity.avatar} />
+                                <AvatarFallback>{activity.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="text-sm font-medium">{activity.name} {activity.action}</p>
+                                <p className="text-xs text-muted-foreground">{activity.service} • {activity.time}</p>
+                            </div>
+                        </DropdownMenuItem>
+                    ))
+                ) : (
+                    <p className="p-4 text-sm text-muted-foreground text-center">Нет новых уведомлений.</p>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
