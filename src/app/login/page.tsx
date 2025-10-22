@@ -31,6 +31,9 @@ const formSchema = z.object({
   username: z.string().min(1, {
     message: "Имя пользователя обязательно.",
   }),
+  password: z.string().min(1, {
+      message: "Пароль обязателен.",
+  }),
 });
 
 export default function LoginPage() {
@@ -40,6 +43,7 @@ export default function LoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      password: "",
     },
   });
 
@@ -57,7 +61,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl font-headline">Вход</CardTitle>
           <CardDescription>
-            Введите свое имя пользователя для входа. <br/> (например: chairman, dianap, alicej, bobw, charlieb)
+            Введите свое имя пользователя и пароль для входа.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -70,7 +74,20 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Имя пользователя</FormLabel>
                     <FormControl>
-                      <Input placeholder="dianap" {...field} />
+                      <Input placeholder="chairman" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Пароль</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

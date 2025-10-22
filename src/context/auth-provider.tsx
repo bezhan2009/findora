@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   useEffect(() => {
     // Mock auto-login with a default user
-    const defaultUser = initialData.users.find(u => u.username === 'dianap');
+    const defaultUser = initialData.users.find(u => u.username === 'chairman');
     if (defaultUser) {
         setUser(defaultUser);
         setRole(defaultUser.role);
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const authenticate = (username: string, name?: string, userRole: UserRole = 'customer') => {
     // Simplified authentication: find user by username
-    const foundUser = initialData.users.find(u => u.username === username);
+    const foundUser = initialData.users.find(u => u.username.toLowerCase() === username.toLowerCase());
     
     if (foundUser) {
         setUser(foundUser);
