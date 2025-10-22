@@ -5,6 +5,8 @@ import { Suspense, use, useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -211,9 +213,11 @@ function ServicePageContent({ id }: { id: string }) {
             <CarouselNext className="right-4" />
           </Carousel>
 
-          <div className="prose max-w-none mb-12">
+          <div className="prose max-w-none mb-12 dark:prose-invert">
             <h2 className="text-2xl font-bold font-headline">Об этом товаре/услуге</h2>
-            <p>{service.description}</p>
+             <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {service.description}
+            </ReactMarkdown>
           </div>
 
           <div className="mt-12">
@@ -260,3 +264,5 @@ export default function ServicePage({ params }: { params: { id: string } }) {
     </Suspense>
   );
 }
+
+    
