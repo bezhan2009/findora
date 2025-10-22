@@ -36,8 +36,8 @@ const categoryPerformanceData = [
   { subject: 'Веб-разработка', A: 120, fullMark: 150 },
   { subject: 'Граф. дизайн', A: 98, fullMark: 150 },
   { subject: 'Копирайтинг', A: 86, fullMark: 150 },
-  { subject: 'Маркетинг', A: 99, fullMark: 150 },
-  { subject: 'Видео', A: 85, fullMark: 150 },
+  { subject: 'Маркетинг', A: 135, fullMark: 150 },
+  { subject: 'Видео', A: 75, fullMark: 150 },
 ];
 
 const satisfactionData = [
@@ -96,14 +96,27 @@ export default function DashboardPage() {
         }
 
         const last7Months = generateLast7Months();
-        const monthlyPerformanceData = last7Months.map((month, index) => {
-            const monthFraction = (index + 1) / 7;
+
+        const fakeData = {
+            "Апр": { views: 450, revenue: 3200 },
+            "Май": { views: 600, revenue: 4100 },
+            "Июнь": { views: 750, revenue: 5500 },
+            "Июль": { views: 900, revenue: 6200 },
+            "Авг": { views: 1100, revenue: 7800 },
+            "Сен": { views: 1300, revenue: 8500 },
+        };
+        
+        const monthlyPerformanceData = last7Months.map(month => {
+            if (month === 'Окт') {
+                return { name: 'Окт', views: totalViews, revenue: totalRevenue };
+            }
             return {
                 name: month,
-                views: Math.floor(totalViews * monthFraction * 0.5 * Math.random() + totalViews * monthFraction * 0.5),
-                revenue: Math.floor(totalRevenue * monthFraction * 0.5 * Math.random() + totalRevenue * monthFraction * 0.5),
-            };
+                views: fakeData[month]?.views || 0,
+                revenue: fakeData[month]?.revenue || 0,
+            }
         });
+
 
         const topServicesData = providerServices
             .sort((a, b) => (b.analytics?.revenue ?? 0) - (a.analytics?.revenue ?? 0))

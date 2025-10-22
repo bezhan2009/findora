@@ -1,9 +1,9 @@
 {
-  "/ai-creator/page": "app/ai-creator/page.js",
-  "/profile/[username]/page": "app/profile/[username]/page.js",
   "/cart/page": "app/cart/page.js",
   "/page": "app/page.js",
   "/login/page": "app/login/page.js",
   "/services/[id]/page": "app/services/[id]/page.js",
-  "/dashboard/page": "app/dashboard/page.js"
+  "/dashboard/page": "app/dashboard/page.js",
+  "/ai-creator/page": "app/ai-creator/page.js",
+  "/profile/[username]/page": "app/profile/[username]/page.js"
 }
