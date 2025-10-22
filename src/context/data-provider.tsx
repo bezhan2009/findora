@@ -21,13 +21,40 @@ interface DataContextType extends InitialData {
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
 
+const DATA_STORAGE_KEY = 'bizmart-app-data';
+
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   
-  const [data, setData] = useState<InitialData>(initialData);
+  const [data, setData] = useState<InitialData>(() => {
+    // Lazy initialization from localStorage
+    try {
+        if (typeof window !== 'undefined') {
+            const storedData = localStorage.getItem(DATA_STORAGE_KEY);
+            if (storedData) {
+                return JSON.parse(storedData);
+            }
+        }
+    } catch (error) {
+        console.error("Failed to read data from localStorage", error);
+    }
+    return initialData;
+  });
 
-  const updateData = (newData: InitialData) => {
-    setData(newData);
+  // Persist data to localStorage whenever it changes
+  useEffect(() => {
+    try {
+        localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+        console.error("Failed to save data to localStorage", error);
+    }
+  }, [data]);
+
+  const updateData = (newData: Partial<InitialData>) => {
+    setData(prevData => ({
+        ...prevData,
+        ...newData
+    }));
   }
 
   const addConversation = (conversation: Conversation) => {

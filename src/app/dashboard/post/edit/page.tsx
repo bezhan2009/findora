@@ -14,6 +14,7 @@ import { useData } from "@/hooks/use-data";
 import { ImagePlus, Loader2 } from "lucide-react";
 import type { Post } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import dynamic from "next/dynamic";
 
 const formSchema = z.object({
   type: z.enum(["photo", "video"], { required_error: "Выберите тип поста." }),
@@ -25,7 +26,7 @@ const formSchema = z.object({
   path: ["media"],
 });
 
-export default function EditPostPage() {
+function EditPostPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { addPost } = useData();
@@ -167,3 +168,5 @@ export default function EditPostPage() {
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(EditPostPage), { ssr: false });
