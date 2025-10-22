@@ -33,7 +33,6 @@ export default function Header() {
     if (!user || role !== 'provider') return [];
     
     const providerServices = services.filter(s => s.provider.username === user.username);
-    const providerServiceIds = new Set(providerServices.map(s => s.id));
 
     return allUsers
         .flatMap(u => (u.orders || []).map(order => ({...order, customer: u})))
@@ -41,6 +40,7 @@ export default function Header() {
         .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 5)
         .map(order => ({
+            id: order.id,
             name: order.customer.name,
             action: 'разместил(а) заказ.',
             service: `На "${order.serviceTitle}".`,
@@ -162,16 +162,18 @@ export default function Header() {
                 <DropdownMenuLabel>Уведомления</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {recentActivity.length > 0 ? (
-                    recentActivity.map((activity, index) => (
-                        <DropdownMenuItem key={index} className="flex items-start gap-3">
-                             <Avatar className="h-8 w-8 mt-1">
-                                <AvatarImage src={activity.avatar} />
-                                <AvatarFallback>{activity.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="text-sm font-medium">{activity.name} {activity.action}</p>
-                                <p className="text-xs text-muted-foreground">{activity.service} • {activity.time}</p>
-                            </div>
+                    recentActivity.map((activity) => (
+                        <DropdownMenuItem key={activity.id} asChild>
+                            <Link href={`/dashboard?highlight=${activity.id}`} className="flex items-start gap-3">
+                                 <Avatar className="h-8 w-8 mt-1">
+                                    <AvatarImage src={activity.avatar} />
+                                    <AvatarFallback>{activity.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="text-sm font-medium leading-tight">{activity.name} {activity.action}</p>
+                                    <p className="text-xs text-muted-foreground">{activity.service} • {activity.time}</p>
+                                </div>
+                            </Link>
                         </DropdownMenuItem>
                     ))
                 ) : (

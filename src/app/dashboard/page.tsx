@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { useData } from "@/hooks/use-data";
-import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, MoreVertical, Percent, Phone, Home } from "lucide-react";
+import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, Phone, Home } from "lucide-react";
 import { 
     Bar, 
     BarChart as RechartsBarChart, 
@@ -25,7 +25,7 @@ import {
     RadialBar,
     RadialBarChart
 } from 'recharts';
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -48,6 +48,8 @@ export default function DashboardPage() {
     const { user, role } = useAuth();
     const { services, users: allUsers } = useData();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const highlightId = searchParams.get('highlight');
 
     useEffect(() => {
         if (role !== 'provider') {
@@ -131,6 +133,7 @@ export default function DashboardPage() {
             .map(order => {
                 const customer = allUsers.find(u => u.orders?.some(o => o.id === order.id));
                 return {
+                    id: order.id,
                     name: customer?.name || 'Клиент',
                     action: 'разместил(а) заказ.',
                     service: `На "${order.serviceTitle}".`,
@@ -235,8 +238,8 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    {recentActivity.length > 0 ? recentActivity.map((activity, index) => (
-                      <div key={index} className="flex flex-col">
+                    {recentActivity.length > 0 ? recentActivity.map((activity) => (
+                      <div key={activity.id} className={cn("p-2 rounded-lg transition-all", highlightId === activity.id && 'animate-highlight-pulse')}>
                           <div className="flex items-center">
                             <Avatar className="h-9 w-9">
                                 <AvatarImage src={activity.avatar} data-ai-hint="person" />
