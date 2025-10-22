@@ -4,16 +4,16 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { SlidersHorizontal } from 'lucide-react';
+import { Input } from './ui/input';
 
 export interface FilterState {
   category: string;
-  priceRange: number[];
+  priceRange: [number, number];
   rating: number;
   featured: boolean;
   topRated: boolean;
@@ -27,7 +27,7 @@ interface FilterSidebarProps {
 export default function FilterSidebar({ categories, onApplyFilters }: FilterSidebarProps) {
   const [filters, setFilters] = useState<FilterState>({
     category: 'all',
-    priceRange: [0, 500],
+    priceRange: [0, 1000],
     rating: 0,
     featured: false,
     topRated: false
@@ -37,8 +37,11 @@ export default function FilterSidebar({ categories, onApplyFilters }: FilterSide
     setFilters(prev => ({ ...prev, category: value }));
   };
 
-  const handlePriceChange = (value: number[]) => {
-    setFilters(prev => ({ ...prev, priceRange: value }));
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, index: 0 | 1) => {
+    const value = Number(e.target.value);
+    const newPriceRange = [...filters.priceRange] as [number, number];
+    newPriceRange[index] = value >= 0 ? value : 0;
+    setFilters(prev => ({ ...prev, priceRange: newPriceRange }));
   };
 
   const handleRatingChange = (value: string) => {
@@ -84,14 +87,24 @@ export default function FilterSidebar({ categories, onApplyFilters }: FilterSide
           </div>
           
           <div>
-            <Label>Ценовой диапазон: ${filters.priceRange[0]} - ${filters.priceRange[1]}</Label>
-            <Slider 
-              value={filters.priceRange}
-              onValueChange={handlePriceChange}
-              max={500} 
-              step={10} 
-              minStepsBetweenThumbs={1}
-            />
+            <Label>Ценовой диапазон</Label>
+            <div className="flex items-center gap-2">
+                <Input
+                    type="number"
+                    placeholder="от"
+                    value={filters.priceRange[0]}
+                    onChange={(e) => handlePriceChange(e, 0)}
+                    min="0"
+                />
+                 <span className="text-muted-foreground">-</span>
+                <Input
+                    type="number"
+                    placeholder="до"
+                    value={filters.priceRange[1]}
+                    onChange={(e) => handlePriceChange(e, 1)}
+                    min="0"
+                />
+            </div>
           </div>
           
           <div>

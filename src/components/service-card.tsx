@@ -85,8 +85,8 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           </span>
         </div>
         <div className="text-base font-semibold text-foreground">
-          <span className="text-xs font-normal text-muted-foreground">ОТ </span>$
-          {service.price}
+          <span className="text-xs font-normal text-muted-foreground">ОТ </span>
+          {service.price} TJS
         </div>
       </CardFooter>
     </Card>

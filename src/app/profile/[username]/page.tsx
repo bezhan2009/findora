@@ -250,7 +250,7 @@ function OrdersList({ orders }: { orders: Order[] }) {
                         <div className="md:col-span-1 flex items-center gap-4 text-sm text-muted-foreground">
                             <span>{new Date(order.date).toLocaleDateString()}</span>
                             <span>|</span>
-                            <span>${order.price}</span>
+                            <span>{order.price} TJS</span>
                         </div>
                         <div className="md:col-span-1 flex justify-start md:justify-end">
                              <Badge variant={order.status === 'Completed' ? 'default' : (order.status === 'In Progress' ? 'secondary' : 'outline')}>{order.status === 'Completed' ? 'Завершено' : (order.status === 'In Progress' ? 'В процессе' : 'Отменено')}</Badge>

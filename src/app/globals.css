@@ -78,21 +78,25 @@
   }
 
   .animated-gradient-border-container {
-    @apply relative p-[2px] rounded-2xl;
+    @apply relative;
   }
 
   .animated-gradient-border-container::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: inherit; /* Use the same border-radius as the container */
-    padding: 2px; /* The width of the border */
+    inset: -2px; /* Control the border thickness */
+    border-radius: calc(var(--radius) + 2px); /* Match the input's border-radius + inset */
+    padding: 2px; /* Should match inset */
     background: conic-gradient(from 180deg at 50% 50%, hsl(var(--primary)/0.5) 0deg, hsl(var(--accent)/0.8) 180deg, hsl(var(--primary)/0.5) 360deg);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    z-index: 0;
+    z-index: -1; /* Place it behind the input */
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
   }

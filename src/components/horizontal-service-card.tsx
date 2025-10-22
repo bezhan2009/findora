@@ -74,7 +74,7 @@ export default function HorizontalServiceCard({ service }: HorizontalServiceCard
               </Link>
             </div>
             <p className="text-lg font-bold text-foreground">
-                ${service.price}
+                {service.price} TJS
             </p>
           </div>
         </CardContent>
