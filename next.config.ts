@@ -17,8 +17,10 @@ const nextConfig: NextConfig = {
     ],
   },
    webpack: (config, { isServer }) => {
-    // Эта строка решает проблему с 'require.extensions' в handlebars
-    config.externals.push({ 'handlebars': 'commonjs handlebars' });
+    // This line solves the 'require.extensions' issue in handlebars
+    if (!isServer) {
+      config.externals.push({ 'handlebars': 'commonjs handlebars' });
+    }
     return config;
   },
 };

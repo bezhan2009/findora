@@ -65,7 +65,7 @@ export default function EditPostPage() {
     router.push(`/profile/${user.username}`);
   }
   
-  const mediaRef = form.register("media");
+  const mediaRef = {...form.register("media")};
 
   return (
     <div className="container mx-auto px-4 py-8">

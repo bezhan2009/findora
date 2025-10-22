@@ -3,5 +3,6 @@
   "/page": "app/page.js",
   "/services/[id]/page": "app/services/[id]/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/ai-creator/page": "app/ai-creator/page.js"
+  "/ai-creator/page": "app/ai-creator/page.js",
+  "/profile/[username]/page": "app/profile/[username]/page.js"
 }
