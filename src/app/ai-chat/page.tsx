@@ -9,12 +9,13 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Sparkles, User, Star, Paperclip, X, ChevronDown } from 'lucide-react';
+import { Send, Sparkles, User, Star, Paperclip, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
 import type { Service, User as ProviderUser } from '@/lib/types';
 import Logo from '@/components/logo';
+import ScrollToBottomButton from '@/components/scroll-to-bottom-button';
 
 interface Message {
   role: 'user' | 'model';
@@ -158,7 +159,6 @@ export default function AIChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
-  const [showScrollDown, setShowScrollDown] = useState(false);
   
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -167,36 +167,13 @@ export default function AIChatPage() {
   const { services, users } = useData();
   const hasMessages = messages.length > 1;
 
-  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
+  useEffect(() => {
     if (scrollAreaRef.current) {
         scrollAreaRef.current.scrollTo({
             top: scrollAreaRef.current.scrollHeight,
-            behavior,
+            behavior: 'smooth',
         });
     }
-  };
-  
-  const handleScroll = () => {
-    const scrollDiv = scrollAreaRef.current;
-    if (scrollDiv) {
-        const isAtBottom = scrollDiv.scrollHeight - scrollDiv.scrollTop <= scrollDiv.clientHeight + 1;
-        setShowScrollDown(!isAtBottom);
-    }
-  };
-
-
-  useEffect(() => {
-    const scrollDiv = scrollAreaRef.current;
-    if (scrollDiv) {
-        scrollDiv.addEventListener('scroll', handleScroll);
-        // Initial check
-        handleScroll();
-        return () => scrollDiv.removeEventListener('scroll', handleScroll);
-    }
-  }, []);
-
-  useEffect(() => {
-      scrollToBottom('auto');
   }, [messages, isLoading]);
   
   useEffect(() => {
@@ -309,24 +286,24 @@ export default function AIChatPage() {
                             </div>
                         </>
                     ) : (
-                       <div className="flex items-start gap-4 animate-card-in max-w-[80%]">
-                           <div className="flex flex-col items-end gap-2 w-full">
-                              {msg.photoDataUri && (
-                                  <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
-                                      <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
-                                  </div>
-                              )}
-                               {msg.content && (
-                                  <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl self-end">
-                                      <p className="text-base">{msg.content}</p>
-                                  </div>
-                               )}
+                       <div className="flex flex-col items-end gap-2 animate-card-in max-w-[80%]">
+                           {msg.photoDataUri && (
+                               <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
+                                   <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
+                               </div>
+                           )}
+                           <div className="flex items-start gap-4 w-full justify-end">
+                                {msg.content && (
+                                    <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl self-end">
+                                        <p className="text-base">{msg.content}</p>
+                                    </div>
+                                 )}
+                                 <Avatar className="h-9 w-9 border shrink-0 order-last">
+                                    <AvatarFallback>
+                                        <User className="h-5 w-5 text-muted-foreground"/>
+                                    </AvatarFallback>
+                                </Avatar>
                            </div>
-                           <Avatar className="h-9 w-9 border shrink-0 order-last">
-                              <AvatarFallback>
-                                  <User className="h-5 w-5 text-muted-foreground"/>
-                              </AvatarFallback>
-                          </Avatar>
                        </div>
                     )}
                     </div>
@@ -345,16 +322,7 @@ export default function AIChatPage() {
                 )}
                 </div>
             </div>
-             {showScrollDown && (
-                <Button 
-                    variant="secondary" 
-                    size="icon" 
-                    className="absolute bottom-4 right-8 rounded-full h-10 w-10 shadow-lg z-30"
-                    onClick={() => scrollToBottom()}
-                >
-                    <ChevronDown className="h-6 w-6" />
-                </Button>
-            )}
+            <ScrollToBottomButton chatRef={scrollAreaRef} />
         </div>
         <div className="px-4 pb-4 w-full shrink-0 border-t bg-background">
             <div className="max-w-3xl mx-auto pt-4">
@@ -412,7 +380,3 @@ export default function AIChatPage() {
     </div>
   );
 }
-
-    
-
-    
