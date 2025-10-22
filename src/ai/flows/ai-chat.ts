@@ -21,6 +21,7 @@ const ServiceSchema = z.object({
   description: z.string(),
   price: z.number(),
   category: z.string(),
+  rating: z.number(),
 });
 
 const ProviderSchema = z.object({
@@ -38,6 +39,7 @@ const AIChatInputSchema = z.object({
   message: z.string().describe('The latest message from the user.'),
   services: z.array(ServiceSchema).describe('The list of available services/products.'),
   providers: z.array(ProviderSchema).describe('The list of available service providers.'),
+  photoDataUri: z.string().optional().describe("An optional photo provided by the user, as a data URI. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 export type AIChatInput = z.infer<typeof AIChatInputSchema>;
 
@@ -61,6 +63,8 @@ function buildSystemPrompt(services: Service[], providers: z.infer<typeof Provid
 Your goal is to help users find services, providers, answer their questions about the platform, and provide recommendations.
 You MUST ALWAYS respond in Russian, unless the user explicitly asks you to switch to another language.
 You should respond in a conversational, verbose style, like ChatGPT.
+
+If the user provides an image, your primary task is to analyze the image and use it as the main context for the search. First, describe what you see in the image, then find relevant services or providers from the lists below.
 
 When a user asks for a recommendation or shows interest in a service, you MUST recommend a service from the list below.
 When you recommend a service, you MUST use the following format and nothing else for that part of the response:
@@ -92,29 +96,40 @@ Keep your responses concise and friendly.
 export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
   const systemPrompt = buildSystemPrompt(input.services, input.providers);
   
-  const chatPrompt = ai.definePrompt(
-    {
-      name: 'aiChatPrompt_dynamic_v3',
-      input: {schema: z.object({
-        history: z.array(ChatMessageSchema),
-        message: z.string()
-      })},
-      output: {schema: AIChatOutputSchema},
-      prompt: `${systemPrompt}
+  const promptParts = [systemPrompt];
 
+  promptParts.push(`
 Here is the conversation history:
 {{#each history}}
 {{role}}: {{content}}
 {{/each}}
 
 User: {{{message}}}
-AI Assistant:`,
+`);
+
+  if (input.photoDataUri) {
+    promptParts.push(`{{media url=photoDataUri}}`);
+  }
+
+  promptParts.push(`AI Assistant:`);
+
+  const chatPrompt = ai.definePrompt(
+    {
+      name: 'aiChatPrompt_dynamic_v4',
+      input: {schema: z.object({
+        history: z.array(ChatMessageSchema),
+        message: z.string(),
+        photoDataUri: z.string().optional(),
+      })},
+      output: {schema: AIChatOutputSchema},
+      prompt: promptParts.join('\n'),
     }
   );
 
   const {output} = await chatPrompt({
     history: input.history,
     message: input.message,
+    photoDataUri: input.photoDataUri,
   });
   if (!output) {
     return { response: "I'm sorry, I couldn't generate a response." };

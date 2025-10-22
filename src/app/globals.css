@@ -67,6 +67,32 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  body::-webkit-scrollbar {
+    width: 8px;
+  }
+  body::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  body::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 6px;
+    border: 3px solid hsl(var(--background));
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: hsl(var(--muted-foreground) / 0.3);
+      border-radius: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(var(--muted-foreground) / 0.5);
+  }
 }
 
 @layer utilities {
@@ -75,40 +101,6 @@
     backdrop-filter: blur(8px);
     border-width: 1px;
     border-color: hsl(var(--border) / 0.2);
-  }
-
-  .animated-gradient-border-container {
-    @apply relative;
-  }
-
-  .animated-gradient-border-container::before {
-    content: '';
-    position: absolute;
-    inset: -2px; /* Control the border thickness */
-    border-radius: calc(var(--radius) + 2px); /* Match the input's border-radius + inset */
-    padding: 2px; /* Should match inset */
-    background: conic-gradient(from 180deg at 50% 50%, hsl(var(--primary)/0.5) 0deg, hsl(var(--accent)/0.8) 180deg, hsl(var(--primary)/0.5) 360deg);
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    z-index: -1; /* Place it behind the input */
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-  
-  .animated-gradient-border-container.focused::before {
-    opacity: 1;
-    animation: rotate 4s linear infinite;
-  }
-  
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
   }
 }
 
@@ -138,4 +130,82 @@
 
 .animate-card-in {
   animation: riseAndFadeIn 0.6s ease-out forwards;
+}
+
+
+/* Firebase-inspired Input Animation */
+.firebase-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.firebase-input-wrapper .focus-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: calc(var(--radius) + 2px);
+  pointer-events: none;
+}
+
+.firebase-input-wrapper .focus-border:before,
+.firebase-input-wrapper .focus-border:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+  transition: width 0.2s ease-out;
+  border-radius: 2px;
+}
+
+.firebase-input-wrapper .focus-border:after {
+  top: auto;
+  bottom: 0;
+  left: auto;
+  right: 0;
+  transition-delay: 0.4s;
+}
+
+.firebase-input-wrapper .focus-border i:before,
+.firebase-input-wrapper .focus-border i:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--accent)));
+  transition: height 0.2s ease-out;
+  border-radius: 2px;
+}
+
+.firebase-input-wrapper .focus-border i:after {
+  left: auto;
+  right: 0;
+  top: auto;
+  bottom: 0;
+  transition-delay: 0.2s;
+}
+
+.firebase-input-wrapper input:focus ~ .focus-border:before,
+.firebase-input-wrapper input:focus ~ .focus-border:after {
+  width: 100%;
+  transition-delay: 0s;
+}
+
+.firebase-input-wrapper input:focus ~ .focus-border:after {
+  transition-delay: 0.4s;
+}
+
+.firebase-input-wrapper input:focus ~ .focus-border i:before {
+  height: 100%;
+  transition-delay: 0.2s;
+}
+.firebase-input-wrapper input:focus ~ .focus-border i:after {
+  height: 100%;
+  transition-delay: 0.6s;
 }

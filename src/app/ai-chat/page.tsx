@@ -9,8 +9,7 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Sparkles, User, Star } from 'lucide-react';
+import { Send, Sparkles, User, Star, Paperclip, X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -140,7 +139,7 @@ const ModelMessage = ({ content }: { content: string }) => {
         <>
             {parts.map((part, index) => {
                 if (part.startsWith('SERVICE_CARD') || part.startsWith('PROVIDER_CARD')) {
-                    return <MessageContent key={index} content={part} />;
+                    return <AnimatedCard key={index}><MessageContent content={part} /></AnimatedCard>;
                 }
                 if (isTyping && index === parts.length - 1) {
                     return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
@@ -154,30 +153,66 @@ const ModelMessage = ({ content }: { content: string }) => {
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: 'Здравствуйте! Как я могу помочь вам найти идеальную услугу на BizMart сегодня?' }
+    { role: 'model', content: 'Здравствуйте! Как я могу помочь вам найти идеальную услугу на BizMart сегодня? Вы также можете загрузить изображение.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollViewportRef = useRef<HTMLDivElement>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageDataUri, setImageDataUri] = useState<string | null>(null);
+  const [showScrollDown, setShowScrollDown] = useState(false);
+  
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { services, users } = useData();
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { services, users } = useData();
   const hasMessages = messages.length > 1;
 
-  const scrollToBottom = () => {
-    if (scrollViewportRef.current) {
-        scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
+  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
+    if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTo({
+            top: scrollAreaRef.current.scrollHeight,
+            behavior,
+        });
+    }
+  };
+  
+  const handleScroll = () => {
+    if (scrollAreaRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollAreaRef.current;
+        // Show button if user has scrolled up significantly
+        setShowScrollDown(scrollHeight - scrollTop > clientHeight + 100);
     }
   };
 
   useEffect(() => {
-    setTimeout(scrollToBottom, 100);
+    const scrollDiv = scrollAreaRef.current;
+    if (scrollDiv) {
+        scrollDiv.addEventListener('scroll', handleScroll);
+        return () => scrollDiv.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => scrollToBottom('auto'), 100);
   }, [messages, isLoading]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const uri = e.target?.result as string;
+            setImageDataUri(uri);
+            setImagePreview(URL.createObjectURL(file));
+        };
+        reader.readAsDataURL(file);
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if ((!input.trim() && !imageDataUri) || isLoading) return;
 
     const userMessage: Message = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
@@ -212,6 +247,7 @@ export default function AIChatPage() {
             rating: s.rating,
         })),
         providers,
+        photoDataUri: imageDataUri || undefined,
       };
       
       const result = await aiChat(chatRequest);
@@ -225,13 +261,19 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      setImagePreview(null);
+      setImageDataUri(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
       inputRef.current?.focus();
     }
   };
 
   return (
-    <div className="flex flex-col h-full">
-        <ScrollArea className="flex-grow" viewportRef={scrollViewportRef}>
+    <div className="flex flex-col h-full bg-background">
+        <div 
+            ref={scrollAreaRef}
+            className="flex-1 overflow-y-auto custom-scrollbar relative"
+        >
             <div className={cn("max-w-3xl mx-auto px-4 pt-8 pb-4", hasMessages ? "w-full" : "flex flex-col justify-center h-full")}>
               {!hasMessages && (
                   <div className="text-center mb-16">
@@ -251,7 +293,7 @@ export default function AIChatPage() {
                                     <Sparkles className="h-5 w-5 text-primary"/>
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="prose prose-sm dark:prose-invert bg-muted rounded-2xl px-4 py-3 break-words">
+                            <div className="prose prose-sm dark:prose-invert bg-muted rounded-2xl px-4 py-3 break-words max-w-[80%]">
                                 <ModelMessage content={msg.content} />
                             </div>
                         </>
@@ -283,23 +325,65 @@ export default function AIChatPage() {
                 )}
                 </div>
             </div>
-        </ScrollArea>
-        <div className="px-4 pb-4 w-full shrink-0">
-            <div className="max-w-3xl mx-auto">
-                <form onSubmit={handleSendMessage} className={cn("animated-gradient-border-container", isInputFocused && "focused")}>
-                <Input
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onFocus={() => setIsInputFocused(true)}
-                    onBlur={() => setIsInputFocused(false)}
-                    placeholder="Спросите что-нибудь у AI Ассистента..."
-                    className="relative w-full h-14 pl-4 pr-14 rounded-[14px] shadow-lg border-border/20 text-base z-10"
-                    disabled={isLoading}
-                />
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20">
-                    <Send className="h-5 w-5" />
+             {showScrollDown && (
+                <Button 
+                    variant="secondary" 
+                    size="icon" 
+                    className="absolute bottom-4 right-8 rounded-full h-10 w-10 shadow-lg"
+                    onClick={() => scrollToBottom()}
+                >
+                    <ChevronDown className="h-6 w-6" />
                 </Button>
+            )}
+        </div>
+        <div className="px-4 pb-4 w-full shrink-0 border-t bg-background">
+            <div className="max-w-3xl mx-auto pt-4">
+                {imagePreview && (
+                    <div className="relative w-24 h-24 mb-2 rounded-md overflow-hidden">
+                        <Image src={imagePreview} alt="Image preview" fill className="object-cover" />
+                        <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6"
+                            onClick={() => {
+                                setImagePreview(null);
+                                setImageDataUri(null);
+                                if (fileInputRef.current) fileInputRef.current.value = '';
+                            }}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
+                <form onSubmit={handleSendMessage} className="firebase-input-wrapper">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        accept="image/*"
+                        className="hidden"
+                    />
+                    <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20 text-muted-foreground"
+                        onClick={() => fileInputRef.current?.click()}
+                    >
+                        <Paperclip className="h-5 w-5" />
+                    </Button>
+                    <Input
+                        ref={inputRef}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Спросите что-нибудь у AI Ассистента..."
+                        className="w-full h-14 pl-14 pr-14 rounded-xl shadow-none border-2 text-base z-10 bg-background"
+                        disabled={isLoading}
+                    />
+                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20">
+                        <Send className="h-5 w-5" />
+                    </Button>
+                    <span className="focus-border"><i></i></span>
                 </form>
                 <p className="text-xs text-center text-muted-foreground mt-2">AI может ошибаться. Проверяйте важную информацию.</p>
             </div>
@@ -307,5 +391,3 @@ export default function AIChatPage() {
     </div>
   );
 }
-
-    
