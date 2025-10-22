@@ -29,32 +29,30 @@ const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
 );
 
 const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
+    const [displayedText, setDisplayedText] = useState('');
+
     useEffect(() => {
-        if (text) {
-            const timer = setTimeout(onComplete, text.length * 15 + 500); 
-            return () => clearTimeout(timer);
-        }
+        if (!text) return;
+
+        let i = 0;
+        const intervalId = setInterval(() => {
+            setDisplayedText(text.substring(0, i + 1));
+            i++;
+            if (i >= text.length) {
+                clearInterval(intervalId);
+                onComplete();
+            }
+        }, 15);
+
+        return () => clearInterval(intervalId);
     }, [text, onComplete]);
+
 
     if (text.startsWith('SERVICE_CARD') || text.startsWith('PROVIDER_CARD')) {
         return <MessageContent content={text} />;
     }
 
-    const letters = text.split('');
-
-    return (
-        <div className="prose prose-sm dark:prose-invert leading-relaxed typing-animation-container">
-            {letters.map((letter, index) => (
-                <span
-                    key={index}
-                    className="animate-letter"
-                    style={{ animationDelay: `${index * 0.015}s` }}
-                >
-                    {letter}
-                </span>
-            ))}
-        </div>
-    );
+    return <ReactMarkdown className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>;
 };
 
 
@@ -290,7 +288,7 @@ export default function AIChatPage() {
                         key={index}
                         className={cn(
                             "flex items-start gap-4 animate-card-in", 
-                            msg.role === 'user' ? 'justify-end' : ''
+                            msg.role === 'user' ? 'flex-row-reverse' : ''
                         )}
                     >
                     {msg.role === 'model' ? (
@@ -305,10 +303,16 @@ export default function AIChatPage() {
                             </div>
                         </>
                     ) : (
-                        <div className="flex flex-col items-end max-w-[80%]">
+                       <>
+                         <Avatar className="h-9 w-9 border shrink-0">
+                            <AvatarFallback>
+                                <User className="h-5 w-5 text-muted-foreground"/>
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col items-end max-w-[80%] gap-2">
                             {msg.photoDataUri && (
-                                <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden mb-2">
-                                <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
+                                <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
+                                    <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
                                 </div>
                             )}
                              {msg.content && (
@@ -317,6 +321,7 @@ export default function AIChatPage() {
                                 </div>
                              )}
                         </div>
+                       </>
                     )}
                     </div>
                 ))}
