@@ -241,51 +241,33 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         return u;
       });
 
-      // Update provider's revenue
+      // Update provider's revenue and service views
       const servicesById = new Map(prevData.services.map(s => [s.id, s]));
-      const revenueByProvider: {[username: string]: number} = {};
-
-      cartItems.forEach(item => {
-        const service = servicesById.get(item.id);
-        if (service) {
-            const providerUsername = service.provider.username;
-            const revenue = item.price * item.quantity;
-            if (!revenueByProvider[providerUsername]) {
-                revenueByProvider[providerUsername] = 0;
-            }
-            revenueByProvider[providerUsername] += revenue;
-        }
-      });
-      
       const newServices = [...prevData.services];
 
-      const finalUsers = updatedUsers.map(u => {
-        if (revenueByProvider[u.username]) {
-          const providerServices = newServices.filter(s => s.provider.username === u.username);
-          if (providerServices.length > 0) {
-              const revenuePerService = revenueByProvider[u.username] / providerServices.length;
-              providerServices.forEach(ps => {
-                  const serviceIndex = newServices.findIndex(s => s.id === ps.id);
-                  if (serviceIndex !== -1) {
-                      newServices[serviceIndex] = {
-                          ...newServices[serviceIndex],
-                           analytics: {
-                               ...newServices[serviceIndex].analytics,
-                               views: newServices[serviceIndex].analytics?.views || 0,
-                               likes: newServices[serviceIndex].analytics?.likes || 0,
-                               revenue: (newServices[serviceIndex].analytics?.revenue || 0) + revenuePerService
-                           }
-                      }
-                  }
-              });
-          }
+      cartItems.forEach(item => {
+        const serviceIndex = newServices.findIndex(s => s.id === item.id);
+        if (serviceIndex !== -1) {
+            const service = newServices[serviceIndex];
+            const revenue = item.price * item.quantity;
+            const viewIncrease = Math.floor(Math.random() * (300 - 200 + 1)) + 200;
+
+            const currentAnalytics = service.analytics ?? { views: 0, likes: 0, revenue: 0 };
+
+            newServices[serviceIndex] = {
+                ...service,
+                analytics: {
+                    ...currentAnalytics,
+                    views: (currentAnalytics.views || 0) + viewIncrease,
+                    revenue: (currentAnalytics.revenue || 0) + revenue
+                }
+            }
         }
-        return u;
       });
       
       return {
         ...prevData,
-        users: finalUsers,
+        users: updatedUsers,
         services: newServices,
       };
     });
