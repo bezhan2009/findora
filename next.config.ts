@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -17,7 +18,7 @@ const nextConfig: NextConfig = {
     ],
   },
    webpack: (config, { isServer }) => {
-    // This line solves the 'require.extensions' issue in handlebars
+    // This is to solve the 'require.extensions' issue in handlebars, a dependency of genkit.
     if (!isServer) {
       config.externals.push({ 'handlebars': 'commonjs handlebars' });
     }
@@ -26,3 +27,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+    

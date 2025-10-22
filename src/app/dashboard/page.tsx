@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { useData } from "@/hooks/use-data";
-import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, Phone, Home } from "lucide-react";
+import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, Phone, Home, DollarSignIcon } from "lucide-react";
 import { 
     Bar, 
     BarChart as RechartsBarChart, 
@@ -26,11 +26,10 @@ import {
     RadialBarChart
 } from 'recharts';
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { DollarSignIcon } from "lucide-react";
 
 const categoryPerformanceData = [
   { subject: 'Веб-разработка', A: 120, fullMark: 150 },
@@ -44,7 +43,7 @@ const satisfactionData = [
   { name: '5 звезд', value: 85, fill: 'hsl(var(--primary))' },
 ];
 
-export default function DashboardPage() {
+function DashboardPageContent() {
     const { user, role } = useAuth();
     const { services, users: allUsers } = useData();
     const router = useRouter();
@@ -109,13 +108,14 @@ export default function DashboardPage() {
         };
         
         const monthlyPerformanceData = last7Months.map(month => {
-            if (month === 'Окт') {
-                return { name: 'Окт', views: totalViews, revenue: totalRevenue };
+            const currentMonthName = new Date().toLocaleString('ru-RU', { month: 'short' }).replace('.', '');
+            if (month.toLowerCase() === currentMonthName.toLowerCase()) {
+                return { name: month, views: totalViews, revenue: totalRevenue };
             }
             return {
                 name: month,
-                views: fakeData[month]?.views || 0,
-                revenue: fakeData[month]?.revenue || 0,
+                views: fakeData[month]?.views || Math.floor(Math.random() * (500 - 100 + 1)) + 100,
+                revenue: fakeData[month]?.revenue || Math.floor(Math.random() * (450 - 100 + 1)) + 100,
             }
         });
 
@@ -350,3 +350,13 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<div>Загрузка...</div>}>
+            <DashboardPageContent />
+        </Suspense>
+    )
+}
+
+    
