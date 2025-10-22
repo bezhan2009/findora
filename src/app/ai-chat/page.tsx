@@ -305,21 +305,18 @@ export default function AIChatPage() {
                             </div>
                         </>
                     ) : (
-                        <>
-                            <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl max-w-[80%]">
-                                {msg.photoDataUri && (
-                                  <div className="relative w-full aspect-video rounded-md overflow-hidden mb-2">
-                                    <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
-                                  </div>
-                                )}
-                                {msg.content && <p className="text-base">{msg.content}</p>}
-                            </div>
-                            <Avatar className="h-9 w-9 border-2 border-muted shrink-0">
-                                <AvatarFallback>
-                                    <User className="h-5 w-5 text-muted-foreground"/>
-                                </AvatarFallback>
-                            </Avatar>
-                        </>
+                        <div className="flex flex-col items-end max-w-[80%]">
+                            {msg.photoDataUri && (
+                                <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden mb-2">
+                                <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
+                                </div>
+                            )}
+                             {msg.content && (
+                                <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl">
+                                    <p className="text-base">{msg.content}</p>
+                                </div>
+                             )}
+                        </div>
                     )}
                     </div>
                 ))}
