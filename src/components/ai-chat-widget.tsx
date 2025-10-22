@@ -332,35 +332,36 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                     </Button>
                 </div>
             )}
-            <form onSubmit={handleSendMessage} className="firebase-input-wrapper">
-                 <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    accept="image/*"
-                    className="hidden"
-                />
-                <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg z-20 text-muted-foreground"
-                    onClick={() => fileInputRef.current?.click()}
-                >
-                    <Paperclip className="h-5 w-5" />
-                </Button>
-                <Input
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Спросите что-нибудь..."
-                    className="w-full h-12 pl-12 pr-12 rounded-lg border-2"
-                    disabled={isLoading}
-                />
-                <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9">
-                    <Send className="h-4 w-4" />
-                </Button>
-                 <span className="focus-border"><i></i></span>
+            <form onSubmit={handleSendMessage} className="relative">
+                <div className="input-wrapper">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        accept="image/*"
+                        className="hidden"
+                    />
+                    <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg z-20 text-muted-foreground"
+                        onClick={() => fileInputRef.current?.click()}
+                    >
+                        <Paperclip className="h-5 w-5" />
+                    </Button>
+                    <Input
+                        ref={inputRef}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Спросите что-нибудь..."
+                        className="w-full h-12 pl-12 pr-12 rounded-lg border-2 input-element"
+                        disabled={isLoading}
+                    />
+                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 z-20">
+                        <Send className="h-4 w-4" />
+                    </Button>
+                </div>
             </form>
         </div>
     </Card>

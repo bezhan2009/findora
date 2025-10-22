@@ -79,13 +79,13 @@ export default function DashboardPage() {
 
         // Mock monthly data based on total revenue
         const monthlyPerformanceData = [
-            { name: 'Янв', views: totalViews * 0.1, revenue: totalRevenue * 0.1 },
-            { name: 'Фев', views: totalViews * 0.08, revenue: totalRevenue * 0.09 },
-            { name: 'Март', views: totalViews * 0.12, revenue: totalRevenue * 0.11 },
-            { name: 'Апр', views: totalViews * 0.15, revenue: totalRevenue * 0.14 },
-            { name: 'Май', views: totalViews * 0.13, revenue: totalRevenue * 0.16 },
-            { name: 'Июнь', views: totalViews * 0.2, revenue: totalRevenue * 0.22 },
-            { name: 'Июль', views: totalViews * 0.22, revenue: totalRevenue * 0.18 },
+            { name: 'Янв', views: 435, revenue: 2400 },
+            { name: 'Фев', views: 489, revenue: 2210 },
+            { name: 'Март', views: 521, revenue: 2290 },
+            { name: 'Апр', views: 603, revenue: 2780 },
+            { name: 'Май', views: 580, revenue: 1890 },
+            { name: 'Июнь', views: 720, revenue: 2390 },
+            { name: 'Июль', views: 780, revenue: 3490 },
         ];
 
         const topServicesData = providerServices

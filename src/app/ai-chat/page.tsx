@@ -355,35 +355,36 @@ export default function AIChatPage() {
                         </Button>
                     </div>
                 )}
-                <form onSubmit={handleSendMessage} className="firebase-input-wrapper">
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleImageChange}
-                        accept="image/*"
-                        className="hidden"
-                    />
-                    <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20 text-muted-foreground"
-                        onClick={() => fileInputRef.current?.click()}
-                    >
-                        <Paperclip className="h-5 w-5" />
-                    </Button>
-                    <Input
-                        ref={inputRef}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Спросите что-нибудь у AI Ассистента..."
-                        className="w-full h-14 pl-14 pr-14 rounded-xl shadow-none border-2 text-base z-10 bg-background"
-                        disabled={isLoading}
-                    />
-                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20">
-                        <Send className="h-5 w-5" />
-                    </Button>
-                    <span className="focus-border"><i></i></span>
+                <form onSubmit={handleSendMessage} className="relative">
+                    <div className="input-wrapper">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageChange}
+                            accept="image/*"
+                            className="hidden"
+                        />
+                        <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20 text-muted-foreground"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            <Paperclip className="h-5 w-5" />
+                        </Button>
+                        <Input
+                            ref={inputRef}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Спросите что-нибудь у AI Ассистента..."
+                            className="w-full h-14 pl-14 pr-14 rounded-xl shadow-none border-2 text-base z-10 input-element"
+                            disabled={isLoading}
+                        />
+                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20">
+                            <Send className="h-5 w-5" />
+                        </Button>
+                    </div>
                 </form>
                 <p className="text-xs text-center text-muted-foreground mt-2">AI может ошибаться. Проверяйте важную информацию.</p>
             </div>
