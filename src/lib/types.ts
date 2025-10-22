@@ -30,6 +30,8 @@ export interface Order {
   date: string;
   price: number;
   status: 'Pending' | 'In Progress' | 'Completed' | 'Cancelled';
+  address: string;
+  phone: string;
 }
 
 export interface Service {

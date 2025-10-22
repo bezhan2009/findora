@@ -3,7 +3,7 @@
 
 import React, { createContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { initialData, type InitialData } from '@/lib/data';
-import type { User, Service, Review, Category, Conversation, ChatMessage, Post, Comment, CartItem } from '@/lib/types';
+import type { User, Service, Review, Category, Conversation, ChatMessage, Post, Comment, CartItem, Order } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
 
 interface DataContextType extends InitialData {
@@ -15,7 +15,7 @@ interface DataContextType extends InitialData {
   addCommentToPost: (postId: string, comment: Comment) => void;
   addReplyToComment: (postId: string, parentCommentId: string, reply: Comment) => void;
   addReplyToReview: (reviewId: string, reply: Comment) => void;
-  createOrderFromCart: (cartItems: CartItem[]) => void;
+  createOrderFromCart: (cartItems: CartItem[], address: string, phone: string) => void;
   addLikeToService: (serviceId: string) => void;
 }
 
@@ -185,11 +185,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const createOrderFromCart = (cartItems: CartItem[]) => {
+  const createOrderFromCart = (cartItems: CartItem[], address: string, phone: string) => {
     if (!user) return;
 
     setData(prevData => {
-      const newOrders = cartItems.map(item => {
+      const newOrders: Order[] = cartItems.map(item => {
         const service = prevData.services.find(s => s.id === item.id);
         return {
           id: `order-${Date.now()}-${item.id}`,
@@ -199,6 +199,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           date: new Date().toISOString(),
           price: item.price * item.quantity,
           status: 'Completed' as const,
+          address,
+          phone,
         };
       });
 

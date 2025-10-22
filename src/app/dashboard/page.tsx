@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { useData } from "@/hooks/use-data";
-import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, MoreVertical, Percent } from "lucide-react";
+import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, MoreVertical, Percent, Phone, Home } from "lucide-react";
 import { 
     Bar, 
     BarChart as RechartsBarChart, 
@@ -98,12 +98,12 @@ export default function DashboardPage() {
         const last7Months = generateLast7Months();
 
         const fakeData = {
-            "Апр": { views: 450, revenue: 3200 },
-            "Май": { views: 600, revenue: 4100 },
-            "Июнь": { views: 750, revenue: 5500 },
-            "Июль": { views: 900, revenue: 6200 },
-            "Авг": { views: 1100, revenue: 7800 },
-            "Сен": { views: 1300, revenue: 8500 },
+            "Апр": { views: 250, revenue: 180 },
+            "Май": { views: 300, revenue: 220 },
+            "Июнь": { views: 350, revenue: 300 },
+            "Июль": { views: 400, revenue: 350 },
+            "Авг": { views: 450, revenue: 400 },
+            "Сен": { views: 500, revenue: 480 },
         };
         
         const monthlyPerformanceData = last7Months.map(month => {
@@ -136,6 +136,8 @@ export default function DashboardPage() {
                     service: `На "${order.serviceTitle}".`,
                     time: `${Math.round((new Date().getTime() - new Date(order.date).getTime()) / (1000 * 60 * 60))} ч. назад`,
                     avatar: customer?.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop',
+                    address: order.address,
+                    phone: order.phone,
                 }
             });
 
@@ -234,16 +236,28 @@ export default function DashboardPage() {
             <CardContent>
                 <div className="space-y-4">
                     {recentActivity.length > 0 ? recentActivity.map((activity, index) => (
-                      <div key={index} className="flex items-center">
-                          <Avatar className="h-9 w-9">
-                              <AvatarImage src={activity.avatar} data-ai-hint="person" />
-                              <AvatarFallback>{activity.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div className="ml-4 space-y-1">
-                              <p className="text-sm font-medium leading-none">{activity.name} {activity.action}</p>
-                              <p className="text-sm text-muted-foreground">{activity.service}</p>
+                      <div key={index} className="flex flex-col">
+                          <div className="flex items-center">
+                            <Avatar className="h-9 w-9">
+                                <AvatarImage src={activity.avatar} data-ai-hint="person" />
+                                <AvatarFallback>{activity.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="ml-4 space-y-1">
+                                <p className="text-sm font-medium leading-none">{activity.name} {activity.action}</p>
+                                <p className="text-sm text-muted-foreground">{activity.service}</p>
+                            </div>
+                            <div className="ml-auto font-medium text-xs text-muted-foreground">{activity.time}</div>
                           </div>
-                          <div className="ml-auto font-medium text-xs text-muted-foreground">{activity.time}</div>
+                          <div className="pl-12 mt-2 space-y-1 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                                <Home className="h-3 w-3" />
+                                <span>{activity.address}</span>
+                            </div>
+                             <div className="flex items-center gap-2">
+                                <Phone className="h-3 w-3" />
+                                <span>{activity.phone}</span>
+                            </div>
+                          </div>
                       </div>
                     )) : <p className="text-sm text-muted-foreground text-center py-10">Нет недавней активности.</p>}
                 </div>

@@ -60,7 +60,7 @@ export default function CartPage() {
     
     // Simulate processing delay
     setTimeout(() => {
-        createOrderFromCart(cartItems);
+        createOrderFromCart(cartItems, address, phone);
         clearCart();
         toast({
           title: "Заказ оформлен!",
@@ -193,13 +193,13 @@ export default function CartPage() {
                     <Label htmlFor="address" className="text-right">
                       Адрес
                     </Label>
-                    <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} className="col-span-3" placeholder="ул. Примерная, д. 1, кв. 2" />
+                    <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} className="col-span-3" placeholder="Испечак 15/7" />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="phone" className="text-right">
                       Телефон
                     </Label>
-                    <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="col-span-3" placeholder="+7 (999) 123-45-67" />
+                    <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="col-span-3" placeholder="+992 012330004" />
                   </div>
                 </div>
                 <DialogFooter>
