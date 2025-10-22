@@ -1,8 +1,9 @@
+
 "use client";
 
 import React, { createContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { initialData, type InitialData } from '@/lib/data';
-import type { User, Service, Review, Category, Conversation, ChatMessage, Post, Comment } from '@/lib/types';
+import type { User, Service, Review, Category, Conversation, ChatMessage, Post, Comment, CartItem } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
 
 interface DataContextType extends InitialData {
@@ -14,7 +15,7 @@ interface DataContextType extends InitialData {
   addCommentToPost: (postId: string, comment: Comment) => void;
   addReplyToComment: (postId: string, parentCommentId: string, reply: Comment) => void;
   addReplyToReview: (reviewId: string, reply: Comment) => void;
-  createOrderFromCart: (cartItems: {id: string, name: string, price: number, quantity: number}[]) => void;
+  createOrderFromCart: (cartItems: CartItem[]) => void;
   addLikeToService: (serviceId: string) => void;
 }
 
@@ -23,27 +24,7 @@ export const DataContext = createContext<DataContextType | undefined>(undefined)
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   
-  const getStorageKey = useCallback(() => 'bizmart-data', []);
-
-  const [data, setData] = useState<InitialData>(() => {
-    try {
-        if (typeof window !== 'undefined') {
-            const storedData = localStorage.getItem(getStorageKey());
-            return storedData ? JSON.parse(storedData) : initialData;
-        }
-    } catch (error) {
-        console.error("Failed to read from localStorage", error);
-    }
-    return initialData;
-  });
-
-  useEffect(() => {
-    try {
-        localStorage.setItem(getStorageKey(), JSON.stringify(data));
-    } catch (error) {
-        console.error("Failed to save to localStorage", error);
-    }
-  }, [data, getStorageKey]);
+  const [data, setData] = useState<InitialData>(initialData);
 
   const updateData = (newData: InitialData) => {
     setData(newData);
@@ -204,7 +185,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const createOrderFromCart = (cartItems: {id: string, name: string, price: number, quantity: number}[]) => {
+  const createOrderFromCart = (cartItems: CartItem[]) => {
     if (!user) return;
 
     setData(prevData => {
@@ -247,22 +228,28 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         }
       });
       
+      const newServices = [...prevData.services];
+
       const finalUsers = updatedUsers.map(u => {
         if (revenueByProvider[u.username]) {
-          const providerServices = prevData.services.filter(s => s.provider.username === u.username);
-          const totalRevenue = providerServices.reduce((acc, s) => acc + (s.analytics?.revenue || 0), 0) + revenueByProvider[u.username];
-          // Distribute revenue for analytics (this is a mock simplification)
-          const updatedProviderServices = providerServices.map(ps => ({
-              ...ps,
-              analytics: {
-                  ...ps.analytics,
-                  revenue: (ps.analytics?.revenue || 0) + (revenueByProvider[u.username] / providerServices.length),
-              }
-          }));
-
-          // Need to update services in the main data object
-          const nonProviderServices = prevData.services.filter(s => s.provider.username !== u.username);
-          prevData.services = [...nonProviderServices, ...updatedProviderServices];
+          const providerServices = newServices.filter(s => s.provider.username === u.username);
+          if (providerServices.length > 0) {
+              const revenuePerService = revenueByProvider[u.username] / providerServices.length;
+              providerServices.forEach(ps => {
+                  const serviceIndex = newServices.findIndex(s => s.id === ps.id);
+                  if (serviceIndex !== -1) {
+                      newServices[serviceIndex] = {
+                          ...newServices[serviceIndex],
+                           analytics: {
+                               ...newServices[serviceIndex].analytics,
+                               views: newServices[serviceIndex].analytics?.views || 0,
+                               likes: newServices[serviceIndex].analytics?.likes || 0,
+                               revenue: (newServices[serviceIndex].analytics?.revenue || 0) + revenuePerService
+                           }
+                      }
+                  }
+              });
+          }
         }
         return u;
       });
@@ -270,6 +257,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       return {
         ...prevData,
         users: finalUsers,
+        services: newServices,
       };
     });
   };
