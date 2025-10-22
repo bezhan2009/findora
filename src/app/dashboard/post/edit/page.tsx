@@ -39,8 +39,8 @@ function EditPostPage() {
     },
   });
 
-  const { isSubmitting, watch } = form.formState;
-  const postType = watch("type");
+  const { isSubmitting } = form.formState;
+  const postType = form.watch("type");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) return;
