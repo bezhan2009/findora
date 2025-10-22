@@ -42,6 +42,7 @@ const prompt = ai.definePrompt({
   input: {schema: ContentCreatorInputSchema},
   output: {schema: ContentCreatorOutputSchema},
   prompt: `You are an expert content creator assistant. Your task is to generate a complete article based on the user's request and return it as a single, valid JSON object with two keys: "markdown" and "meta".
+Your response MUST be in Russian.
 
 Follow these instructions precisely:
 

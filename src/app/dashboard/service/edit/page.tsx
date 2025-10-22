@@ -20,7 +20,7 @@ const formSchema = z.object({
   description: z.string().min(20, "Описание должно содержать не менее 20 символов."),
   category: z.string({ required_error: "Пожалуйста, выберите категорию." }),
   price: z.coerce.number().min(1, "Цена должна быть не менее 1."),
-  images: z.string().min(1, "Требуется хотя бы одно изображение URL.").transform(val => val.split(',').map(s => s.trim())),
+  images: z.any()
 });
 
 export default function EditServicePage() {
@@ -33,7 +33,7 @@ export default function EditServicePage() {
       title: "",
       description: "",
       price: 0,
-      images: [],
+      images: undefined,
     },
   });
 
@@ -41,6 +41,9 @@ export default function EditServicePage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) return;
+    
+    const imageFiles = values.images as FileList;
+    const imageUrls = Array.from(imageFiles).map(file => URL.createObjectURL(file));
 
     const newService: Service = {
       id: `service-${Date.now()}`,
@@ -48,7 +51,7 @@ export default function EditServicePage() {
       description: values.description,
       category: values.category,
       price: values.price,
-      images: values.images,
+      images: imageUrls.length > 0 ? imageUrls : ['https://placehold.co/400x400/F9F9F9/333333?text=No+Image'],
       rating: 0,
       reviewsCount: 0,
       reviews: [],
@@ -57,11 +60,18 @@ export default function EditServicePage() {
         username: user.username,
         avatar: user.avatar,
       },
+       analytics: {
+        views: 0,
+        likes: 0,
+        revenue: 0,
+      }
     };
 
     addService(newService);
     router.push(`/services/${newService.id}`);
   }
+  
+  const imageRef = form.register("images");
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -132,7 +142,7 @@ export default function EditServicePage() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Цена ($)</FormLabel>
+                      <FormLabel>Цена (TJS)</FormLabel>
                       <FormControl>
                         <Input type="number" placeholder="150" {...field} />
                       </FormControl>
@@ -145,12 +155,12 @@ export default function EditServicePage() {
                   name="images"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>URL изображений</FormLabel>
+                      <FormLabel>Изображения</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="https://.../image1.jpg, https://.../image2.jpg" {...field} onChange={e => field.onChange(e.target.value)} />
+                        <Input type="file" multiple accept="image/*" {...imageRef} />
                       </FormControl>
                        <p className="text-sm text-muted-foreground">
-                        Введите URL-адреса изображений через запятую.
+                        Выберите одно или несколько изображений для вашего товара.
                       </p>
                       <FormMessage />
                     </FormItem>

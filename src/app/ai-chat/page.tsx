@@ -22,12 +22,16 @@ interface Message {
   content: string;
 }
 
-// --- Reusable components for displaying AI responses ---
+const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
+    <div className="animate-card-in opacity-0" style={{ animationFillMode: 'forwards' }}>
+        {children}
+    </div>
+);
 
 const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
     useEffect(() => {
         if (text) {
-            const timer = setTimeout(onComplete, text.length * 15 + 500); // Estimate completion time
+            const timer = setTimeout(onComplete, text.length * 15 + 500); 
             return () => clearTimeout(timer);
         }
     }, [text, onComplete]);
@@ -67,7 +71,7 @@ const ServiceCardComponent = memo(({ service }: { service: Service }) => (
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
                     <span>{service.rating.toFixed(1)}</span>
                 </div>
-                <p className="text-base font-bold">${service.price}</p>
+                <p className="text-base font-bold">{service.price} TJS</p>
             </div>
         </div>
     </Link>
@@ -111,7 +115,7 @@ const MessageContent = ({ content }: { content: string }) => {
         if (serviceId) {
             const service = services.find(s => s.id === serviceId);
             if (service) {
-                return <ServiceCardComponent service={service} />;
+                return <AnimatedCard><ServiceCardComponent service={service} /></AnimatedCard>;
             }
         }
     }
@@ -121,7 +125,7 @@ const MessageContent = ({ content }: { content: string }) => {
         if (username) {
             const provider = users.find(u => u.username === username);
             if (provider) {
-                return <ProviderCardComponent provider={provider} />;
+                return <AnimatedCard><ProviderCardComponent provider={provider} /></AnimatedCard>;
             }
         }
     }
@@ -158,6 +162,7 @@ export default function AIChatPage() {
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { services, users } = useData();
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const hasMessages = messages.length > 1;
 
@@ -283,16 +288,18 @@ export default function AIChatPage() {
         </ScrollArea>
         <div className="px-4 pb-4 w-full shrink-0">
             <div className="max-w-3xl mx-auto">
-                <form onSubmit={handleSendMessage} className="relative">
+                <form onSubmit={handleSendMessage} className={cn("animated-gradient-border-container", isInputFocused && "focused")}>
                 <Input
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onFocus={() => setIsInputFocused(true)}
+                    onBlur={() => setIsInputFocused(false)}
                     placeholder="Спросите что-нибудь у AI Ассистента..."
-                    className="w-full h-14 pl-4 pr-14 rounded-2xl shadow-lg border-border/20 text-base"
+                    className="relative w-full h-14 pl-4 pr-14 rounded-[14px] shadow-lg border-border/20 text-base z-10"
                     disabled={isLoading}
                 />
-                <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg">
+                <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20">
                     <Send className="h-5 w-5" />
                 </Button>
                 </form>

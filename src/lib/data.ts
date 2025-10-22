@@ -146,87 +146,89 @@ const services: Service[] = [
     title: 'Разработка сайта на заказ',
     description: 'Полный цикл разработки сайта с использованием новейших технологий. Мы создадим адаптивный, быстрый и SEO-дружественный сайт с нуля по вашим требованиям. Включает в себя дизайн-макеты, разработку и развертывание.',
     category: 'Веб-разработка',
-    price: 450,
+    price: 45000,
     rating: 4.9,
     reviewsCount: 8,
     reviews: ['rev-1', 'rev-2', 'rev-5'],
     images: ['https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop'],
     provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
     featured: true,
-    analytics: { views: 1250, likes: 230, revenue: 4500 }
+    analytics: { views: 1250, likes: 230, revenue: 450000 }
   },
   {
     id: 'service-2',
     title: 'Настройка E-commerce магазина',
     description: 'Запустите свой интернет-магазин на Shopify или WooCommerce. Услуга включает настройку темы, загрузку товаров, интеграцию платежных шлюзов и базовую SEO-настройку, чтобы помочь вам начать продавать онлайн.',
     category: 'Веб-разработка',
-    price: 380,
+    price: 38000,
     rating: 4.8,
     reviewsCount: 12,
     reviews: [],
     images: ['https://images.unsplash.com/photo-1557800636-894a64c1696f?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=500&fit=crop'],
     provider: { name: users[1].name, username: users[1].username, avatar: users[1].avatar },
-    analytics: { views: 890, likes: 180, revenue: 3800 }
+    analytics: { views: 890, likes: 180, revenue: 380000 }
   },
   {
     id: 'service-3',
     title: 'Профессиональный дизайн логотипа',
     description: 'Я разработаю уникальный и запоминающийся логотип для вашего бренда. Вы получите несколько концепций и правок, чтобы финальный дизайн идеально отражал ценности и идентичность вашего бизнеса.',
     category: 'Графический дизайн',
-    price: 150,
+    price: 15000,
     rating: 5.0,
     reviewsCount: 25,
     reviews: ['rev-3'],
     images: ['https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&h=500&fit=crop'],
     provider: { name: users[2].name, username: users[2].username, avatar: users[2].avatar },
-    analytics: { views: 2100, likes: 450, revenue: 6750 }
+    analytics: { views: 2100, likes: 450, revenue: 675000 }
   },
   {
     id: 'service-4',
     title: 'Написание SEO-статьи для блога',
     description: 'Привлекательные и SEO-оптимизированные посты для блога для привлечения трафика на ваш сайт. Каждая статья тщательно исследуется, пишется в голосе вашего бренда и форматируется для удобства чтения. Ключевые слова будут интегрированы естественным образом.',
     category: 'Написание текстов',
-    price: 80,
+    price: 8000,
     rating: 4.7,
     reviewsCount: 42,
     reviews: ['rev-4'],
     images: ['https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=500&fit=crop'],
     provider: { name: users[3].name, username: users[3].username, avatar: users[3].avatar },
-    analytics: { views: 3500, likes: 600, revenue: 3360 }
+    analytics: { views: 3500, likes: 600, revenue: 336000 }
   },
   {
     id: 'service-5',
     title: 'Управление социальными сетями',
     description: 'Полное управление вашими профилями в социальных сетях (Instagram, Facebook, Twitter). Включает создание контента, график публикаций, взаимодействие с сообществом и ежемесячные отчеты о производительности для роста вашего онлайн-присутствия.',
     category: 'Маркетинг',
-    price: 300,
+    price: 30000,
     rating: 4.9,
     reviewsCount: 15,
     reviews: ['rev-6'],
     images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=500&fit=crop'],
     provider: { name: users[4].name, username: users[4].username, avatar: users[4].avatar },
     featured: true,
-    analytics: { views: 1800, likes: 320, revenue: 4500 }
+    analytics: { views: 1800, likes: 320, revenue: 450000 }
   },
 ];
 
 const categories: Category[] = [
-    { id: 'cat-1', name: 'Графический дизайн' },
+    { id: 'cat-1', name: 'Графический дизайн и Дизайн' },
     { id: 'cat-2', name: 'Цифровой маркетинг' },
-    { id: 'cat-3', name: 'Тексты и переводы' },
-    { id: 'cat-4', name: 'Видео и анимация' },
-    { id: 'cat-5', name: 'Музыка и аудио' },
-    { id: 'cat-6', name: 'Программирование' },
+    { id: 'cat-3', name: 'Копирайтинг и Переводы' },
+    { id: 'cat-4', name: 'Видео и Анимация' },
+    { id: 'cat-5', name: 'Музыка и Аудио' },
+    { id: 'cat-6', name: 'Программирование и Технологии' },
     { id: 'cat-7', name: 'Бизнес' },
     { id: 'cat-8', name: 'Стиль жизни' },
     { id: 'cat-9', name: 'Фотография' },
-    { id: 'cat-10', name: 'IT-поддержка' },
+    { id: 'cat-10', name: 'AI Услуги' },
     { id: 'cat-11', name: 'Консалтинг' },
-    { id: 'cat-12', name: 'UI/UX Дизайн' },
-    { id: 'cat-13', name: 'SEO-оптимизация' },
-    { id: 'cat-14', name: 'Создание контента' },
-    { id: 'cat-15', name: 'Озвучка' },
+    { id: 'cat-12', name: 'Юридические услуги' },
+    { id: 'cat-13', name: 'Образование и Репетиторство' },
+    { id: 'cat-14', name: 'Мероприятия' },
+    { id: 'cat-15', name: 'Здоровье и Фитнес' },
+    { id: 'cat-16', name: 'Развлечения' }
 ];
+
 
 const conversations: Conversation[] = [
     {
@@ -261,3 +263,5 @@ export const initialData = {
     categories,
     conversations
 };
+
+export type InitialData = typeof initialData;

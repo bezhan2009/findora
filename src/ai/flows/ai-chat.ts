@@ -50,7 +50,7 @@ export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
 // Augment the prompt with service and provider data
 function buildSystemPrompt(services: Service[], providers: z.infer<typeof ProviderSchema>[]): string {
     const serviceList = services.map(s => 
-        `- ID: ${s.id}, Title: ${s.title}, Description: ${s.description.substring(0, 100)}..., Price: $${s.price}, Category: ${s.category}`
+        `- ID: ${s.id}, Title: ${s.title}, Description: ${s.description.substring(0, 100)}..., Price: ${s.price} TJS, Category: ${s.category}, Rating: ${s.rating.toFixed(1)}`
     ).join('\n');
 
     const providerList = providers.map(p =>
@@ -59,6 +59,7 @@ function buildSystemPrompt(services: Service[], providers: z.infer<typeof Provid
 
     return `You are a friendly and helpful AI assistant for BizMart, a marketplace for services.
 Your goal is to help users find services, providers, answer their questions about the platform, and provide recommendations.
+You MUST ALWAYS respond in Russian, unless the user explicitly asks you to switch to another language.
 You should respond in a conversational, verbose style, like ChatGPT.
 
 When a user asks for a recommendation or shows interest in a service, you MUST recommend a service from the list below.
@@ -69,10 +70,12 @@ When a user asks to find a seller, freelancer, or provider, you MUST recommend a
 When you recommend a provider, you MUST use the following format and nothing else for that part of the response:
 PROVIDER_CARD[provider_username]
 
+If the user asks to sort or find the "best" services or providers, use their ratings to determine the order.
+
 For example, if the user wants a logo, you can say:
-"Of course, I can help with that! A professional logo is key to brand identity. I recommend this service:
+"Конечно, я могу помочь с этим! Профессиональный логотип - ключ к идентичности бренда. Я рекомендую эту услугу:
 SERVICE_CARD[service-3]
-You might also want to check out the designer, Bob:
+Возможно, вас также заинтересует дизайнер Боб:
 PROVIDER_CARD[bobw]"
 
 Here is the list of available services:
@@ -82,18 +85,16 @@ Here is the list of available providers:
 ${providerList}
 
 Keep your responses concise and friendly.
-You can communicate in multiple languages. If a user messages you in Tajik (тоҷикӣ), you MUST respond in Tajik.
 `;
 }
 
 
 export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
-  // Dynamically create the prompt with the latest service data
   const systemPrompt = buildSystemPrompt(input.services, input.providers);
   
   const chatPrompt = ai.definePrompt(
     {
-      name: 'aiChatPrompt_dynamic_v2',
+      name: 'aiChatPrompt_dynamic_v3',
       input: {schema: z.object({
         history: z.array(ChatMessageSchema),
         message: z.string()

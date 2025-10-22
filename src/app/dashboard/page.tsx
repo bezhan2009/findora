@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 import { useData } from "@/hooks/use-data";
-import { BarChart, Eye, Heart, DollarSign, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, MoreVertical, Percent } from "lucide-react";
+import { BarChart, Eye, Heart, Users, LineChart as LineChartIcon, Activity, TrendingUp, Target, Star, MoreVertical, Percent } from "lucide-react";
 import { 
     Bar, 
     BarChart as RechartsBarChart, 
@@ -25,20 +25,11 @@ import {
     RadialBarChart
 } from 'recharts';
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-
-const monthlyPerformanceData = [
-  { name: 'Янв', views: 4000, revenue: 2400 },
-  { name: 'Фев', views: 3000, revenue: 2210 },
-  { name: 'Март', views: 2000, revenue: 2290 },
-  { name: 'Апр', views: 2780, revenue: 2000 },
-  { name: 'Май', views: 1890, revenue: 2181 },
-  { name: 'Июнь', views: 2390, revenue: 2500 },
-  { name: 'Июль', views: 3490, revenue: 2100 },
-];
+import { DollarSignIcon } from "lucide-react";
 
 const categoryPerformanceData = [
   { subject: 'Веб-разработка', A: 120, fullMark: 150 },
@@ -54,7 +45,7 @@ const satisfactionData = [
 
 export default function DashboardPage() {
     const { user, role } = useAuth();
-    const { services } = useData();
+    const { services, users: allUsers } = useData();
     const router = useRouter();
 
     useEffect(() => {
@@ -63,6 +54,64 @@ export default function DashboardPage() {
         }
     }, [role, router]);
 
+    const { 
+        providerServices, 
+        totalRevenue, 
+        totalLikes, 
+        totalViews, 
+        monthlyPerformanceData,
+        topServicesData,
+        recentActivity
+    } = useMemo(() => {
+        if (!user) return { providerServices: [], totalRevenue: 0, totalLikes: 0, totalViews: 0, monthlyPerformanceData: [], topServicesData: [], recentActivity: [] };
+
+        const providerServices = services.filter(s => s.provider.username === user.username);
+        
+        let totalRevenue = 0;
+        let totalLikes = 0;
+        let totalViews = 0;
+        
+        providerServices.forEach(s => {
+            totalRevenue += s.analytics?.revenue ?? 0;
+            totalLikes += s.analytics?.likes ?? 0;
+            totalViews += s.analytics?.views ?? 0;
+        });
+
+        // Mock monthly data based on total revenue
+        const monthlyPerformanceData = [
+            { name: 'Янв', views: totalViews * 0.1, revenue: totalRevenue * 0.1 },
+            { name: 'Фев', views: totalViews * 0.08, revenue: totalRevenue * 0.09 },
+            { name: 'Март', views: totalViews * 0.12, revenue: totalRevenue * 0.11 },
+            { name: 'Апр', views: totalViews * 0.15, revenue: totalRevenue * 0.14 },
+            { name: 'Май', views: totalViews * 0.13, revenue: totalRevenue * 0.16 },
+            { name: 'Июнь', views: totalViews * 0.2, revenue: totalRevenue * 0.22 },
+            { name: 'Июль', views: totalViews * 0.22, revenue: totalRevenue * 0.18 },
+        ];
+
+        const topServicesData = providerServices
+            .sort((a, b) => (b.analytics?.revenue ?? 0) - (a.analytics?.revenue ?? 0))
+            .slice(0, 5)
+            .map(s => ({ name: s.title.substring(0, 15) + '...', revenue: s.analytics?.revenue ?? 0 }));
+
+        const recentActivity = allUsers
+            .flatMap(u => u.orders || [])
+            .filter(order => providerServices.some(s => s.title === order.serviceTitle))
+            .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 3)
+            .map(order => {
+                const customer = allUsers.find(u => u.orders?.some(o => o.id === order.id));
+                return {
+                    name: customer?.name || 'Клиент',
+                    action: 'разместил(а) заказ.',
+                    service: `На "${order.serviceTitle}".`,
+                    time: `${Math.round((new Date().getTime() - new Date(order.date).getTime()) / (1000 * 60 * 60))} ч. назад`,
+                    avatar: customer?.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop',
+                }
+            });
+
+        return { providerServices, totalRevenue, totalLikes, totalViews, monthlyPerformanceData, topServicesData, recentActivity };
+    }, [user, services, allUsers]);
+
     if (role !== 'provider' || !user) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
@@ -70,15 +119,6 @@ export default function DashboardPage() {
             </div>
         );
     }
-
-    const providerServices = services.filter(s => s.provider.username === user.username);
-    const totalViews = providerServices.reduce((acc, s) => acc + (s.analytics?.views ?? 0), 0);
-    const totalLikes = providerServices.reduce((acc, s) => acc + (s.analytics?.likes ?? 0), 0);
-    const totalRevenue = providerServices.reduce((acc, s) => acc + (s.analytics?.revenue ?? 0), 0);
-
-    const topServicesData = providerServices
-        .slice(0, 5)
-        .map(s => ({ name: s.title.substring(0, 15) + '...', revenue: s.analytics?.revenue ?? 0 }));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -95,7 +135,7 @@ export default function DashboardPage() {
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         {[
-          { title: 'Общий доход', value: `$${totalRevenue.toLocaleString()}`, change: '+20.1%', icon: DollarSign, color: 'text-emerald-500' },
+          { title: 'Общий доход', value: `${totalRevenue.toLocaleString()} TJS`, change: '+20.1%', icon: DollarSignIcon, color: 'text-emerald-500' },
           { title: 'Всего просмотров', value: totalViews.toLocaleString(), change: '+180.1%', icon: Eye, color: 'text-blue-500' },
           { title: 'Всего лайков', value: totalLikes.toLocaleString(), change: '+19%', icon: Heart, color: 'text-rose-500' },
           { title: 'Новые подписчики', value: '+235', change: 'с прошлого месяца', icon: Users, color: 'text-indigo-500' }
@@ -163,11 +203,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    {[
-                      { name: 'Диана Князева', action: 'разместила заказ.', service: 'На "Разработка сайта на заказ".', time: '5 мин назад', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330' },
-                      { name: 'Клиент В', action: 'оставил 5-звездочный отзыв.', service: 'На "Профессиональный дизайн логотипа".', time: '2 часа назад', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e' },
-                      { name: 'Клиент Б', action: 'оценил вашу услугу.', service: '"Настройка E-commerce магазина".', time: '1 день назад', avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a' }
-                    ].map((activity, index) => (
+                    {recentActivity.length > 0 ? recentActivity.map((activity, index) => (
                       <div key={index} className="flex items-center">
                           <Avatar className="h-9 w-9">
                               <AvatarImage src={activity.avatar} data-ai-hint="person" />
@@ -179,7 +215,7 @@ export default function DashboardPage() {
                           </div>
                           <div className="ml-auto font-medium text-xs text-muted-foreground">{activity.time}</div>
                       </div>
-                    ))}
+                    )) : <p className="text-sm text-muted-foreground text-center py-10">Нет недавней активности.</p>}
                 </div>
             </CardContent>
         </Card>

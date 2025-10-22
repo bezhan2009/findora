@@ -17,8 +17,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
   type: z.enum(["photo", "video"], { required_error: "Выберите тип поста." }),
-  url: z.string().url("Введите действительный URL.").min(1, "URL обязателен."),
+  media: z.any(),
+  url: z.string().optional(),
   caption: z.string().max(280, "Подпись не может превышать 280 символов."),
+}).refine(data => data.type === 'video' ? !!data.url : !!data.media, {
+  message: "Для видео требуется URL, для фото - файл.",
+  path: ["media"],
 });
 
 export default function EditPostPage() {
@@ -34,21 +38,34 @@ export default function EditPostPage() {
     },
   });
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, watch } = form.formState;
+  const postType = watch("type");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) return;
 
+    let mediaUrl = '';
+    if (values.type === 'video') {
+        mediaUrl = values.url || '';
+    } else if (values.media && values.media.length > 0) {
+        const file = values.media[0] as File;
+        mediaUrl = URL.createObjectURL(file);
+    }
+    
     const newPost: Post = {
       id: `post-${Date.now()}`,
       type: values.type,
-      url: values.url,
+      url: mediaUrl,
       caption: values.caption,
+      likes: 0,
+      comments: [],
     };
 
     addPost(user.username, newPost);
     router.push(`/profile/${user.username}`);
   }
+  
+  const mediaRef = form.register("media");
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -88,7 +105,7 @@ export default function EditPostPage() {
                             <FormControl>
                               <RadioGroupItem value="video" />
                             </FormControl>
-                            <FormLabel className="font-normal">Видео</FormLabel>
+                            <FormLabel className="font-normal">Видео (YouTube)</FormLabel>
                           </FormItem>
                         </RadioGroup>
                       </FormControl>
@@ -96,19 +113,35 @@ export default function EditPostPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>URL медиа</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://images.unsplash.com/..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {postType === 'video' ? (
+                     <FormField
+                      control={form.control}
+                      name="url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>URL видео (YouTube)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://www.youtube.com/watch?v=..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                ) : (
+                    <FormField
+                      control={form.control}
+                      name="media"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Файл изображения</FormLabel>
+                          <FormControl>
+                            <Input type="file" accept="image/*" {...mediaRef} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                )}
                 <FormField
                   control={form.control}
                   name="caption"

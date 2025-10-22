@@ -76,7 +76,38 @@
     border-width: 1px;
     border-color: hsl(var(--border) / 0.2);
   }
+
+  .animated-gradient-border-container {
+    @apply relative p-[2px] rounded-2xl;
+  }
+
+  .animated-gradient-border-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit; /* Use the same border-radius as the container */
+    padding: 2px; /* The width of the border */
+    background: conic-gradient(from 180deg at 50% 50%, hsl(var(--primary)/0.5) 0deg, hsl(var(--accent)/0.8) 180deg, hsl(var(--primary)/0.5) 360deg);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .animated-gradient-border-container.focused::before {
+    opacity: 1;
+    animation: rotate 4s linear infinite;
+  }
+  
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 }
+
 
 @keyframes riseAndFadeIn {
   from {
@@ -99,4 +130,8 @@
 
 .typing-animation-container {
   white-space: pre-wrap;
+}
+
+.animate-card-in {
+  animation: riseAndFadeIn 0.6s ease-out forwards;
 }

@@ -163,7 +163,6 @@ function ServicePageContent({ id }: { id: string }) {
   };
   
   const handleReviewSubmit = () => {
-    // This function will re-filter the reviews when a new one is submitted.
     const updatedService = services.find((s) => s.id === id);
     if(updatedService) {
         setServiceReviews(allReviews.filter(review => updatedService.reviews?.includes(review.id)));
@@ -235,7 +234,7 @@ function ServicePageContent({ id }: { id: string }) {
           <Card className="sticky top-24 p-6 rounded-xl shadow-sm">
             <CardTitle className="text-2xl mb-4 font-headline flex justify-between items-center">
               <span>{service.category}</span>
-              <span className="text-3xl font-bold text-foreground">${service.price}</span>
+              <span className="text-3xl font-bold text-foreground">{service.price} TJS</span>
             </CardTitle>
             <CardContent className="p-0">
               <p className="text-muted-foreground mb-6">Начальная цена за стандартный проект/товар.</p>

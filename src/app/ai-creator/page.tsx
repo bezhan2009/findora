@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -47,10 +47,6 @@ export default function AICreatorPage() {
     }
   }, [user, router]);
 
-  if (!user) {
-    return null;
-  }
-
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     setIsLoading(true);
@@ -91,7 +87,7 @@ export default function AICreatorPage() {
     const newService: Service = {
       id: `service-${Date.now()}`,
       title: editableTitle,
-      description: generatedContent.meta.summary, // Using summary for short description
+      description: editableBody, // Use full markdown body as description
       category: editableCategory,
       price: editablePrice,
       images: editableImages.map(img => img.url).filter(url => url.trim() !== ''),
@@ -103,12 +99,30 @@ export default function AICreatorPage() {
         username: user.username,
         avatar: user.avatar,
       },
+      analytics: {
+        views: 0,
+        likes: 0,
+        revenue: 0,
+      }
     };
 
     addService(newService);
     router.push(`/services/${newService.id}`);
   };
 
+  const handleImageChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const updatedImages = [...editableImages];
+        updatedImages[index].url = reader.result as string;
+        setEditableImages(updatedImages);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   const handleImageMetaChange = (index: number, field: keyof ImageMeta, value: string) => {
     const updatedImages = [...editableImages];
     updatedImages[index][field] = value;
@@ -121,6 +135,10 @@ export default function AICreatorPage() {
 
   const handleRemoveImageField = (index: number) => {
     setEditableImages(prev => prev.filter((_, i) => i !== index));
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -216,7 +234,7 @@ export default function AICreatorPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="price">Цена ($)</Label>
+                            <Label htmlFor="price">Цена (TJS)</Label>
                             <Input
                                 id="price"
                                 type="number"
@@ -267,6 +285,12 @@ export default function AICreatorPage() {
                                             value={image.url}
                                             onChange={(e) => handleImageMetaChange(index, 'url', e.target.value)}
                                             placeholder="URL изображения"
+                                        />
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleImageChange(index, e)}
+                                            className="text-sm"
                                         />
                                         <Input 
                                             value={image.alt}

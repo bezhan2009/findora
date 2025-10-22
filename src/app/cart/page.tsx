@@ -8,9 +8,27 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ShoppingCart, Trash2, Plus, Minus, Package } from 'lucide-react';
+import { useData } from '@/hooks/use-data';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, clearCart, totalPrice, cartCount } = useCart();
+  const { createOrderFromCart } = useData();
+  const { toast } = useToast();
+  const router = useRouter();
+
+
+  const handleCheckout = () => {
+    createOrderFromCart(cartItems);
+    clearCart();
+    toast({
+      title: "Заказ оформлен!",
+      description: "Ваши товары скоро будут у вас. Спасибо за покупку!",
+    });
+    router.push('/profile/dianap'); // Redirect to customer profile/orders page
+  };
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -49,7 +67,7 @@ export default function CartPage() {
                             </div>
                             <div className="flex-grow">
                                 <Link href={`/services/${item.id}`} className="font-semibold hover:text-primary transition-colors">{item.name}</Link>
-                                <p className="text-lg font-bold text-primary mt-1">${item.price.toFixed(2)}</p>
+                                <p className="text-lg font-bold text-primary mt-1">{item.price.toFixed(2)} TJS</p>
                                 <div className="flex items-center gap-2 mt-2">
                                 <Button
                                     variant="outline"
@@ -101,7 +119,7 @@ export default function CartPage() {
                 <CardContent className="space-y-4">
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">Промежуточный итог</span>
-                        <span>${totalPrice.toFixed(2)}</span>
+                        <span>{totalPrice.toFixed(2)} TJS</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">Налоги</span>
@@ -109,9 +127,9 @@ export default function CartPage() {
                     </div>
                     <div className="border-t pt-4 flex justify-between font-bold text-lg">
                         <span>Итого</span>
-                        <span>${totalPrice.toFixed(2)}</span>
+                        <span>{totalPrice.toFixed(2)} TJS</span>
                     </div>
-                     <Button size="lg" className="w-full mt-4">
+                     <Button size="lg" className="w-full mt-4" onClick={handleCheckout}>
                         Перейти к оформлению
                     </Button>
                 </CardContent>
