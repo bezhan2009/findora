@@ -8,7 +8,7 @@ import { initialData } from '@/lib/data';
 interface AuthContextType {
   user: User | null;
   role: UserRole | null;
-  authenticate: (email: string, name?: string, role?: UserRole) => void;
+  authenticate: (username: string, name?: string, role?: UserRole) => void;
   logout: () => void;
 }
 
@@ -19,26 +19,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<UserRole | null>(null);
   
   useEffect(() => {
-    // Mock auto-login
-    const chairmanUser = initialData.users.find(u => u.username === 'chairman');
-    if (chairmanUser) {
-        setUser(chairmanUser);
-        setRole(chairmanUser.role);
+    // Mock auto-login with a default user
+    const defaultUser = initialData.users.find(u => u.username === 'dianap');
+    if (defaultUser) {
+        setUser(defaultUser);
+        setRole(defaultUser.role);
     }
   }, []);
 
 
-  const authenticate = (email: string, name?: string, userRole: UserRole = 'customer') => {
-    // Dummy authentication: find user by email or create a new stub for registration
-    const foundUser = initialData.users.find(u => u.username === email.split('@')[0]) || {
-        ...initialData.users[0],
-        id: `user-${Date.now()}`,
-        name: name || `User ${email.split('@')[0]}`,
-        username: email.split('@')[0],
-        avatar: `https://images.unsplash.com/photo-1527980965255-d3b416303d12`,
-    };
-    setUser(foundUser);
-    setRole(userRole);
+  const authenticate = (username: string, name?: string, userRole: UserRole = 'customer') => {
+    // Simplified authentication: find user by username
+    const foundUser = initialData.users.find(u => u.username === username);
+    
+    if (foundUser) {
+        setUser(foundUser);
+        setRole(foundUser.role);
+    } else {
+        // If user not found for login, do nothing or show error
+        // For registration, a new user would be created and added to the data source
+        console.warn(`User "${username}" not found.`);
+        // For demo purposes, let's create a temporary user on registration
+        if(name) {
+             const newUser: User = {
+                id: `user-${Date.now()}`,
+                name: name,
+                username: username,
+                role: userRole,
+                avatar: `https://images.unsplash.com/photo-1527980965255-d3b416303d12`,
+                location: 'Не указано',
+                bio: 'Новый пользователь BizMart!',
+                followers: 0,
+            };
+            // In a real app, you would add this user to your persistent data source.
+            // For now, we just set them in the context.
+            setUser(newUser);
+            setRole(userRole);
+        }
+    }
   };
 
   const logout = () => {

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -27,31 +28,23 @@ import Logo from "@/components/logo";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Пожалуйста, введите действительный email.",
-  }),
-  password: z.string().min(1, {
-    message: "Пароль обязателен.",
-  }),
-  role: z.enum(["customer", "provider"], {
-    required_error: "Вам нужно выбрать роль.",
+  username: z.string().min(1, {
+    message: "Имя пользователя обязательно.",
   }),
 });
 
 export default function LoginPage() {
   const router = useRouter();
-  const { authenticate } = useAuth();
+  const { authenticate, user } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      role: "customer",
+      username: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    authenticate(values.email, undefined, values.role as 'customer' | 'provider');
+    authenticate(values.username);
     router.push("/");
   }
 
@@ -64,7 +57,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl font-headline">Вход</CardTitle>
           <CardDescription>
-            Введите свою почту ниже, чтобы войти в аккаунт
+            Введите свое имя пользователя для входа. <br/> (например: chairman, dianap, alicej, bobw, charlieb)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -72,59 +65,12 @@ export default function LoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Имя пользователя</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Пароль</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Я...</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="customer" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Клиент
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="provider" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Исполнитель
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
+                      <Input placeholder="dianap" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -11,22 +12,34 @@ import { ShoppingCart, Trash2, Plus, Minus, Package } from 'lucide-react';
 import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, clearCart, totalPrice, cartCount } = useCart();
   const { createOrderFromCart } = useData();
+  const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
 
   const handleCheckout = () => {
+    if (!user) {
+        toast({
+            variant: 'destructive',
+            title: "Ошибка",
+            description: "Вы должны быть авторизованы, чтобы оформить заказ.",
+        });
+        router.push('/login');
+        return;
+    }
+
     createOrderFromCart(cartItems);
     clearCart();
     toast({
       title: "Заказ оформлен!",
       description: "Ваши товары скоро будут у вас. Спасибо за покупку!",
     });
-    router.push('/profile/dianap'); // Redirect to customer profile/orders page
+    router.push(`/profile/${user.username}`);
   };
 
 

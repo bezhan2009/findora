@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,15 +78,19 @@ export default function DashboardPage() {
             totalViews += s.analytics?.views ?? 0;
         });
 
+        const providerPosts = user.posts || [];
+        const postLikes = providerPosts.reduce((acc, post) => acc + (post.likes || 0), 0);
+        totalLikes += postLikes;
+
         // Mock monthly data based on total revenue
         const monthlyPerformanceData = [
-            { name: 'Янв', views: 435, revenue: 2400 },
-            { name: 'Фев', views: 489, revenue: 2210 },
-            { name: 'Март', views: 521, revenue: 2290 },
-            { name: 'Апр', views: 603, revenue: 2780 },
-            { name: 'Май', views: 580, revenue: 1890 },
-            { name: 'Июнь', views: 720, revenue: 2390 },
-            { name: 'Июль', views: 780, revenue: 3490 },
+            { name: 'Янв', views: Math.floor(totalViews * 0.1), revenue: Math.floor(totalRevenue * 0.05) },
+            { name: 'Фев', views: Math.floor(totalViews * 0.12), revenue: Math.floor(totalRevenue * 0.1) },
+            { name: 'Март', views: Math.floor(totalViews * 0.15), revenue: Math.floor(totalRevenue * 0.15) },
+            { name: 'Апр', views: Math.floor(totalViews * 0.2), revenue: Math.floor(totalRevenue * 0.2) },
+            { name: 'Май', views: Math.floor(totalViews * 0.18), revenue: Math.floor(totalRevenue * 0.15) },
+            { name: 'Июнь', views: Math.floor(totalViews * 0.25), revenue: Math.floor(totalRevenue * 0.2) },
+            { name: 'Июль', views: Math.floor(totalViews), revenue: Math.floor(totalRevenue) },
         ];
 
         const topServicesData = providerServices
