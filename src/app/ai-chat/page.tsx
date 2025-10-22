@@ -188,15 +188,21 @@ export default function AIChatPage() {
     const scrollDiv = scrollAreaRef.current;
     if (scrollDiv) {
         scrollDiv.addEventListener('scroll', handleScroll);
+        // Initial check
+        handleScroll();
         return () => scrollDiv.removeEventListener('scroll', handleScroll);
     }
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
-      setTimeout(() => scrollToBottom('auto'), 100);
-    }
+      scrollToBottom('auto');
   }, [messages, isLoading]);
+  
+  useEffect(() => {
+    if (!isLoading) {
+      inputRef.current?.focus();
+    }
+  }, [isLoading]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -266,7 +272,6 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-      inputRef.current?.focus();
     }
   };
 
@@ -287,8 +292,8 @@ export default function AIChatPage() {
                     <div
                         key={index}
                         className={cn(
-                            "flex items-start gap-4 animate-card-in", 
-                            msg.role === 'user' ? 'flex-row-reverse' : ''
+                            "flex items-start gap-4", 
+                            msg.role === 'user' ? 'justify-end' : ''
                         )}
                     >
                     {msg.role === 'model' ? (
@@ -298,30 +303,32 @@ export default function AIChatPage() {
                                     <Sparkles className="h-5 w-5 text-primary"/>
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="prose prose-sm dark:prose-invert bg-muted rounded-2xl px-4 py-3 break-words max-w-[80%]">
+                            <div className="prose prose-sm dark:prose-invert bg-muted rounded-2xl px-4 py-3 break-words max-w-[80%] animate-card-in">
                                 <ModelMessage content={msg.content} />
                             </div>
                         </>
                     ) : (
-                       <>
-                         <Avatar className="h-9 w-9 border shrink-0">
-                            <AvatarFallback>
-                                <User className="h-5 w-5 text-muted-foreground"/>
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col items-end max-w-[80%] gap-2">
-                            {msg.photoDataUri && (
-                                <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
-                                    <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
-                                </div>
-                            )}
-                             {msg.content && (
-                                <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl">
-                                    <p className="text-base">{msg.content}</p>
-                                </div>
-                             )}
-                        </div>
-                       </>
+                       <div className="flex flex-col items-end max-w-[80%] animate-card-in">
+                         <div className="flex items-start gap-4">
+                           <div className="flex flex-col items-end gap-2 order-2">
+                              {msg.photoDataUri && (
+                                  <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
+                                      <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
+                                  </div>
+                              )}
+                               {msg.content && (
+                                  <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl">
+                                      <p className="text-base">{msg.content}</p>
+                                  </div>
+                               )}
+                           </div>
+                           <Avatar className="h-9 w-9 border shrink-0 order-1">
+                              <AvatarFallback>
+                                  <User className="h-5 w-5 text-muted-foreground"/>
+                              </AvatarFallback>
+                          </Avatar>
+                         </div>
+                       </div>
                     )}
                     </div>
                 ))}
@@ -343,7 +350,7 @@ export default function AIChatPage() {
                 <Button 
                     variant="secondary" 
                     size="icon" 
-                    className="absolute bottom-4 right-8 rounded-full h-10 w-10 shadow-lg"
+                    className="absolute bottom-4 right-8 rounded-full h-10 w-10 shadow-lg z-30"
                     onClick={() => scrollToBottom()}
                 >
                     <ChevronDown className="h-6 w-6" />
