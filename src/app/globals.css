@@ -59,6 +59,16 @@
     @apply bg-background text-foreground;
   }
   
+  /* Custom Selection Color */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.25);
+    color: inherit;
+  }
+  ::-moz-selection {
+    background-color: hsl(var(--primary) / 0.25);
+    color: inherit;
+  }
+
   body::-webkit-scrollbar {
     width: 8px;
   }

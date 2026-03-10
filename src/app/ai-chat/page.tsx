@@ -9,7 +9,8 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare, Search } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Send, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare, Search, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -31,19 +32,35 @@ const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
 );
 
 const ServiceCardComponent = memo(({ service }: { service: Service }) => (
-    <Link href={`/services/${service.id}`} className="block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 my-4 border shadow-sm">
-        <div className="relative h-48 w-full">
-            <Image src={service.images[0]} alt={service.title} fill className="object-cover" />
+    <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/30 rounded-2xl overflow-hidden transition-all duration-300 my-6 border shadow-lg hover:shadow-xl hover:-translate-y-1">
+        <div className="relative h-56 w-full overflow-hidden">
+            <Image 
+                src={service.images[0]} 
+                alt={service.title} 
+                fill 
+                className="object-cover transition-transform duration-500 group-hover:scale-110" 
+            />
+            <div className="absolute top-3 right-3 bg-background/80 backdrop-blur-md px-2 py-1 rounded-lg text-sm font-bold text-primary shadow-sm">
+                {service.price} TJS
+            </div>
         </div>
-        <div className="p-4">
-            <h4 className="font-semibold text-lg truncate">{service.title}</h4>
-            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{service.description}</p>
-            <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center gap-1.5 text-sm">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="font-medium">{service.rating.toFixed(1)}</span>
+        <div className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{service.category}</span>
+            </div>
+            <h4 className="font-bold text-xl truncate group-hover:text-primary transition-colors">{service.title}</h4>
+            <p className="text-sm text-muted-foreground line-clamp-2 mt-2 leading-relaxed">{service.description}</p>
+            <div className="flex items-center justify-between mt-5 pt-4 border-t border-border/50">
+                <div className="flex items-center gap-1.5">
+                    <div className="flex items-center text-yellow-400">
+                        <Star className="h-4 w-4 fill-current" />
+                    </div>
+                    <span className="font-bold">{service.rating.toFixed(1)}</span>
+                    <span className="text-xs text-muted-foreground font-medium">({service.reviewsCount} отзывов)</span>
                 </div>
-                <p className="text-lg font-bold text-primary">{service.price} TJS</p>
+                <Button variant="ghost" size="sm" className="rounded-full text-primary font-bold group-hover:bg-primary/10">
+                    Подробнее
+                </Button>
             </div>
         </div>
     </Link>
@@ -52,18 +69,26 @@ ServiceCardComponent.displayName = 'ServiceCardComponent';
 
 const ProviderCardComponent = memo(({ provider }: { provider: ProviderUser }) => {
     return (
-        <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 my-4 border shadow-sm">
-            <div className="p-5 flex items-center gap-4">
-                 <Avatar className="h-16 w-16 border-2 border-primary/20">
-                    <AvatarImage src={provider.avatar} alt={provider.name} />
-                    <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-2xl overflow-hidden transition-all duration-300 my-6 border shadow-lg hover:shadow-xl">
+            <div className="p-6 flex items-center gap-5">
+                 <div className="relative">
+                    <Avatar className="h-20 w-20 border-2 border-primary/20 p-1 bg-background transition-transform duration-300 group-hover:scale-105">
+                        <AvatarImage src={provider.avatar} alt={provider.name} className="rounded-full object-cover" />
+                        <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full border-2 border-background">
+                        <Sparkles className="h-3 w-3" />
+                    </div>
+                 </div>
                 <div className="flex-grow">
-                    <h4 className="font-semibold text-lg truncate">{provider.name}</h4>
-                    <p className="text-sm text-muted-foreground line-clamp-1">@{provider.username}</p>
-                    <div className="flex items-center gap-1 text-sm mt-2 text-primary">
-                        <Star className="h-4 w-4 fill-current" />
-                        <span className="font-medium">Проверенный исполнитель</span>
+                    <h4 className="font-bold text-xl truncate group-hover:text-primary transition-colors">{provider.name}</h4>
+                    <p className="text-sm text-muted-foreground">@{provider.username}</p>
+                    <div className="flex items-center gap-4 mt-3">
+                        <div className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/5 px-2 py-1 rounded-md">
+                            <Star className="h-3 w-3 fill-current" />
+                            <span>Проверен</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground font-medium">Топ исполнитель</span>
                     </div>
                 </div>
             </div>
@@ -72,7 +97,31 @@ const ProviderCardComponent = memo(({ provider }: { provider: ProviderUser }) =>
 });
 ProviderCardComponent.displayName = 'ProviderCardComponent';
 
-const MessageContent = ({ content, onQuote }: { content: string; onQuote?: (text: string) => void }) => {
+const ImagePreview = ({ src, alt }: { src: string; alt: string }) => {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <div className="relative group cursor-zoom-in mt-4 mb-2 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl hover:ring-4 hover:ring-primary/10">
+                    <div className="relative w-full max-w-2xl aspect-[16/10]">
+                        <Image src={src} alt={alt} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <div className="bg-background/80 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100">
+                            <Maximize2 className="h-6 w-6 text-primary" />
+                        </div>
+                    </div>
+                </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-5xl border-none bg-transparent shadow-none p-0 flex items-center justify-center">
+                <div className="relative w-full h-[85vh]">
+                    <Image src={src} alt={alt} fill className="object-contain" />
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+const MessageContent = ({ content }: { content: string }) => {
     const { services, users } = useData();
 
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
@@ -93,7 +142,7 @@ const MessageContent = ({ content, onQuote }: { content: string; onQuote?: (text
                 return (
                     <div key={index} className="relative select-text">
                         <ReactMarkdown 
-                            className="prose prose-sm dark:prose-invert max-w-none leading-relaxed" 
+                            className="prose prose-sm dark:prose-invert max-w-none leading-relaxed text-base" 
                             remarkPlugins={[remarkGfm]}
                         >
                             {part}
@@ -115,7 +164,6 @@ export default function AIChatPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
   
-  // Selection state
   const [selection, setSelection] = useState<{ text: string, x: number, y: number } | null>(null);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -228,7 +276,6 @@ export default function AIChatPage() {
 
   return (
     <div className="flex flex-col h-full bg-background font-body">
-        {/* Floating Selection Tool */}
         {selection && (
             <div 
                 className="fixed z-[100] animate-in fade-in zoom-in duration-200"
@@ -236,7 +283,7 @@ export default function AIChatPage() {
             >
                 <Button 
                     size="sm" 
-                    className="shadow-xl rounded-full bg-primary hover:bg-primary/90 flex items-center gap-2 px-4 h-9"
+                    className="shadow-xl rounded-full bg-primary hover:bg-primary/90 flex items-center gap-2 px-4 h-9 font-bold"
                     onClick={() => handleQuote(selection.text)}
                 >
                     <Sparkles className="h-4 w-4" />
@@ -254,34 +301,32 @@ export default function AIChatPage() {
                             <Sparkles className="h-12 w-12 text-primary" />
                         </div>
                       </div>
-                      <h1 className="text-4xl font-bold font-headline mb-4">Как я могу помочь?</h1>
-                      <p className="text-muted-foreground text-lg">Найду исполнителя, подскажу цену или подберу товар по фото.</p>
+                      <h1 className="text-4xl font-bold font-headline mb-4 tracking-tight">Как я могу помочь?</h1>
+                      <p className="text-muted-foreground text-lg max-w-md mx-auto">Найду исполнителя, подскажу цену или подберу товар по фото.</p>
                   </div>
               )}
-                <div className="space-y-10">
+                <div className="space-y-12">
                 {messages.map((msg, index) => (
-                    <div key={index} className={cn("flex items-start gap-4", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+                    <div key={index} className={cn("flex items-start gap-5", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
                         {msg.role === 'model' && (
-                            <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0">
-                                <AvatarFallback className="bg-primary/5"><Sparkles className="h-5 w-5 text-primary"/></AvatarFallback>
+                            <Avatar className="h-10 w-10 border-2 border-primary/20 shrink-0 shadow-sm">
+                                <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-6 w-6"/></AvatarFallback>
                             </Avatar>
                         )}
                         <div className={cn(
                             "max-w-[85%] group",
-                            msg.role === 'user' ? 'flex flex-col items-end' : 'bg-muted/30 rounded-2xl p-4 border border-border/50'
+                            msg.role === 'user' ? 'flex flex-col items-end' : 'bg-muted/30 rounded-3xl p-6 border border-border/50 shadow-sm'
                         )}>
                             {msg.photoDataUri && (
-                                <div className="relative w-full max-w-md aspect-video rounded-xl overflow-hidden mb-3 border shadow-sm">
-                                    <Image src={msg.photoDataUri} alt="User upload" fill className="object-cover" />
-                                </div>
+                                <ImagePreview src={msg.photoDataUri} alt="User upload" />
                             )}
                             {msg.quote && msg.role === 'user' && (
-                                <div className="border-l-4 border-primary/30 pl-3 py-1 mb-2 text-sm text-muted-foreground bg-primary/5 rounded-r-md">
+                                <div className="border-l-4 border-primary/30 pl-4 py-2 mb-3 text-sm text-muted-foreground bg-primary/5 rounded-r-xl max-w-lg italic">
                                     {msg.quote}
                                 </div>
                             )}
                             <div className={cn(
-                                msg.role === 'user' ? 'bg-primary text-primary-foreground px-4 py-3 rounded-2xl rounded-tr-none shadow-md' : ''
+                                msg.role === 'user' ? 'bg-primary text-primary-foreground px-5 py-3.5 rounded-3xl rounded-tr-none shadow-lg' : ''
                             )}>
                                 <MessageContent 
                                     content={msg.content} 
@@ -289,23 +334,23 @@ export default function AIChatPage() {
                             </div>
                         </div>
                         {msg.role === 'user' && (
-                            <Avatar className="h-9 w-9 border shrink-0">
+                            <Avatar className="h-10 w-10 border shrink-0 shadow-sm">
                                 <AvatarImage src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100&h=100&fit=crop" />
-                                <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
+                                <AvatarFallback><User className="h-6 w-6 text-muted-foreground"/></AvatarFallback>
                             </Avatar>
                         )}
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex items-start gap-4">
-                        <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0">
-                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-5 w-5 text-primary animate-pulse"/></AvatarFallback>
+                    <div className="flex items-start gap-5">
+                        <Avatar className="h-10 w-10 border-2 border-primary/20 shrink-0">
+                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-6 w-6 text-primary animate-pulse"/></AvatarFallback>
                         </Avatar>
-                        <div className="bg-muted/30 rounded-2xl px-4 py-3 border border-border/50">
-                            <div className="flex gap-1">
-                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        <div className="bg-muted/30 rounded-3xl px-6 py-4 border border-border/50">
+                            <div className="flex gap-1.5">
+                                <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                             </div>
                         </div>
                     </div>
@@ -315,51 +360,51 @@ export default function AIChatPage() {
             <ScrollToBottomButton chatRef={scrollAreaRef} />
         </div>
 
-        <div className="px-4 pb-6 w-full shrink-0 border-t bg-background/80 backdrop-blur-md z-50">
-            <div className="max-w-3xl mx-auto pt-4">
+        <div className="px-4 pb-8 w-full shrink-0 border-t bg-background/80 backdrop-blur-md z-50">
+            <div className="max-w-3xl mx-auto pt-6">
                 {quotedText && (
-                    <div className="flex items-center justify-between bg-primary/5 border-l-4 border-primary p-3 rounded-r-lg mb-3 animate-in slide-in-from-bottom-2">
-                        <div className="flex items-center gap-2 overflow-hidden">
-                            <Quote className="h-4 w-4 text-primary shrink-0" />
+                    <div className="flex items-center justify-between bg-primary/5 border-l-4 border-primary p-4 rounded-r-2xl mb-4 animate-in slide-in-from-bottom-2 shadow-sm">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                            <Quote className="h-5 w-5 text-primary shrink-0 opacity-50" />
                             <p className="text-sm truncate text-muted-foreground italic">"{quotedText}"</p>
                         </div>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setQuotedText(null)}>
-                            <X className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-primary/10" onClick={() => setQuotedText(null)}>
+                            <X className="h-5 w-5" />
                         </Button>
                     </div>
                 )}
                 {imagePreview && (
-                    <div className="relative w-24 h-24 mb-3 rounded-xl overflow-hidden shadow-lg border-2 border-primary/20">
+                    <div className="relative w-32 h-32 mb-4 rounded-2xl overflow-hidden shadow-2xl border-2 border-primary ring-4 ring-primary/10 animate-in zoom-in">
                         <Image src={imagePreview} alt="Preview" fill className="object-cover" />
-                        <Button variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6 rounded-full" onClick={() => { setImagePreview(null); setImageDataUri(null); }}>
+                        <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7 rounded-full shadow-lg" onClick={() => { setImagePreview(null); setImageDataUri(null); }}>
                             <X className="h-4 w-4" />
                         </Button>
                     </div>
                 )}
                 <form onSubmit={handleSendMessage} className="relative">
-                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-colors bg-muted/20 relative h-auto min-h-[3.5rem] flex items-center overflow-hidden rounded-2xl">
+                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-all bg-muted/20 relative h-auto min-h-[4rem] flex items-center overflow-hidden rounded-[1.25rem] shadow-sm">
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                         <Button 
                             type="button" variant="ghost" size="icon" 
-                            className="absolute left-2 h-10 w-10 text-white z-20 hover:bg-transparent"
+                            className="absolute left-3 h-11 w-11 text-white z-20 hover:bg-white/10"
                             onClick={() => fileInputRef.current?.click()}
                         >
-                            <Paperclip className="h-5 w-5 text-white" />
+                            <Paperclip className="h-6 w-6" />
                         </Button>
                         <Input
                             ref={inputRef}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Спросите Findora о чем угодно..."
-                            className="w-full h-14 pl-12 pr-14 rounded-2xl border-none shadow-none bg-transparent text-base focus-visible:ring-0 relative z-10 text-foreground"
+                            className="w-full h-16 pl-14 pr-16 rounded-[1.25rem] border-none shadow-none bg-transparent text-lg focus-visible:ring-0 relative z-10 text-foreground"
                             disabled={isLoading}
                         />
-                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-2 h-10 w-10 rounded-xl shadow-lg z-20">
-                            <Send className="h-5 w-5" />
+                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 h-11 w-11 rounded-xl shadow-xl z-20 transition-transform active:scale-90">
+                            <Send className="h-6 w-6" />
                         </Button>
                     </div>
                 </form>
-                <p className="text-[10px] text-center text-muted-foreground mt-3 uppercase tracking-widest font-semibold opacity-50">Powered by Findora Intelligence</p>
+                <p className="text-[10px] text-center text-muted-foreground mt-4 uppercase tracking-[0.2em] font-black opacity-40">Findora Intelligence Engine</p>
             </div>
         </div>
     </div>

@@ -10,7 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Sparkles, User, X, Star, Paperclip, ChevronDown } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Send, Sparkles, User, X, Star, Paperclip, ChevronDown, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat } from '@/ai/flows/ai-chat';
 import type { AIChatInput } from '@/ai/flows/ai-chat';
@@ -20,6 +21,7 @@ import type { Service, User as ProviderUser } from '@/lib/types';
 interface Message {
   role: 'user' | 'model';
   content: string;
+  photoDataUri?: string;
 }
 
 interface AIChatWidgetProps {
@@ -32,50 +34,24 @@ const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
     </div>
 );
 
-const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
-    useEffect(() => {
-        if (text) {
-            const timer = setTimeout(onComplete, text.length * 15 + 500); // Estimate completion time
-            return () => clearTimeout(timer);
-        }
-    }, [text, onComplete]);
-
-    if (text.startsWith('SERVICE_CARD') || text.startsWith('PROVIDER_CARD')) {
-        return <MessageContent content={text} />;
-    }
-
-    const letters = text.split('');
-
-    return (
-        <div className="prose prose-sm dark:prose-invert leading-relaxed typing-animation-container">
-            {letters.map((letter, index) => (
-                <span
-                    key={index}
-                    className="animate-letter"
-                    style={{ animationDelay: `${index * 0.015}s` }}
-                >
-                    {letter}
-                </span>
-            ))}
-        </div>
-    );
-};
-
-
 const ServiceCard = memo(({ service }: { service: Service }) => (
-    <Link href={`/services/${service.id}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300">
-        <div className="relative h-32 w-full">
-            <Image src={service.images[0]} alt={service.title} fill className="object-cover" />
+    <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 border shadow-sm my-3">
+        <div className="relative h-36 w-full overflow-hidden">
+            <Image 
+                src={service.images[0]} 
+                alt={service.title} 
+                fill 
+                className="object-cover transition-transform duration-500 group-hover:scale-110" 
+            />
         </div>
         <div className="p-3">
-            <h4 className="font-semibold text-sm truncate">{service.title}</h4>
-            <p className="text-xs text-muted-foreground line-clamp-2">{service.description}</p>
+            <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{service.title}</h4>
             <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center gap-1 text-xs">
+                <div className="flex items-center gap-1 text-[10px] font-bold">
                     <Star className="h-3 w-3 text-yellow-400 fill-current" />
                     <span>{service.rating.toFixed(1)}</span>
                 </div>
-                <p className="text-sm font-bold">{service.price} TJS</p>
+                <p className="text-xs font-black text-primary">{service.price} TJS</p>
             </div>
         </div>
     </Link>
@@ -83,25 +59,18 @@ const ServiceCard = memo(({ service }: { service: Service }) => (
 ServiceCard.displayName = 'ServiceCard';
 
 const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
-    const { services } = useData();
-    const providerServices = services.filter(s => provider.services?.includes(s.id));
-    const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-    const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
-
     return (
-        <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
+        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 my-3 border shadow-sm">
             <div className="p-3 flex items-center gap-3">
-                 <Avatar className="h-12 w-12">
-                    <AvatarImage src={provider.avatar} alt={provider.name} />
+                 <Avatar className="h-12 w-12 border-2 border-primary/10">
+                    <AvatarImage src={provider.avatar} alt={provider.name} className="object-cover" />
                     <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
-                    <h4 className="font-semibold text-sm truncate">{provider.name}</h4>
-                     <p className="text-xs text-muted-foreground line-clamp-1">{provider.bio}</p>
-                    <div className="flex items-center gap-1 text-xs mt-1">
-                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                        <span>{avgRating.toFixed(1)}</span>
-                        <span className="text-muted-foreground">({provider.followers} подписчиков)</span>
+                    <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{provider.name}</h4>
+                    <div className="flex items-center gap-1 text-[10px] mt-1 text-primary font-bold">
+                        <Sparkles className="h-2.5 w-2.5" />
+                        <span>Топ исполнитель</span>
                     </div>
                 </div>
             </div>
@@ -110,58 +79,57 @@ const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
 });
 ProviderCard.displayName = 'ProviderCard';
 
+const ImagePreviewSmall = ({ src }: { src: string }) => {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden my-3 border shadow-sm cursor-zoom-in group">
+                    <Image src={src} alt="Message image" fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <Maximize2 className="h-5 w-5 text-white" />
+                    </div>
+                </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl border-none bg-transparent shadow-none p-0">
+                <div className="relative w-full h-[70vh]">
+                    <Image src={src} alt="Preview" fill className="object-contain" />
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+};
 
 const MessageContent = ({ content }: { content: string }) => {
     const { services, users } = useData();
-
-    if (content.startsWith('SERVICE_CARD')) {
-        const serviceId = content.match(/\[(.*?)\]/)?.[1];
-        if (serviceId) {
-            const service = services.find(s => s.id === serviceId);
-            if (service) {
-                return <AnimatedCard><ServiceCard service={service} /></AnimatedCard>;
-            }
-        }
-    }
-
-    if (content.startsWith('PROVIDER_CARD')) {
-        const username = content.match(/\[(.*?)\]/)?.[1];
-        if (username) {
-            const provider = users.find(u => u.username === username);
-            if (provider) {
-                return <AnimatedCard><ProviderCard provider={provider} /></AnimatedCard>;
-            }
-        }
-    }
-    
-    return <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-full" remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
-};
-
-
-const ModelMessage = ({ content }: { content: string }) => {
-    const [isTyping, setIsTyping] = useState(true);
 
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
     return (
         <>
             {parts.map((part, index) => {
-                if (part.startsWith('SERVICE_CARD') || part.startsWith('PROVIDER_CARD')) {
-                    return <AnimatedCard key={index}><MessageContent content={part} /></AnimatedCard>;
+                if (part.startsWith('SERVICE_CARD')) {
+                    const id = part.match(/\[(.*?)\]/)?.[1];
+                    const service = services.find(s => s.id === id);
+                    return service ? <AnimatedCard key={index}><ServiceCard service={service} /></AnimatedCard> : null;
                 }
-                if (isTyping && index === parts.length - 1) {
-                    return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
+                if (part.startsWith('PROVIDER_CARD')) {
+                    const username = part.match(/\[(.*?)\]/)?.[1];
+                    const provider = users.find(u => u.username === username);
+                    return provider ? <AnimatedCard key={index}><ProviderCard provider={provider} /></AnimatedCard> : null;
                 }
-                return <ReactMarkdown key={index} className="prose prose-sm dark:prose-invert max-w-full" remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>;
+                return (
+                    <div key={index} className="prose prose-sm dark:prose-invert max-w-full text-sm leading-relaxed">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>
+                    </div>
+                );
             })}
         </>
     );
 };
 
-
 export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: 'Здравствуйте! Чем я могу вам помочь сегодня? Я могу порекомендовать услуги или ответить на вопросы о нашей платформе.' }
+    { role: 'model', content: 'Здравствуйте! Чем я могу вам помочь сегодня? Я могу порекомендовать услуги или ответить на вопросы о платформе Findora.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -201,7 +169,11 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
     e.preventDefault();
     if ((!input.trim() && !imageDataUri) || isLoading) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessage: Message = { 
+        role: 'user', 
+        content: input,
+        photoDataUri: imageDataUri || undefined
+    };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -209,21 +181,16 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
     try {
       const providers = users
         .filter(u => u.role === 'provider')
-        .map(u => {
-            const providerServices = services.filter(s => u.services?.includes(s.id));
-            const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-            const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
-            return {
-                username: u.username,
-                name: u.name,
-                bio: u.bio,
-                role: u.role,
-                rating: avgRating,
-            }
-        });
+        .map(u => ({
+            username: u.username,
+            name: u.name,
+            bio: u.bio,
+            role: u.role,
+            rating: 4.5,
+        }));
 
-      const chatRequest: AIChatInput = {
-        history: messages,
+      const result = await aiChat({
+        history: messages.map(m => ({ role: m.role, content: m.content, photoDataUri: m.photoDataUri })),
         message: input,
         services: services.map(s => ({
             id: s.id,
@@ -235,17 +202,13 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
         })),
         providers,
         photoDataUri: imageDataUri || undefined,
-      };
+      });
       
-      const result = await aiChat(chatRequest);
-      
-      const modelMessage: Message = { role: 'model', content: result.response };
-      setMessages(prev => [...prev, modelMessage]);
+      setMessages(prev => [...prev, { role: 'model', content: result.response }]);
 
     } catch (error) {
       console.error("Ошибка AI чата:", error);
-      const errorMessage: Message = { role: 'model', content: "Извините, что-то пошло не так. Пожалуйста, попробуйте еще раз." };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, { role: 'model', content: "Извините, что-то пошло не так. Попробуйте еще раз." }]);
     } finally {
       setIsLoading(false);
       setImagePreview(null);
@@ -256,18 +219,20 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   };
 
   return (
-    <Card className="fixed bottom-20 right-5 w-96 h-[70vh] max-h-[700px] flex flex-col shadow-2xl rounded-2xl z-50 overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between p-4 border-b shrink-0">
+    <Card className="fixed bottom-24 right-5 w-[400px] h-[75vh] max-h-[750px] flex flex-col shadow-2xl rounded-3xl z-[100] overflow-hidden border-2 border-primary/10 animate-in slide-in-from-bottom-10 duration-500">
+        <CardHeader className="flex flex-row items-center justify-between p-5 border-b shrink-0 bg-background/50 backdrop-blur-md">
             <div className="flex items-center gap-3">
-                <Sparkles className="h-6 w-6 text-primary"/>
-                <CardTitle className="text-lg font-headline">AI Ассистент</CardTitle>
+                <div className="bg-primary/10 p-2 rounded-xl">
+                    <Sparkles className="h-5 w-5 text-primary"/>
+                </div>
+                <CardTitle className="text-lg font-bold tracking-tight">Findora AI</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-muted">
                 <X className="h-5 w-5" />
             </Button>
         </CardHeader>
-        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-            <div className="space-y-4">
+        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-5 custom-scrollbar bg-muted/5">
+            <div className="space-y-6">
                 {messages.map((msg, index) => (
                     <div
                     key={index}
@@ -277,51 +242,53 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                     )}
                     >
                     {msg.role === 'model' && (
-                        <Avatar className="h-8 w-8 border-2 border-primary/50">
-                            <AvatarFallback><Sparkles className="h-4 w-4 text-primary"/></AvatarFallback>
+                        <Avatar className="h-8 w-8 border-2 border-primary/20 shadow-sm">
+                            <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-4 w-4"/></AvatarFallback>
                         </Avatar>
                     )}
                     <div
                         className={cn(
-                        "max-w-[80%] rounded-xl px-3 py-2 break-words",
+                        "max-w-[85%] rounded-2xl px-4 py-3 shadow-sm",
                          msg.role === 'model'
-                            ? "bg-muted rounded-bl-none"
-                            : "bg-primary text-primary-foreground rounded-br-none"
+                            ? "bg-card border rounded-tl-none"
+                            : "bg-primary text-primary-foreground rounded-tr-none shadow-md"
                         )}
                     >
-                       {msg.role === 'model' ? (
-                            <ModelMessage content={msg.content} />
-                        ) : (
-                            <p className="text-sm">{msg.content}</p>
-                        )}
+                       {msg.photoDataUri && <ImagePreviewSmall src={msg.photoDataUri} />}
+                       <MessageContent content={msg.content} />
                     </div>
                     {msg.role === 'user' && (
-                        <Avatar className="h-8 w-8 border">
-                            <AvatarFallback><User className="h-4 w-4 text-muted-foreground"/></AvatarFallback>
+                        <Avatar className="h-8 w-8 border shadow-sm">
+                            <AvatarImage src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=50&h=50&fit=crop" />
+                            <AvatarFallback><User className="h-4 w-4"/></AvatarFallback>
                         </Avatar>
                     )}
                     </div>
                 ))}
                 {isLoading && (
                     <div className="flex items-start gap-3">
-                        <Avatar className="h-8 w-8 border-2 border-primary/50">
-                            <AvatarFallback><Sparkles className="h-4 w-4 text-primary animate-pulse"/></AvatarFallback>
+                        <Avatar className="h-8 w-8 border-2 border-primary/20">
+                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-4 w-4 text-primary animate-pulse"/></AvatarFallback>
                         </Avatar>
-                        <div className="max-w-xs rounded-xl px-3 py-2 bg-muted rounded-bl-none">
-                            <p className="text-sm text-muted-foreground animate-pulse">Думаю...</p>
+                        <div className="max-w-[100px] rounded-2xl px-4 py-3 bg-muted border rounded-tl-none">
+                            <div className="flex gap-1">
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                            </div>
                         </div>
                     </div>
                 )}
             </div>
         </div>
-        <div className="p-3 border-t bg-background shrink-0">
+        <div className="p-4 border-t bg-background shrink-0">
              {imagePreview && (
-                <div className="relative w-20 h-20 mb-2 rounded-md overflow-hidden">
-                    <Image src={imagePreview} alt="Image preview" fill className="object-cover" />
+                <div className="relative w-24 h-24 mb-3 rounded-2xl overflow-hidden border-2 border-primary shadow-xl animate-in zoom-in">
+                    <Image src={imagePreview} alt="Preview" fill className="object-cover" />
                     <Button
                         variant="destructive"
                         size="icon"
-                        className="absolute top-1 right-1 h-5 w-5"
+                        className="absolute top-1 right-1 h-6 w-6 rounded-full shadow-lg"
                         onClick={() => {
                             setImagePreview(null);
                             setImageDataUri(null);
@@ -333,7 +300,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                 </div>
             )}
             <form onSubmit={handleSendMessage} className="relative">
-                <div className="input-wrapper">
+                <div className="input-wrapper border shadow-sm">
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -345,7 +312,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                         type="button" 
                         variant="ghost" 
                         size="icon" 
-                        className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg z-20 text-muted-foreground"
+                        className="absolute left-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl z-20 text-white"
                         onClick={() => fileInputRef.current?.click()}
                     >
                         <Paperclip className="h-5 w-5" />
@@ -354,11 +321,11 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                         ref={inputRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Спросите что-нибудь..."
-                        className="w-full h-12 pl-12 pr-12 rounded-lg border-2 input-element"
+                        placeholder="Спросите Findora..."
+                        className="w-full h-12 pl-12 pr-12 rounded-2xl border-none shadow-none text-sm focus-visible:ring-0 bg-transparent text-foreground"
                         disabled={isLoading}
                     />
-                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 z-20">
+                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl shadow-lg z-20">
                         <Send className="h-4 w-4" />
                     </Button>
                 </div>
