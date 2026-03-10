@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, memo, useCallback } from 'react';
@@ -8,7 +9,7 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare } from 'lucide-react';
+import { Send, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -76,16 +77,8 @@ const MessageContent = ({ content, onQuote }: { content: string; onQuote?: (text
 
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
-    const handleMouseUp = () => {
-        const selection = window.getSelection();
-        const selectedText = selection?.toString().trim();
-        if (selectedText && onQuote) {
-            // We could show a tooltip here, but for simplicity we'll just handle it via a separate UI or key
-        }
-    };
-
     return (
-        <div onMouseUp={handleMouseUp} className="relative group">
+        <div className="relative group">
             {parts.map((part, index) => {
                 if (part.startsWith('SERVICE_CARD')) {
                     const id = part.match(/\[(.*?)\]/)?.[1];
@@ -98,25 +91,13 @@ const MessageContent = ({ content, onQuote }: { content: string; onQuote?: (text
                     return provider ? <AnimatedCard key={index}><ProviderCardComponent provider={provider} /></AnimatedCard> : null;
                 }
                 return (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative select-text">
                         <ReactMarkdown 
                             className="prose prose-sm dark:prose-invert max-w-none leading-relaxed" 
                             remarkPlugins={[remarkGfm]}
                         >
                             {part}
                         </ReactMarkdown>
-                        {onQuote && (
-                            <button 
-                                onClick={() => {
-                                    const text = window.getSelection()?.toString() || part;
-                                    onQuote(text);
-                                }}
-                                className="absolute -right-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-primary"
-                                title="Ответить на этот участок"
-                            >
-                                <Quote className="h-4 w-4" />
-                            </button>
-                        )}
                     </div>
                 );
             })}
@@ -134,6 +115,9 @@ export default function AIChatPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
   
+  // Selection state
+  const [selection, setSelection] = useState<{ text: string, x: number, y: number } | null>(null);
+
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -141,8 +125,37 @@ export default function AIChatPage() {
   const { services, users } = useData();
 
   const handleQuote = useCallback((text: string) => {
-      setQuotedText(text.length > 100 ? text.substring(0, 100) + '...' : text);
+      setQuotedText(text.length > 150 ? text.substring(0, 150) + '...' : text);
+      setSelection(null);
       inputRef.current?.focus();
+  }, []);
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+      const sel = window.getSelection();
+      const text = sel?.toString().trim();
+      if (text && text.length > 2) {
+          const range = sel?.getRangeAt(0);
+          const rect = range?.getBoundingClientRect();
+          if (rect) {
+              setSelection({
+                  text,
+                  x: rect.left + rect.width / 2,
+                  y: rect.top - 40
+              });
+          }
+      } else {
+          setSelection(null);
+      }
+  };
+
+  useEffect(() => {
+      const handleGlobalClick = () => {
+          if (!window.getSelection()?.toString().trim()) {
+              setSelection(null);
+          }
+      };
+      document.addEventListener('mousedown', handleGlobalClick);
+      return () => document.removeEventListener('mousedown', handleGlobalClick);
   }, []);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,7 +200,7 @@ export default function AIChatPage() {
             name: u.name,
             bio: u.bio,
             role: u.role,
-            rating: 4.5, // Simple fallback
+            rating: 4.5,
         }));
 
       const result = await aiChat({
@@ -215,7 +228,24 @@ export default function AIChatPage() {
 
   return (
     <div className="flex flex-col h-full bg-background font-body">
-        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto custom-scrollbar relative">
+        {/* Floating Selection Tool */}
+        {selection && (
+            <div 
+                className="fixed z-[100] animate-in fade-in zoom-in duration-200"
+                style={{ left: selection.x, top: selection.y, transform: 'translateX(-50%)' }}
+            >
+                <Button 
+                    size="sm" 
+                    className="shadow-xl rounded-full bg-primary hover:bg-primary/90 flex items-center gap-2 px-4 h-9"
+                    onClick={() => handleQuote(selection.text)}
+                >
+                    <Sparkles className="h-4 w-4" />
+                    <span>Спросить Findora</span>
+                </Button>
+            </div>
+        )}
+
+        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto custom-scrollbar relative" onMouseUp={handleMouseUp}>
             <div className={cn("max-w-3xl mx-auto px-4 pt-12 pb-20", messages.length > 1 ? "w-full" : "flex flex-col justify-center h-full")}>
               {messages.length <= 1 && (
                   <div className="text-center mb-12 animate-in fade-in zoom-in duration-700">
@@ -255,7 +285,6 @@ export default function AIChatPage() {
                             )}>
                                 <MessageContent 
                                     content={msg.content} 
-                                    onQuote={msg.role === 'model' ? handleQuote : undefined} 
                                 />
                             </div>
                         </div>
@@ -286,7 +315,7 @@ export default function AIChatPage() {
             <ScrollToBottomButton chatRef={scrollAreaRef} />
         </div>
 
-        <div className="px-4 pb-6 w-full shrink-0 border-t bg-background/80 backdrop-blur-md">
+        <div className="px-4 pb-6 w-full shrink-0 border-t bg-background/80 backdrop-blur-md z-50">
             <div className="max-w-3xl mx-auto pt-4">
                 {quotedText && (
                     <div className="flex items-center justify-between bg-primary/5 border-l-4 border-primary p-3 rounded-r-lg mb-3 animate-in slide-in-from-bottom-2">
@@ -308,11 +337,11 @@ export default function AIChatPage() {
                     </div>
                 )}
                 <form onSubmit={handleSendMessage} className="relative">
-                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-colors bg-muted/20">
+                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-colors bg-muted/20 relative h-auto min-h-[3.5rem] flex items-center overflow-visible">
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                         <Button 
                             type="button" variant="ghost" size="icon" 
-                            className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 text-muted-foreground hover:text-primary"
+                            className="absolute left-2 h-10 w-10 text-muted-foreground hover:text-primary z-20"
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <Paperclip className="h-5 w-5" />
@@ -322,10 +351,10 @@ export default function AIChatPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Спросите Findora о чем угодно..."
-                            className="w-full h-14 pl-12 pr-14 rounded-xl border-none shadow-none bg-transparent text-base focus-visible:ring-0"
+                            className="w-full h-14 pl-12 pr-14 rounded-xl border-none shadow-none bg-transparent text-base focus-visible:ring-0 relative z-10 text-foreground"
                             disabled={isLoading}
                         />
-                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-xl shadow-lg">
+                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-2 h-10 w-10 rounded-xl shadow-lg z-20">
                             <Send className="h-5 w-5" />
                         </Button>
                     </div>
