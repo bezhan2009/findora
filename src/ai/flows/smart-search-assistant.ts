@@ -25,13 +25,10 @@ export type SmartSearchSuggestionsOutput = z.infer<
   typeof SmartSearchSuggestionsOutputSchema
 >;
 
-export async function smartSearchSuggestions(
-  input: SmartSearchSuggestionsInput
-): Promise<SmartSearchSuggestionsOutput> {
-  return smartSearchSuggestionsFlow(input);
-}
-
-const prompt = ai.definePrompt({
+/**
+ * Определение промпта для подсказок поиска.
+ */
+const smartSearchSuggestionsPrompt = ai.definePrompt({
   name: 'smartSearchSuggestionsPrompt',
   input: {schema: SmartSearchSuggestionsInputSchema},
   output: {schema: SmartSearchSuggestionsOutputSchema},
@@ -39,10 +36,13 @@ const prompt = ai.definePrompt({
 
 Current query: {{{query}}}
 
-Provide a list of search suggestions that are relevant to the query. Return as a JSON array of strings.
-Ensure the output is a valid JSON array.`,
+Provide a list of 3-5 search suggestions that are relevant to the query. Return as a JSON object with a "suggestions" key containing an array of strings.
+Ensure the output is a valid JSON.`,
 });
 
+/**
+ * Определение потока для подсказок поиска с обработкой ошибок квот.
+ */
 const smartSearchSuggestionsFlow = ai.defineFlow(
   {
     name: 'smartSearchSuggestionsFlow',
@@ -50,10 +50,22 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
     outputSchema: SmartSearchSuggestionsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    if (!output) {
+    try {
+      const {output} = await smartSearchSuggestionsPrompt(input);
+      if (!output) {
+        return { suggestions: [] };
+      }
+      return output;
+    } catch (error: any) {
+      // Если превышена квота или другая ошибка API, просто возвращаем пустой массив
+      console.warn("AI Search Suggestions failed (likely quota):", error?.message);
       return { suggestions: [] };
     }
-    return output;
   }
 );
+
+export async function smartSearchSuggestions(
+  input: SmartSearchSuggestionsInput
+): Promise<SmartSearchSuggestionsOutput> {
+  return smartSearchSuggestionsFlow(input);
+}
