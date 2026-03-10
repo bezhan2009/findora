@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Send, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare, Search, Maximize2 } from 'lucide-react';
+import { ArrowUp, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare, Search, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -399,8 +399,8 @@ export default function AIChatPage() {
                             className="w-full h-16 pl-14 pr-16 rounded-[1.25rem] border-none shadow-none bg-transparent text-lg focus-visible:ring-0 relative z-10 text-foreground"
                             disabled={isLoading}
                         />
-                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 h-11 w-11 rounded-xl shadow-xl z-20 transition-transform active:scale-90">
-                            <Send className="h-6 w-6" />
+                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 h-11 w-11 rounded-full shadow-xl z-20 transition-transform active:scale-90">
+                            <ArrowUp className="h-6 w-6" />
                         </Button>
                     </div>
                 </form>

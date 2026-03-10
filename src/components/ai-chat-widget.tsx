@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Send, Sparkles, User, X, Star, Paperclip, ChevronDown, Maximize2 } from 'lucide-react';
+import { ArrowUp, Sparkles, User, X, Star, Paperclip, ChevronDown, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat } from '@/ai/flows/ai-chat';
 import type { AIChatInput } from '@/ai/flows/ai-chat';
@@ -325,8 +325,8 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                         className="w-full h-12 pl-12 pr-12 rounded-2xl border-none shadow-none text-sm focus-visible:ring-0 bg-transparent text-foreground"
                         disabled={isLoading}
                     />
-                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl shadow-lg z-20">
-                        <Send className="h-4 w-4" />
+                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full shadow-lg z-20">
+                        <ArrowUp className="h-4 w-4" />
                     </Button>
                 </div>
             </form>
