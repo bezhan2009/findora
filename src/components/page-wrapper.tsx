@@ -5,7 +5,7 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Sparkles, X } from 'lucide-react';
+import { Compass, X } from 'lucide-react';
 import AIChatWidget from './ai-chat-widget';
 
 export default function PageWrapper({
@@ -19,9 +19,6 @@ export default function PageWrapper({
   const showFooter = pathname !== '/chat' && pathname !== '/ai-chat';
   const showChatWidget = pathname !== '/ai-chat';
 
-  // For pages like /ai-chat, we want the main content to take up all available space
-  // and handle its own scrolling. For other pages, we allow the main content to
-  // be scrolled by the browser.
   const mainContentClass = showFooter 
     ? "flex-grow flex flex-col" 
     : "flex-1 overflow-y-auto";
@@ -36,12 +33,12 @@ export default function PageWrapper({
       {showChatWidget && (
         <>
             <Button 
-                className="fixed bottom-5 right-5 h-16 w-16 rounded-full shadow-2xl"
+                className="fixed bottom-5 right-5 h-16 w-16 rounded-full shadow-2xl z-50 animate-in fade-in slide-in-from-bottom-4 duration-500"
                 size="icon"
                 onClick={() => setIsChatOpen(!isChatOpen)}
                 aria-label={isChatOpen ? "Закрыть чат" : "Открыть AI чат"}
             >
-                {isChatOpen ? <X className="h-8 w-8" /> : <Sparkles className="h-8 w-8" />}
+                {isChatOpen ? <X className="h-8 w-8" /> : <Compass className="h-8 w-8" />}
             </Button>
             {isChatOpen && <AIChatWidget onClose={() => setIsChatOpen(false)} />}
         </>

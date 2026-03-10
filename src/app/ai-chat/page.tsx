@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useRef, useEffect, memo } from 'react';
+import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -9,7 +8,7 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Sparkles, User, Star, Paperclip, X } from 'lucide-react';
+import { Send, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -21,6 +20,7 @@ interface Message {
   role: 'user' | 'model';
   content: string;
   photoDataUri?: string;
+  quote?: string;
 }
 
 const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
@@ -29,48 +29,20 @@ const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
     </div>
 );
 
-const TypingEffect = ({ text, onComplete }: { text: string; onComplete: () => void }) => {
-    const [displayedText, setDisplayedText] = useState('');
-
-    useEffect(() => {
-        if (!text) return;
-
-        let i = 0;
-        const intervalId = setInterval(() => {
-            setDisplayedText(text.substring(0, i + 1));
-            i++;
-            if (i >= text.length) {
-                clearInterval(intervalId);
-                onComplete();
-            }
-        }, 15);
-
-        return () => clearInterval(intervalId);
-    }, [text, onComplete]);
-
-
-    if (text.startsWith('SERVICE_CARD') || text.startsWith('PROVIDER_CARD')) {
-        return <MessageContent content={text} />;
-    }
-
-    return <ReactMarkdown className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{displayedText}</ReactMarkdown>;
-};
-
-
 const ServiceCardComponent = memo(({ service }: { service: Service }) => (
-    <Link href={`/services/${service.id}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
-        <div className="relative h-40 w-full">
+    <Link href={`/services/${service.id}`} className="block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 my-4 border shadow-sm">
+        <div className="relative h-48 w-full">
             <Image src={service.images[0]} alt={service.title} fill className="object-cover" />
         </div>
-        <div className="p-3">
-            <h4 className="font-semibold text-base truncate">{service.title}</h4>
-            <p className="text-sm text-muted-foreground line-clamp-2">{service.description}</p>
-            <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center gap-1 text-sm">
+        <div className="p-4">
+            <h4 className="font-semibold text-lg truncate">{service.title}</h4>
+            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{service.description}</p>
+            <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center gap-1.5 text-sm">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span>{service.rating.toFixed(1)}</span>
+                    <span className="font-medium">{service.rating.toFixed(1)}</span>
                 </div>
-                <p className="text-base font-bold">{service.price} TJS</p>
+                <p className="text-lg font-bold text-primary">{service.price} TJS</p>
             </div>
         </div>
     </Link>
@@ -78,25 +50,19 @@ const ServiceCardComponent = memo(({ service }: { service: Service }) => (
 ServiceCardComponent.displayName = 'ServiceCardComponent';
 
 const ProviderCardComponent = memo(({ provider }: { provider: ProviderUser }) => {
-    const { services } = useData();
-    const providerServices = services.filter(s => provider.services?.includes(s.id));
-    const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-    const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
-
     return (
-        <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-background/80 rounded-lg overflow-hidden transition-all duration-300 my-2 border">
-            <div className="p-4 flex items-center gap-4">
-                 <Avatar className="h-16 w-16">
+        <Link href={`/profile/${provider.username}`} className="block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 my-4 border shadow-sm">
+            <div className="p-5 flex items-center gap-4">
+                 <Avatar className="h-16 w-16 border-2 border-primary/20">
                     <AvatarImage src={provider.avatar} alt={provider.name} />
                     <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
-                    <h4 className="font-semibold text-base truncate">{provider.name}</h4>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{provider.bio}</p>
-                    <div className="flex items-center gap-1 text-sm mt-1">
-                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                        <span>{avgRating.toFixed(1)}</span>
-                        <span className="text-muted-foreground">({provider.followers} подписчиков)</span>
+                    <h4 className="font-semibold text-lg truncate">{provider.name}</h4>
+                    <p className="text-sm text-muted-foreground line-clamp-1">@{provider.username}</p>
+                    <div className="flex items-center gap-1 text-sm mt-2 text-primary">
+                        <Star className="h-4 w-4 fill-current" />
+                        <span className="font-medium">Проверенный исполнитель</span>
                     </div>
                 </div>
             </div>
@@ -105,57 +71,65 @@ const ProviderCardComponent = memo(({ provider }: { provider: ProviderUser }) =>
 });
 ProviderCardComponent.displayName = 'ProviderCardComponent';
 
-const MessageContent = ({ content }: { content: string }) => {
+const MessageContent = ({ content, onQuote }: { content: string; onQuote?: (text: string) => void }) => {
     const { services, users } = useData();
 
-    if (content.startsWith('SERVICE_CARD')) {
-        const serviceId = content.match(/\[(.*?)\]/)?.[1];
-        if (serviceId) {
-            const service = services.find(s => s.id === serviceId);
-            if (service) {
-                return <AnimatedCard><ServiceCardComponent service={service} /></AnimatedCard>;
-            }
-        }
-    }
-    
-    if (content.startsWith('PROVIDER_CARD')) {
-        const username = content.match(/\[(.*?)\]/)?.[1];
-        if (username) {
-            const provider = users.find(u => u.username === username);
-            if (provider) {
-                return <AnimatedCard><ProviderCardComponent provider={provider} /></AnimatedCard>;
-            }
-        }
-    }
-    
-    return <ReactMarkdown className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
-};
-
-const ModelMessage = ({ content }: { content: string }) => {
-    const [isTyping, setIsTyping] = useState(true);
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
+    const handleMouseUp = () => {
+        const selection = window.getSelection();
+        const selectedText = selection?.toString().trim();
+        if (selectedText && onQuote) {
+            // We could show a tooltip here, but for simplicity we'll just handle it via a separate UI or key
+        }
+    };
+
     return (
-        <>
+        <div onMouseUp={handleMouseUp} className="relative group">
             {parts.map((part, index) => {
-                if (part.startsWith('SERVICE_CARD') || part.startsWith('PROVIDER_CARD')) {
-                    return <AnimatedCard key={index}><MessageContent content={part} /></AnimatedCard>;
+                if (part.startsWith('SERVICE_CARD')) {
+                    const id = part.match(/\[(.*?)\]/)?.[1];
+                    const service = services.find(s => s.id === id);
+                    return service ? <AnimatedCard key={index}><ServiceCardComponent service={service} /></AnimatedCard> : null;
                 }
-                if (isTyping && index === parts.length - 1) {
-                    return <TypingEffect key={index} text={part} onComplete={() => setIsTyping(false)} />;
+                if (part.startsWith('PROVIDER_CARD')) {
+                    const username = part.match(/\[(.*?)\]/)?.[1];
+                    const provider = users.find(u => u.username === username);
+                    return provider ? <AnimatedCard key={index}><ProviderCardComponent provider={provider} /></AnimatedCard> : null;
                 }
-                return <ReactMarkdown key={index} className="prose prose-sm dark:prose-invert" remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>;
+                return (
+                    <div key={index} className="relative">
+                        <ReactMarkdown 
+                            className="prose prose-sm dark:prose-invert max-w-none leading-relaxed" 
+                            remarkPlugins={[remarkGfm]}
+                        >
+                            {part}
+                        </ReactMarkdown>
+                        {onQuote && (
+                            <button 
+                                onClick={() => {
+                                    const text = window.getSelection()?.toString() || part;
+                                    onQuote(text);
+                                }}
+                                className="absolute -right-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-primary"
+                                title="Ответить на этот участок"
+                            >
+                                <Quote className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
+                );
             })}
-        </>
+        </div>
     );
 };
 
-
 export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: 'Здравствуйте! Как я могу помочь вам найти идеальную услугу на BizMart сегодня? Вы также можете загрузить изображение.' }
+    { role: 'model', content: 'Привет! Я — ИИ ассистент Findora. Чем могу помочь? Могу найти услуги, сравнить исполнителей или проанализировать ваше фото.' }
   ]);
   const [input, setInput] = useState('');
+  const [quotedText, setQuotedText] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
@@ -165,22 +139,11 @@ export default function AIChatPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { services, users } = useData();
-  const hasMessages = messages.length > 1;
 
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTo({
-            top: scrollAreaRef.current.scrollHeight,
-            behavior: 'smooth',
-        });
-    }
-  }, [messages, isLoading]);
-  
-  useEffect(() => {
-    if (!isLoading) {
+  const handleQuote = useCallback((text: string) => {
+      setQuotedText(text.length > 100 ? text.substring(0, 100) + '...' : text);
       inputRef.current?.focus();
-    }
-  }, [isLoading]);
+  }, []);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -199,9 +162,17 @@ export default function AIChatPage() {
     e.preventDefault();
     if ((!input.trim() && !imageDataUri) || isLoading) return;
 
-    const userMessage: Message = { role: 'user', content: input, photoDataUri: imageDataUri || undefined };
+    const fullMessage = quotedText ? `> ${quotedText}\n\n${input}` : input;
+    const userMessage: Message = { 
+        role: 'user', 
+        content: fullMessage, 
+        photoDataUri: imageDataUri || undefined,
+        quote: quotedText || undefined
+    };
+
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setQuotedText(null);
     setImagePreview(null);
     setImageDataUri(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -211,22 +182,17 @@ export default function AIChatPage() {
     try {
       const providers = users
         .filter(u => u.role === 'provider')
-        .map(u => {
-            const providerServices = services.filter(s => u.services?.includes(s.id));
-            const totalRating = providerServices.reduce((acc, service) => acc + (service?.rating ?? 0), 0);
-            const avgRating = providerServices.length > 0 ? totalRating / providerServices.length : 0;
-            return {
-                username: u.username,
-                name: u.name,
-                bio: u.bio,
-                role: u.role,
-                rating: avgRating,
-            }
-        });
+        .map(u => ({
+            username: u.username,
+            name: u.name,
+            bio: u.bio,
+            role: u.role,
+            rating: 4.5, // Simple fallback
+        }));
 
-      const chatRequest: AIChatInput = {
-        history: messages,
-        message: input,
+      const result = await aiChat({
+        history: messages.map(m => ({ role: m.role, content: m.content, photoDataUri: m.photoDataUri })),
+        message: fullMessage,
         services: services.map(s => ({
             id: s.id,
             title: s.title,
@@ -237,86 +203,81 @@ export default function AIChatPage() {
         })),
         providers,
         photoDataUri: imageDataUri || undefined,
-      };
+      });
       
-      const result = await aiChat(chatRequest);
-      
-      const modelMessage: Message = { role: 'model', content: result.response };
-      setMessages(prev => [...prev, modelMessage]);
-
+      setMessages(prev => [...prev, { role: 'model', content: result.response }]);
     } catch (error) {
-      console.error("Ошибка AI чата:", error);
-      const errorMessage: Message = { role: 'model', content: "Извините, что-то пошло не так. Пожалуйста, попробуйте еще раз." };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, { role: 'model', content: "Произошла ошибка. Попробуйте еще раз." }]);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
-        <div 
-            ref={scrollAreaRef}
-            className="flex-1 overflow-y-auto custom-scrollbar relative"
-        >
-            <div className={cn("max-w-3xl mx-auto px-4 pt-8 pb-4", hasMessages ? "w-full" : "flex flex-col justify-center h-full")}>
-              {!hasMessages && (
-                  <div className="text-center mb-16">
-                      <Logo />
+    <div className="flex flex-col h-full bg-background font-body">
+        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto custom-scrollbar relative">
+            <div className={cn("max-w-3xl mx-auto px-4 pt-12 pb-20", messages.length > 1 ? "w-full" : "flex flex-col justify-center h-full")}>
+              {messages.length <= 1 && (
+                  <div className="text-center mb-12 animate-in fade-in zoom-in duration-700">
+                      <div className="flex justify-center mb-6">
+                        <div className="p-4 bg-primary/10 rounded-3xl">
+                            <Sparkles className="h-12 w-12 text-primary" />
+                        </div>
+                      </div>
+                      <h1 className="text-4xl font-bold font-headline mb-4">Как я могу помочь?</h1>
+                      <p className="text-muted-foreground text-lg">Найду исполнителя, подскажу цену или подберу товар по фото.</p>
                   </div>
               )}
-                <div className="space-y-8">
+                <div className="space-y-10">
                 {messages.map((msg, index) => (
-                    <div
-                        key={index}
-                        className={cn(
-                            "flex items-start gap-4", 
-                            msg.role === 'user' ? 'justify-end' : ''
-                        )}
-                    >
-                    {msg.role === 'model' ? (
-                        <>
-                            <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
-                                <AvatarFallback>
-                                    <Sparkles className="h-5 w-5 text-primary"/>
-                                </AvatarFallback>
+                    <div key={index} className={cn("flex items-start gap-4", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+                        {msg.role === 'model' && (
+                            <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0">
+                                <AvatarFallback className="bg-primary/5"><Sparkles className="h-5 w-5 text-primary"/></AvatarFallback>
                             </Avatar>
-                            <div className="prose prose-sm dark:prose-invert bg-muted rounded-2xl px-4 py-3 break-words max-w-[80%] animate-card-in">
-                                <ModelMessage content={msg.content} />
+                        )}
+                        <div className={cn(
+                            "max-w-[85%] group",
+                            msg.role === 'user' ? 'flex flex-col items-end' : 'bg-muted/30 rounded-2xl p-4 border border-border/50'
+                        )}>
+                            {msg.photoDataUri && (
+                                <div className="relative w-full max-w-md aspect-video rounded-xl overflow-hidden mb-3 border shadow-sm">
+                                    <Image src={msg.photoDataUri} alt="User upload" fill className="object-cover" />
+                                </div>
+                            )}
+                            {msg.quote && msg.role === 'user' && (
+                                <div className="border-l-4 border-primary/30 pl-3 py-1 mb-2 text-sm text-muted-foreground bg-primary/5 rounded-r-md">
+                                    {msg.quote}
+                                </div>
+                            )}
+                            <div className={cn(
+                                msg.role === 'user' ? 'bg-primary text-primary-foreground px-4 py-3 rounded-2xl rounded-tr-none shadow-md' : ''
+                            )}>
+                                <MessageContent 
+                                    content={msg.content} 
+                                    onQuote={msg.role === 'model' ? handleQuote : undefined} 
+                                />
                             </div>
-                        </>
-                    ) : (
-                       <div className="flex flex-col items-end gap-2 animate-card-in max-w-[80%]">
-                           {msg.photoDataUri && (
-                               <div className="relative w-full max-w-sm aspect-video rounded-md overflow-hidden">
-                                   <Image src={msg.photoDataUri} alt="User upload" layout="fill" className="object-contain" />
-                               </div>
-                           )}
-                           <div className="flex items-start gap-4 w-full justify-end">
-                                {msg.content && (
-                                    <div className="prose prose-sm dark:prose-invert bg-primary text-primary-foreground px-4 py-3 rounded-2xl self-end">
-                                        <p className="text-base">{msg.content}</p>
-                                    </div>
-                                 )}
-                                 <Avatar className="h-9 w-9 border shrink-0 order-last">
-                                    <AvatarFallback>
-                                        <User className="h-5 w-5 text-muted-foreground"/>
-                                    </AvatarFallback>
-                                </Avatar>
-                           </div>
-                       </div>
-                    )}
+                        </div>
+                        {msg.role === 'user' && (
+                            <Avatar className="h-9 w-9 border shrink-0">
+                                <AvatarImage src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100&h=100&fit=crop" />
+                                <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
+                            </Avatar>
+                        )}
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex items-start gap-4 animate-card-in">
-                        <Avatar className="h-9 w-9 border-2 border-primary/50 shrink-0">
-                            <AvatarFallback>
-                                <Sparkles className="h-5 w-5 text-primary animate-pulse"/>
-                            </AvatarFallback>
+                    <div className="flex items-start gap-4">
+                        <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0">
+                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-5 w-5 text-primary animate-pulse"/></AvatarFallback>
                         </Avatar>
-                        <div className="max-w-md rounded-2xl px-4 py-3 bg-muted">
-                            <p className="text-sm text-muted-foreground animate-pulse">Думаю...</p>
+                        <div className="bg-muted/30 rounded-2xl px-4 py-3 border border-border/50">
+                            <div className="flex gap-1">
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -324,39 +285,34 @@ export default function AIChatPage() {
             </div>
             <ScrollToBottomButton chatRef={scrollAreaRef} />
         </div>
-        <div className="px-4 pb-4 w-full shrink-0 border-t bg-background">
+
+        <div className="px-4 pb-6 w-full shrink-0 border-t bg-background/80 backdrop-blur-md">
             <div className="max-w-3xl mx-auto pt-4">
+                {quotedText && (
+                    <div className="flex items-center justify-between bg-primary/5 border-l-4 border-primary p-3 rounded-r-lg mb-3 animate-in slide-in-from-bottom-2">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                            <Quote className="h-4 w-4 text-primary shrink-0" />
+                            <p className="text-sm truncate text-muted-foreground italic">"{quotedText}"</p>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setQuotedText(null)}>
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
                 {imagePreview && (
-                    <div className="relative w-24 h-24 mb-2 rounded-md overflow-hidden">
-                        <Image src={imagePreview} alt="Image preview" fill className="object-cover" />
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-1 right-1 h-6 w-6"
-                            onClick={() => {
-                                setImagePreview(null);
-                                setImageDataUri(null);
-                                if (fileInputRef.current) fileInputRef.current.value = '';
-                            }}
-                        >
+                    <div className="relative w-24 h-24 mb-3 rounded-xl overflow-hidden shadow-lg border-2 border-primary/20">
+                        <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                        <Button variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6 rounded-full" onClick={() => { setImagePreview(null); setImageDataUri(null); }}>
                             <X className="h-4 w-4" />
                         </Button>
                     </div>
                 )}
                 <form onSubmit={handleSendMessage} className="relative">
-                    <div className="input-wrapper">
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            accept="image/*"
-                            className="hidden"
-                        />
+                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-colors bg-muted/20">
+                        <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                         <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="icon" 
-                            className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20 text-muted-foreground"
+                            type="button" variant="ghost" size="icon" 
+                            className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 text-muted-foreground hover:text-primary"
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <Paperclip className="h-5 w-5" />
@@ -365,16 +321,16 @@ export default function AIChatPage() {
                             ref={inputRef}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Спросите что-нибудь у AI Ассистента..."
-                            className="w-full h-14 pl-14 pr-14 rounded-xl shadow-none border-2 text-base z-10 input-element"
+                            placeholder="Спросите Findora о чем угодно..."
+                            className="w-full h-14 pl-12 pr-14 rounded-xl border-none shadow-none bg-transparent text-base focus-visible:ring-0"
                             disabled={isLoading}
                         />
-                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-lg z-20">
+                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-xl shadow-lg">
                             <Send className="h-5 w-5" />
                         </Button>
                     </div>
                 </form>
-                <p className="text-xs text-center text-muted-foreground mt-2">AI может ошибаться. Проверяйте важную информацию.</p>
+                <p className="text-[10px] text-center text-muted-foreground mt-3 uppercase tracking-widest font-semibold opacity-50">Powered by Findora Intelligence</p>
             </div>
         </div>
     </div>

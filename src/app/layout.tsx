@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { FavoritesProvider } from '@/context/favorites-provider';
-import Header from '@/components/header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/context/auth-provider';
 import PageWrapper from '@/components/page-wrapper';
@@ -10,8 +9,8 @@ import { CartProvider } from '@/context/cart-provider';
 import { DataProvider } from '@/context/data-provider';
 
 export const metadata: Metadata = {
-  title: 'BizMart',
-  description: 'Находите и заказывайте услуги от проверенных исполнителей.',
+  title: 'Findora — Маркетплейс товаров и услуг',
+  description: 'Найдите идеальные услуги от проверенных исполнителей с помощью AI.',
 };
 
 export default function RootLayout({

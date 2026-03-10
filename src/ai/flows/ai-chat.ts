@@ -1,7 +1,6 @@
-
 'use server';
 /**
- * @fileOverview A simple AI chat flow.
+ * @fileOverview A simple AI chat flow for Findora.
  */
 
 import {ai} from '@/ai/genkit';
@@ -46,7 +45,7 @@ export type AIChatInput = z.infer<typeof AIChatInputSchema>;
 
 // Define the output schema for the chat flow
 const AIChatOutputSchema = z.object({
-  response: z.string().describe('The AI\'s response to the user. This can be plain text or Markdown. If you are recommending a service, format it as a special block: SERVICE_CARD[service_id]. If you are recommending a provider, use: PROVIDER_CARD[provider_username]. For example: SERVICE_CARD[service-1] or PROVIDER_CARD[alicej]'),
+  response: z.string().describe('The AI\'s response to the user. This can be plain text or Markdown. If you are recommending a service, format it as a special block: SERVICE_CARD[service_id]. If you are recommending a provider, use: PROVIDER_CARD[provider_username].'),
 });
 export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
 
@@ -60,36 +59,21 @@ function buildSystemPrompt(services: Service[], providers: z.infer<typeof Provid
         `- Username: ${p.username}, Name: ${p.name}, Bio: ${p.bio.substring(0, 100)}..., Rating: ${p.rating.toFixed(1)}`
     ).join('\n');
 
-    return `You are a friendly and helpful AI assistant for BizMart, a marketplace for services.
-Your goal is to help users find services, providers, answer their questions about the platform, and provide recommendations.
-You MUST ALWAYS respond in Russian, unless the user explicitly asks you to switch to another language.
-You should respond in a conversational, verbose style, like ChatGPT.
+    return `You are a friendly and helpful AI assistant for Findora, a modern marketplace for services and products.
+Your goal is to help users find the best deals, providers, and answer questions about the Findora platform.
+You MUST ALWAYS respond in Russian, unless requested otherwise.
+You should respond in a conversational, professional, yet friendly style (like ChatGPT).
 
-If the user provides an image, your primary task is to analyze the image and use it as the main context for the search. First, describe what you see in the image, then find relevant services or providers from the lists below.
+If the user provides an image, analyze it and find relevant services on Findora.
 
-When a user asks for a recommendation or shows interest in a service, you MUST recommend a service from the list below.
-When you recommend a service, you MUST use the following format and nothing else for that part of the response:
-SERVICE_CARD[service_id]
+When recommending a service, use: SERVICE_CARD[service_id]
+When recommending a provider, use: PROVIDER_CARD[provider_username]
 
-When a user asks to find a seller, freelancer, or provider, you MUST recommend a provider from the list below.
-When you recommend a provider, you MUST use the following format and nothing else for that part of the response:
-PROVIDER_CARD[provider_username]
-
-If the user asks to sort or find the "best" services or providers, use their ratings to determine the order.
-
-For example, if the user wants a logo, you can say:
-"Конечно, я могу помочь с этим! Профессиональный логотип - ключ к идентичности бренда. Я рекомендую эту услугу:
-SERVICE_CARD[service-3]
-Возможно, вас также заинтересует дизайнер Боб:
-PROVIDER_CARD[bobw]"
-
-Here is the list of available services:
+Available services:
 ${serviceList}
 
-Here is the list of available providers:
+Available providers:
 ${providerList}
-
-Keep your responses concise and friendly.
 `;
 }
 
@@ -120,7 +104,7 @@ Here is the conversation history:
 
   const chatPrompt = ai.definePrompt(
     {
-      name: 'aiChatPrompt_dynamic_v5_with_image_in_history',
+      name: 'findora_chat_v1',
       input: {schema: z.object({
         history: z.array(ChatMessageSchema),
         message: z.string(),
@@ -137,7 +121,7 @@ Here is the conversation history:
     photoDataUri: input.photoDataUri,
   });
   if (!output) {
-    return { response: "I'm sorry, I couldn't generate a response." };
+    return { response: "Извините, я не смог сгенерировать ответ. Попробуйте еще раз." };
   }
   return { response: output.response };
 }
