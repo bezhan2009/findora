@@ -337,21 +337,21 @@ export default function AIChatPage() {
                     </div>
                 )}
                 <form onSubmit={handleSendMessage} className="relative">
-                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-colors bg-muted/20 relative h-auto min-h-[3.5rem] flex items-center overflow-visible">
+                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-colors bg-muted/20 relative h-auto min-h-[3.5rem] flex items-center overflow-hidden rounded-2xl">
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                         <Button 
                             type="button" variant="ghost" size="icon" 
-                            className="absolute left-2 h-10 w-10 text-muted-foreground hover:text-primary z-20"
+                            className="absolute left-2 h-10 w-10 text-white z-20 hover:bg-transparent"
                             onClick={() => fileInputRef.current?.click()}
                         >
-                            <Paperclip className="h-5 w-5" />
+                            <Paperclip className="h-5 w-5 text-white" />
                         </Button>
                         <Input
                             ref={inputRef}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Спросите Findora о чем угодно..."
-                            className="w-full h-14 pl-12 pr-14 rounded-xl border-none shadow-none bg-transparent text-base focus-visible:ring-0 relative z-10 text-foreground"
+                            className="w-full h-14 pl-12 pr-14 rounded-2xl border-none shadow-none bg-transparent text-base focus-visible:ring-0 relative z-10 text-foreground"
                             disabled={isLoading}
                         />
                         <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-2 h-10 w-10 rounded-xl shadow-lg z-20">
