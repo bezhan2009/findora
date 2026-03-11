@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A flow for generating structured content like blog posts or service descriptions.
@@ -38,7 +37,7 @@ export async function createContent(input: ContentCreatorInput): Promise<Content
 }
 
 const prompt = ai.definePrompt({
-  name: 'contentCreatorPrompt',
+  name: 'contentCreatorPrompt_v2',
   input: {schema: ContentCreatorInputSchema},
   output: {schema: ContentCreatorOutputSchema},
   prompt: `You are an expert content creator assistant. Your task is to generate a complete article based on the user's request and return it as a single, valid JSON object with two keys: "markdown" and "meta".

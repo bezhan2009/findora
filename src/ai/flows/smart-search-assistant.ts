@@ -24,7 +24,7 @@ export type SmartSearchSuggestionsOutput = z.infer<
  * Определение промпта для подсказок поиска.
  */
 const smartSearchSuggestionsPrompt = ai.definePrompt({
-  name: 'smartSearchSuggestionsPrompt_v2',
+  name: 'smartSearchSuggestionsPrompt_v3',
   input: {schema: SmartSearchSuggestionsInputSchema},
   output: {schema: SmartSearchSuggestionsOutputSchema},
   prompt: `You are a search assistant that provides search suggestions based on the user's current query.

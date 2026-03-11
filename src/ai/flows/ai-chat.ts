@@ -53,7 +53,7 @@ export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
  */
 const findoraChatPrompt = ai.definePrompt(
   {
-    name: 'findora_chat_v5',
+    name: 'findora_chat_v6',
     input: { schema: AIChatInputSchema },
     output: { schema: AIChatOutputSchema },
     prompt: `Вы — дружелюбный и профессиональный ИИ-ассистент платформы Findora (маркетплейс услуг и товаров).

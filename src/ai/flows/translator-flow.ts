@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A flow for translating text into different languages.
@@ -23,7 +22,7 @@ export async function translateText(input: TranslatorInput): Promise<TranslatorO
 }
 
 const prompt = ai.definePrompt({
-  name: 'translatorPrompt',
+  name: 'translatorPrompt_v2',
   input: {schema: TranslatorInputSchema},
   output: {schema: TranslatorOutputSchema},
   prompt: `Translate the following text into {{targetLanguage}}.
@@ -45,5 +44,3 @@ const translatorFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
