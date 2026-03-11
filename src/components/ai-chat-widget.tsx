@@ -60,7 +60,7 @@ ServiceCard.displayName = 'ServiceCard';
 
 const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
     return (
-        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 my-3 border shadow-sm">
+        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-2xl overflow-hidden transition-all duration-300 my-3 border shadow-sm">
             <div className="p-3 flex items-center gap-3">
                  <Avatar className="h-12 w-12 border-2 border-primary/10">
                     <AvatarImage src={provider.avatar} alt={provider.name} className="object-cover" />
@@ -322,7 +322,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Спросите Findora..."
-                        className="w-full h-12 pl-12 pr-12 rounded-2xl border-none shadow-none text-sm focus-visible:ring-0 bg-transparent text-foreground"
+                        className="w-full h-12 pl-12 pr-12 rounded-2xl border-none shadow-none text-sm focus-visible:ring-0 bg-transparent text-foreground relative z-10"
                         disabled={isLoading}
                     />
                     <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full shadow-lg z-20">
