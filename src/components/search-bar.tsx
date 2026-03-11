@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, FormEvent, useRef } from 'react';
@@ -15,8 +14,8 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  // Увеличиваем задержку до 800мс, чтобы не спамить API при наборе текста
-  const debouncedQuery = useDebounce(query, 800);
+  // Увеличиваем задержку до 1000мс, чтобы максимально экономить квоты
+  const debouncedQuery = useDebounce(query, 1000);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,13 +81,13 @@ export default function SearchBar() {
       </form>
       {loading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground animate-spin" />}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-card border rounded-md shadow-lg z-10">
-          <ul>
+        <div className="absolute top-full mt-2 w-full bg-card border rounded-md shadow-lg z-[100]">
+          <ul className="py-1">
             {suggestions.map((item, index) => (
               <li 
                 key={index} 
                 onMouseDown={() => handleSelect(item)}
-                className="px-4 py-2 hover:bg-accent cursor-pointer text-sm"
+                className="px-4 py-2 hover:bg-accent cursor-pointer text-sm transition-colors"
               >
                 {item}
               </li>

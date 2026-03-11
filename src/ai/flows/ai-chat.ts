@@ -50,11 +50,10 @@ export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
 
 /**
  * Определение промпта Findora. 
- * ВАЖНО: Определение должно быть на верхнем уровне файла.
  */
 const findoraChatPrompt = ai.definePrompt(
   {
-    name: 'findora_chat_v2',
+    name: 'findora_chat_v3',
     input: { schema: AIChatInputSchema },
     output: { schema: AIChatOutputSchema },
     prompt: `Вы — дружелюбный и профессиональный ИИ-ассистент платформы Findora (маркетплейс услуг и товаров).
@@ -108,9 +107,10 @@ const findoraChatFlow = ai.defineFlow(
         throw new Error("Empty output from AI model");
       }
       return output;
-    } catch (error) {
-      console.error("Genkit Flow Error:", error);
-      return { response: "Извините, возникла техническая проблема при генерации ответа. Пожалуйста, попробуйте еще раз чуть позже." };
+    } catch (error: any) {
+      console.error("Genkit Flow Error Detail:", error);
+      // Возвращаем текст ошибки для диагностики (только на время отладки)
+      return { response: `Ошибка ИИ: ${error?.message || "Неизвестная ошибка"}. Попробуйте обновить страницу или проверить API ключ.` };
     }
   }
 );
