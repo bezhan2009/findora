@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview Оптимизированный поток AI чата для Findora.
+ * @fileOverview Оптимизированный поток AI чата для Findora с использованием актуального плагина google-genai.
  */
 
 import {ai} from '@/ai/genkit';
@@ -53,7 +53,7 @@ export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
  */
 const findoraChatPrompt = ai.definePrompt(
   {
-    name: 'findora_chat_v3',
+    name: 'findora_chat_v5',
     input: { schema: AIChatInputSchema },
     output: { schema: AIChatOutputSchema },
     prompt: `Вы — дружелюбный и профессиональный ИИ-ассистент платформы Findora (маркетплейс услуг и товаров).
@@ -109,8 +109,7 @@ const findoraChatFlow = ai.defineFlow(
       return output;
     } catch (error: any) {
       console.error("Genkit Flow Error Detail:", error);
-      // Возвращаем текст ошибки для диагностики (только на время отладки)
-      return { response: `Ошибка ИИ: ${error?.message || "Неизвестная ошибка"}. Попробуйте обновить страницу или проверить API ключ.` };
+      return { response: `Ошибка ИИ: ${error?.message || "Неизвестная ошибка"}. Пожалуйста, попробуйте обновить страницу.` };
     }
   }
 );

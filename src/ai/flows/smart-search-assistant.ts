@@ -1,11 +1,6 @@
-
 'use server';
 /**
- * @fileOverview This file implements the smart search assistant flow.
- *
- * - smartSearchSuggestions - A function that suggests search terms as the user types.
- * - SmartSearchSuggestionsInput - The input type for the smartSearchSuggestions function.
- * - SmartSearchSuggestionsOutput - The return type for the smartSearchSuggestions function.
+ * @fileOverview Подсказки поиска с использованием актуального плагина google-genai.
  */
 
 import {ai} from '@/ai/genkit';
@@ -29,7 +24,7 @@ export type SmartSearchSuggestionsOutput = z.infer<
  * Определение промпта для подсказок поиска.
  */
 const smartSearchSuggestionsPrompt = ai.definePrompt({
-  name: 'smartSearchSuggestionsPrompt',
+  name: 'smartSearchSuggestionsPrompt_v2',
   input: {schema: SmartSearchSuggestionsInputSchema},
   output: {schema: SmartSearchSuggestionsOutputSchema},
   prompt: `You are a search assistant that provides search suggestions based on the user's current query.
@@ -57,8 +52,7 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
       }
       return output;
     } catch (error: any) {
-      // Если превышена квота или другая ошибка API, просто возвращаем пустой массив
-      console.warn("AI Search Suggestions failed (likely quota):", error?.message);
+      console.warn("AI Search Suggestions failed:", error?.message);
       return { suggestions: [] };
     }
   }
