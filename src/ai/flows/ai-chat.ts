@@ -1,12 +1,13 @@
+
 'use server';
 /**
- * @fileOverview Оптимизированный поток AI чата для Findora с использованием актуального плагина google-genai.
+ * @fileOverview Оптимизированный поток AI чата для Findora с ограничением контекста.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Схема услуги
+// Схемы данных
 const ServiceSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -16,7 +17,6 @@ const ServiceSchema = z.object({
   rating: z.number(),
 });
 
-// Схема исполнителя
 const ProviderSchema = z.object({
     username: z.string(),
     name: z.string(),
@@ -25,14 +25,12 @@ const ProviderSchema = z.object({
     rating: z.number(),
 });
 
-// Схема сообщения истории
 const ChatMessageSchema = z.object({
   role: z.enum(['user', 'model']),
   content: z.string(),
   photoDataUri: z.string().optional(),
 });
 
-// Схема входных данных для чата
 const AIChatInputSchema = z.object({
   history: z.array(ChatMessageSchema),
   message: z.string().describe('Последнее сообщение пользователя.'),
@@ -42,9 +40,8 @@ const AIChatInputSchema = z.object({
 });
 export type AIChatInput = z.infer<typeof AIChatInputSchema>;
 
-// Схема выходных данных
 const AIChatOutputSchema = z.object({
-  response: z.string().describe('Ответ ИИ. Может содержать Markdown и специальные блоки SERVICE_CARD[id] или PROVIDER_CARD[username].'),
+  response: z.string().describe('Ответ ИИ.'),
 });
 export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
 
@@ -53,40 +50,26 @@ export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
  */
 const findoraChatPrompt = ai.definePrompt(
   {
-    name: 'findora_chat_v6',
+    name: 'findora_chat_v10',
     input: { schema: AIChatInputSchema },
     output: { schema: AIChatOutputSchema },
-    prompt: `Вы — дружелюбный и профессиональный ИИ-ассистент платформы Findora (маркетплейс услуг и товаров).
-Ваша цель: помогать пользователям находить лучшие предложения, выбирать исполнителей и отвечать на вопросы о платформе.
+    prompt: `Вы — дружелюбный ИИ-ассистент платформы Findora (маркетплейс в Таджикистане).
+Отвечайте на РУССКОМ языке. Лаконично и полезно.
 
-ПРАВИЛА ОТВЕТА:
-1. ВСЕГДА отвечайте на РУССКОМ языке.
-2. Стиль общения: дружелюбный, лаконичный, как в ChatGPT.
-3. Если пользователь прислал фото — проанализируйте его и предложите подходящие товары или услуги из списка ниже.
-4. Для рекомендации товара используйте блок: SERVICE_CARD[service_id]
-5. Для рекомендации исполнителя используйте блок: PROVIDER_CARD[provider_username]
+Для рекомендации товара используйте: SERVICE_CARD[id]
+Для рекомендации исполнителя: PROVIDER_CARD[username]
 
 ДОСТУПНЫЕ УСЛУГИ:
 {{#each services}}
-- ID: {{id}}, Название: {{title}}, Цена: {{price}} TJS, Категория: {{category}}, Рейтинг: {{rating}}
-{{/each}}
-
-ДОСТУПНЫЕ ИСПОЛНИТЕЛИ:
-{{#each providers}}
-- Username: {{username}}, Имя: {{name}}, Рейтинг: {{rating}}
+- ID: {{id}}, {{title}}, {{price}} TJS, {{category}}
 {{/each}}
 
 ИСТОРИЯ ДИАЛОГА:
 {{#each history}}
-**{{role}}**: 
-{{#if photoDataUri}}{{media url=photoDataUri}}{{/if}}
-{{{content}}}
+**{{role}}**: {{{content}}}
 {{/each}}
 
-**user**: 
-{{#if photoDataUri}}{{media url=photoDataUri}}{{/if}}
-{{{message}}}
-
+**user**: {{{message}}}
 **model**:`,
   }
 );
@@ -102,21 +85,29 @@ const findoraChatFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      const { output } = await findoraChatPrompt(input);
-      if (!output) {
-        throw new Error("Empty output from AI model");
-      }
+      // ОГРАНИЧЕНИЕ КОНТЕКСТА: берем только последние 6 сообщений, чтобы не вылетать за квоты токенов
+      const limitedHistory = input.history.slice(-6);
+      
+      const { output } = await findoraChatPrompt({
+        ...input,
+        history: limitedHistory
+      });
+      
+      if (!output) throw new Error("Empty output");
       return output;
     } catch (error: any) {
-      console.error("Genkit Flow Error Detail:", error);
-      return { response: `Ошибка ИИ: ${error?.message || "Неизвестная ошибка"}. Пожалуйста, попробуйте обновить страницу.` };
+      console.error("Genkit Flow Error:", error);
+      
+      // Специальная обработка для ошибок квот (429)
+      if (error.message?.includes("429") || error.message?.includes("quota") || error.message?.includes("exhausted")) {
+        return { response: "Извините, я получил слишком много запросов за короткое время. Пожалуйста, подождите 30-60 секунд и я снова буду готов вам помочь! 🙏" };
+      }
+      
+      return { response: "Извините, возникла техническая проблема. Пожалуйста, обновите страницу." };
     }
   }
 );
 
-/**
- * Обертка для вызова потока из клиентских компонентов.
- */
 export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
   return findoraChatFlow(input);
 }

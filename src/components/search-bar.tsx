@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, FormEvent, useRef } from 'react';
@@ -14,14 +15,15 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  // Увеличиваем задержку до 1000мс, чтобы максимально экономить квоты
-  const debouncedQuery = useDebounce(query, 1000);
+  // Увеличиваем задержку до 1500мс для максимальной экономии квот Gemini Free Tier
+  const debouncedQuery = useDebounce(query, 1500);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (debouncedQuery && debouncedQuery.length > 2) {
+    // Шлем запрос только если введено более 3 символов
+    if (debouncedQuery && debouncedQuery.trim().length > 3) {
       setLoading(true);
-      smartSearchSuggestions({ query: debouncedQuery })
+      smartSearchSuggestions({ query: debouncedQuery.trim() })
         .then(response => {
             if (response && response.suggestions) {
                 setSuggestions(response.suggestions);
@@ -29,7 +31,8 @@ export default function SearchBar() {
             }
         })
         .catch(err => {
-            console.error("Search suggestions error:", err);
+            // При ошибке квот (429) просто молча скрываем подсказки, не мешая пользователю
+            console.warn("Search suggestions rate limited:", err.message);
             setSuggestions([]);
             setIsOpen(false);
         })
@@ -76,7 +79,7 @@ export default function SearchBar() {
             className="w-full pl-10 pr-4 py-2"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => query.length > 2 && suggestions.length > 0 && setIsOpen(true)}
+            onFocus={() => query.length > 3 && suggestions.length > 0 && setIsOpen(true)}
         />
       </form>
       {loading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground animate-spin" />}

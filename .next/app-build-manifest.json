@@ -12,11 +12,6 @@
       "static/css/app/not-found.css",
       "static/chunks/app/not-found.js"
     ],
-    "/ai-chat/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/ai-chat/page.js"
-    ],
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

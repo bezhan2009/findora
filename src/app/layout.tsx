@@ -1,12 +1,8 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
-import { FavoritesProvider } from '@/context/favorites-provider';
-import { ThemeProvider } from '@/components/theme-provider';
-import { AuthProvider } from '@/context/auth-provider';
 import PageWrapper from '@/components/page-wrapper';
-import { CartProvider } from '@/context/cart-provider';
-import { DataProvider } from '@/context/data-provider';
+import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
   title: 'Findora — Маркетплейс товаров и услуг',
@@ -27,25 +23,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col h-screen">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <DataProvider>
-              <FavoritesProvider>
-                <CartProvider>
-                  <PageWrapper>
-                    {children}
-                  </PageWrapper>
-                  <Toaster />
-                </CartProvider>
-              </FavoritesProvider>
-            </DataProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <Providers>
+          <PageWrapper>
+            {children}
+          </PageWrapper>
+        </Providers>
       </body>
     </html>
   );

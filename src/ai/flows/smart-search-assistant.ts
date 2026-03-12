@@ -1,6 +1,7 @@
+
 'use server';
 /**
- * @fileOverview Подсказки поиска с использованием актуального плагина google-genai.
+ * @fileOverview Подсказки поиска с защитой от чрезмерных запросов.
  */
 
 import {ai} from '@/ai/genkit';
@@ -24,19 +25,14 @@ export type SmartSearchSuggestionsOutput = z.infer<
  * Определение промпта для подсказок поиска.
  */
 const smartSearchSuggestionsPrompt = ai.definePrompt({
-  name: 'smartSearchSuggestionsPrompt_v3',
+  name: 'smartSearchSuggestionsPrompt_v5',
   input: {schema: SmartSearchSuggestionsInputSchema},
   output: {schema: SmartSearchSuggestionsOutputSchema},
-  prompt: `You are a search assistant that provides search suggestions based on the user's current query.
-
-Current query: {{{query}}}
-
-Provide a list of 3-5 search suggestions that are relevant to the query. Return as a JSON object with a "suggestions" key containing an array of strings.
-Ensure the output is a valid JSON.`,
+  prompt: `You are a search assistant. Based on query: "{{{query}}}", provide 3-5 short, relevant search terms in Russian. Return JSON with "suggestions" key.`,
 });
 
 /**
- * Определение потока для подсказок поиска с обработкой ошибок квот.
+ * Определение потока для подсказок поиска.
  */
 const smartSearchSuggestionsFlow = ai.defineFlow(
   {
@@ -45,6 +41,11 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
     outputSchema: SmartSearchSuggestionsOutputSchema,
   },
   async input => {
+    // Дополнительная проверка на стороне сервера
+    if (!input.query || input.query.trim().length < 3) {
+        return { suggestions: [] };
+    }
+
     try {
       const {output} = await smartSearchSuggestionsPrompt(input);
       if (!output) {
@@ -52,7 +53,8 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
       }
       return output;
     } catch (error: any) {
-      console.warn("AI Search Suggestions failed:", error?.message);
+      // Молча ловим ошибки квот, чтобы не мешать основному UX
+      console.warn("AI Suggestions Quota Error:", error?.message);
       return { suggestions: [] };
     }
   }
