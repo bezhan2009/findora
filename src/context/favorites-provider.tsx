@@ -19,7 +19,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     try {
-      const storedFavorites = localStorage.getItem('bizmart-favorites');
+      const storedFavorites = localStorage.getItem('Findora-favorites');
       if (storedFavorites) {
         setFavoriteIds(JSON.parse(storedFavorites));
       }
@@ -30,7 +30,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
 
   const updateLocalStorage = useCallback((ids: string[]) => {
     try {
-      localStorage.setItem('bizmart-favorites', JSON.stringify(ids));
+      localStorage.setItem('Findora-favorites', JSON.stringify(ids));
     } catch (error) {
       console.error("Не удалось сохранить избранное в localStorage", error);
     }

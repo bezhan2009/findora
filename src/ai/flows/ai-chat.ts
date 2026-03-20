@@ -1,13 +1,14 @@
 
 'use server';
 /**
- * @fileOverview Оптимизированный поток AI чата для Findora с ограничением контекста.
+ * @fileOverview Поток AI чата Findora, работающий через Groq API.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Схемы данных
+const GROQ_API_KEY = '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';
+
 const ServiceSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -36,7 +37,7 @@ const AIChatInputSchema = z.object({
   message: z.string().describe('Последнее сообщение пользователя.'),
   services: z.array(ServiceSchema).describe('Список доступных услуг/товаров.'),
   providers: z.array(ProviderSchema).describe('Список доступных исполнителей.'),
-  photoDataUri: z.string().optional().describe("Опциональное фото от пользователя в формате Data URI."),
+  photoDataUri: z.string().optional().describe("Опциональное фото от пользователя."),
 });
 export type AIChatInput = z.infer<typeof AIChatInputSchema>;
 
@@ -45,38 +46,10 @@ const AIChatOutputSchema = z.object({
 });
 export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
 
-/**
- * Определение промпта Findora. 
- */
-const findoraChatPrompt = ai.definePrompt(
-  {
-    name: 'findora_chat_v10',
-    input: { schema: AIChatInputSchema },
-    output: { schema: AIChatOutputSchema },
-    prompt: `Вы — дружелюбный ИИ-ассистент платформы Findora (маркетплейс в Таджикистане).
-Отвечайте на РУССКОМ языке. Лаконично и полезно.
+export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
+  return findoraChatFlow(input);
+}
 
-Для рекомендации товара используйте: SERVICE_CARD[id]
-Для рекомендации исполнителя: PROVIDER_CARD[username]
-
-ДОСТУПНЫЕ УСЛУГИ:
-{{#each services}}
-- ID: {{id}}, {{title}}, {{price}} TJS, {{category}}
-{{/each}}
-
-ИСТОРИЯ ДИАЛОГА:
-{{#each history}}
-**{{role}}**: {{{content}}}
-{{/each}}
-
-**user**: {{{message}}}
-**model**:`,
-  }
-);
-
-/**
- * Определение потока (Flow) для чата.
- */
 const findoraChatFlow = ai.defineFlow(
   {
     name: 'findoraChatFlow',
@@ -85,29 +58,66 @@ const findoraChatFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      // ОГРАНИЧЕНИЕ КОНТЕКСТА: берем только последние 6 сообщений, чтобы не вылетать за квоты токенов
-      const limitedHistory = input.history.slice(-6);
-      
-      const { output } = await findoraChatPrompt({
-        ...input,
-        history: limitedHistory
+      const messages: any[] = [
+        {
+          role: 'system',
+          content: `Вы — дружелюбный ИИ-ассистент платформы Findora (маркетплейс в Таджикистане).
+Отвечайте на РУССКОМ языке. Лаконично и полезно.
+
+Для рекомендации товара используйте: SERVICE_CARD[id]
+Для рекомендации исполнителя: PROVIDER_CARD[username]
+
+ДОСТУПНЫЕ УСЛУГИ:
+${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, ${s.category}`).join('\n')}
+`
+        }
+      ];
+
+      // Добавляем историю
+      input.history.slice(-6).forEach(msg => {
+        messages.push({
+          role: msg.role === 'model' ? 'assistant' : 'user',
+          content: msg.content
+        });
       });
+
+      // Добавляем текущее сообщение
+      const currentContent: any[] = [{ type: 'text', text: input.message }];
       
-      if (!output) throw new Error("Empty output");
-      return output;
-    } catch (error: any) {
-      console.error("Genkit Flow Error:", error);
-      
-      // Специальная обработка для ошибок квот (429)
-      if (error.message?.includes("429") || error.message?.includes("quota") || error.message?.includes("exhausted")) {
-        return { response: "Извините, я получил слишком много запросов за короткое время. Пожалуйста, подождите 30-60 секунд и я снова буду готов вам помочь! 🙏" };
+      if (input.photoDataUri) {
+        currentContent.push({
+          type: 'image_url',
+          image_url: { url: input.photoDataUri }
+        });
       }
-      
-      return { response: "Извините, возникла техническая проблема. Пожалуйста, обновите страницу." };
+
+      messages.push({ role: 'user', content: currentContent });
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.2-11b-vision-preview',
+          messages,
+          temperature: 0.7,
+          max_tokens: 1024,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error?.message || 'Groq API Error');
+      }
+
+      const data = await response.json();
+      return { response: data.choices[0].message.content };
+
+    } catch (error: any) {
+      console.error("Groq Flow Error:", error);
+      return { response: "Извините, возникла техническая проблема. Пожалуйста, попробуйте еще раз." };
     }
   }
 );
-
-export async function aiChat(input: AIChatInput): Promise<AIChatOutput> {
-  return findoraChatFlow(input);
-}

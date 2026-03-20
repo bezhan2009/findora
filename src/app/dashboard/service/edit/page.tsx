@@ -83,7 +83,7 @@ export default function EditServicePage() {
                 <h1 className="text-3xl font-bold font-headline">Добавить новый товар/услугу</h1>
             </div>
             <CardDescription>
-              Заполните детали ниже, чтобы разместить ваш товар или услугу на BizMart.
+              Заполните детали ниже, чтобы разместить ваш товар или услугу на Findora.
             </CardDescription>
           </CardHeader>
           <CardContent>

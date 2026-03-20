@@ -36,7 +36,7 @@ const chatPrompt = ai.definePrompt(
     name: 'aiChatPrompt',
     input: {schema: AIChatInputSchema},
     output: {schema: AIChatOutputSchema},
-    prompt: `You are a friendly and helpful AI assistant for BizMart, a marketplace for services.
+    prompt: `You are a friendly and helpful AI assistant for Findora, a marketplace for services.
 Your goal is to help users find services, answer their questions about the platform, and provide recommendations.
 
 Keep your responses concise and friendly.

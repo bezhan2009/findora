@@ -8,7 +8,7 @@ const usersData: Omit<User, 'id'>[] = [
     role: 'provider',
     avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&h=500&fit=crop',
     location: 'Москва, Россия',
-    bio: 'Главный исполнительный директор и основатель BizMart. Курирую лучшие таланты и услуги на платформе.',
+    bio: 'Главный исполнительный директор и основатель Findora. Курирую лучшие таланты и услуги на платформе.',
     services: ['service-1', 'service-2', 'service-5', 'service-7', 'service-9', 'service-16', 'service-33', 'service-43'],
     reviews: [],
     followers: 9999,
@@ -23,10 +23,10 @@ const usersData: Omit<User, 'id'>[] = [
       { id: 'p3', type: 'photo', url: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop', caption: 'Заключение сделки', likes: 512, comments: [] },
     ],
     socials: {
-        instagram: "https://instagram.com/bizmart",
-        linkedin: "https://linkedin.com/in/bizmart",
-        website: "https://bizmart.com",
-        email: "chairman@bizmart.com"
+        instagram: "https://instagram.com/Findora",
+        linkedin: "https://linkedin.com/in/Findora",
+        website: "https://Findora.com",
+        email: "chairman@Findora.com"
     }
   },
   {

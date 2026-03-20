@@ -1,14 +1,17 @@
+
 'use server';
 /**
- * @fileOverview A flow for translating text into different languages.
+ * @fileOverview Перевод текста через Groq API.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const GROQ_API_KEY = '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';
+
 const TranslatorInputSchema = z.object({
   text: z.string().describe('The text to be translated.'),
-  targetLanguage: z.enum(['English', 'Russian', 'Tajik']).describe('The language to translate the text into.'),
+  targetLanguage: z.enum(['English', 'Russian', 'Tajik']).describe('Target language.'),
 });
 export type TranslatorInput = z.infer<typeof TranslatorInputSchema>;
 
@@ -21,18 +24,6 @@ export async function translateText(input: TranslatorInput): Promise<TranslatorO
   return translatorFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'translatorPrompt_v2',
-  input: {schema: TranslatorInputSchema},
-  output: {schema: TranslatorOutputSchema},
-  prompt: `Translate the following text into {{targetLanguage}}.
-
-Text:
-"{{text}}"
-
-Return only the translated text.`,
-});
-
 const translatorFlow = ai.defineFlow(
   {
     name: 'translatorFlow',
@@ -40,7 +31,31 @@ const translatorFlow = ai.defineFlow(
     outputSchema: TranslatorOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `Translate the following text into ${input.targetLanguage}. Return ONLY the translated text without any explanations.`
+            },
+            { role: 'user', content: input.text }
+          ],
+        }),
+      });
+
+      if (!response.ok) throw new Error('Groq Error');
+
+      const data = await response.json();
+      return { translatedText: data.choices[0].message.content };
+    } catch (error) {
+      return { translatedText: "Ошибка перевода" };
+    }
   }
 );

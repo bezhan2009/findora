@@ -1,4 +1,4 @@
-# **App Name**: BizMart
+# **App Name**: Findora
 
 ## Core Features:
 

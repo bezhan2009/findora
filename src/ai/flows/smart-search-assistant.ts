@@ -1,39 +1,28 @@
 
 'use server';
 /**
- * @fileOverview Подсказки поиска с защитой от чрезмерных запросов.
+ * @fileOverview Подсказки поиска через Groq API.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const GROQ_API_KEY = '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';
+
 const SmartSearchSuggestionsInputSchema = z.object({
   query: z.string().describe('The current search query.'),
 });
-export type SmartSearchSuggestionsInput = z.infer<
-  typeof SmartSearchSuggestionsInputSchema
->;
+export type SmartSearchSuggestionsInput = z.infer<typeof SmartSearchSuggestionsInputSchema>;
 
 const SmartSearchSuggestionsOutputSchema = z.object({
   suggestions: z.array(z.string()).describe('A list of search suggestions.'),
 });
-export type SmartSearchSuggestionsOutput = z.infer<
-  typeof SmartSearchSuggestionsOutputSchema
->;
+export type SmartSearchSuggestionsOutput = z.infer<typeof SmartSearchSuggestionsOutputSchema>;
 
-/**
- * Определение промпта для подсказок поиска.
- */
-const smartSearchSuggestionsPrompt = ai.definePrompt({
-  name: 'smartSearchSuggestionsPrompt_v5',
-  input: {schema: SmartSearchSuggestionsInputSchema},
-  output: {schema: SmartSearchSuggestionsOutputSchema},
-  prompt: `You are a search assistant. Based on query: "{{{query}}}", provide 3-5 short, relevant search terms in Russian. Return JSON with "suggestions" key.`,
-});
+export async function smartSearchSuggestions(input: SmartSearchSuggestionsInput): Promise<SmartSearchSuggestionsOutput> {
+  return smartSearchSuggestionsFlow(input);
+}
 
-/**
- * Определение потока для подсказок поиска.
- */
 const smartSearchSuggestionsFlow = ai.defineFlow(
   {
     name: 'smartSearchSuggestionsFlow',
@@ -41,27 +30,37 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
     outputSchema: SmartSearchSuggestionsOutputSchema,
   },
   async input => {
-    // Дополнительная проверка на стороне сервера
     if (!input.query || input.query.trim().length < 3) {
         return { suggestions: [] };
     }
 
     try {
-      const {output} = await smartSearchSuggestionsPrompt(input);
-      if (!output) {
-        return { suggestions: [] };
-      }
-      return output;
-    } catch (error: any) {
-      // Молча ловим ошибки квот, чтобы не мешать основному UX
-      console.warn("AI Suggestions Quota Error:", error?.message);
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a search assistant. Based on the user query, provide 3-5 short, relevant search terms in Russian. Return ONLY a valid JSON object with a single key "suggestions" which is an array of strings.'
+            },
+            { role: 'user', content: input.query }
+          ],
+          response_format: { type: 'json_object' }
+        }),
+      });
+
+      if (!response.ok) return { suggestions: [] };
+
+      const data = await response.json();
+      const result = JSON.parse(data.choices[0].message.content);
+      return { suggestions: result.suggestions || [] };
+    } catch (error) {
       return { suggestions: [] };
     }
   }
 );
-
-export async function smartSearchSuggestions(
-  input: SmartSearchSuggestionsInput
-): Promise<SmartSearchSuggestionsOutput> {
-  return smartSearchSuggestionsFlow(input);
-}

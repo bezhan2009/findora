@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 role: userRole,
                 avatar: `https://images.unsplash.com/photo-1527980965255-d3b416303d12`,
                 location: 'Не указано',
-                bio: 'Новый пользователь BizMart!',
+                bio: 'Новый пользователь Findora!',
                 followers: 0,
             };
             // In a real app, you would add this user to your persistent data source.

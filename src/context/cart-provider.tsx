@@ -24,7 +24,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
 
   const getStorageKey = useCallback(() => {
-    return user ? `bizmart-cart-${user.id}` : 'bizmart-cart-guest';
+    return user ? `Findora-cart-${user.id}` : 'Findora-cart-guest';
   }, [user]);
 
   useEffect(() => {

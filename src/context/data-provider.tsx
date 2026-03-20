@@ -21,7 +21,7 @@ interface DataContextType extends InitialData {
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
 
-const DATA_STORAGE_KEY = 'bizmart-app-data';
+const DATA_STORAGE_KEY = 'Findora-app-data';
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
