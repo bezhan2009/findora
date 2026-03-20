@@ -1,22 +1,24 @@
 
 'use server';
 /**
- * @fileOverview Перевод текста через Groq API.
+ * @fileOverview Перевод текста через Groq SDK.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
+const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const TranslatorInputSchema = z.object({
-  text: z.string().describe('The text to be translated.'),
-  targetLanguage: z.enum(['English', 'Russian', 'Tajik']).describe('Target language.'),
+  text: z.string().describe('Текст для перевода.'),
+  targetLanguage: z.enum(['English', 'Russian', 'Tajik']).describe('Целевой язык.'),
 });
 export type TranslatorInput = z.infer<typeof TranslatorInputSchema>;
 
 const TranslatorOutputSchema = z.object({
-  translatedText: z.string().describe('The translated text.'),
+  translatedText: z.string().describe('Переведенный текст.'),
 });
 export type TranslatorOutput = z.infer<typeof TranslatorOutputSchema>;
 
@@ -32,30 +34,20 @@ const translatorFlow = ai.defineFlow(
   },
   async input => {
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `Translate the following text into ${input.targetLanguage}. Return ONLY the translated text without any explanations.`
-            },
-            { role: 'user', content: input.text }
-          ],
-        }),
+      const completion = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `Переведите следующий текст на ${input.targetLanguage}. Верните ТОЛЬКО переведенный текст без каких-либо объяснений.`
+          },
+          { role: 'user', content: input.text }
+        ],
       });
 
-      if (!response.ok) throw new Error('Groq Error');
-
-      const data = await response.json();
-      return { translatedText: data.choices[0].message.content };
+      return { translatedText: completion.choices[0]?.message?.content || "Ошибка перевода" };
     } catch (error) {
-      return { translatedText: "Ошибка перевода" };
+      return { translatedText: "Произошла ошибка при обращении к серверу перевода." };
     }
   }
 );

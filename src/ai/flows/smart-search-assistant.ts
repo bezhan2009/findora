@@ -1,21 +1,23 @@
 
 'use server';
 /**
- * @fileOverview Подсказки поиска через Groq API.
+ * @fileOverview Подсказки поиска через Groq SDK.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
+const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const SmartSearchSuggestionsInputSchema = z.object({
-  query: z.string().describe('The current search query.'),
+  query: z.string().describe('Текущий поисковый запрос.'),
 });
 export type SmartSearchSuggestionsInput = z.infer<typeof SmartSearchSuggestionsInputSchema>;
 
 const SmartSearchSuggestionsOutputSchema = z.object({
-  suggestions: z.array(z.string()).describe('A list of search suggestions.'),
+  suggestions: z.array(z.string()).describe('Список поисковых подсказок.'),
 });
 export type SmartSearchSuggestionsOutput = z.infer<typeof SmartSearchSuggestionsOutputSchema>;
 
@@ -35,31 +37,25 @@ const smartSearchSuggestionsFlow = ai.defineFlow(
     }
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a search assistant. Based on the user query, provide 3-5 short, relevant search terms in Russian. Return ONLY a valid JSON object with a single key "suggestions" which is an array of strings.'
-            },
-            { role: 'user', content: input.query }
-          ],
-          response_format: { type: 'json_object' }
-        }),
+      const completion = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: 'Вы — ассистент по поиску. На основе запроса пользователя предложите 3-5 коротких, актуальных поисковых терминов на русском языке. Верните ТОЛЬКО валидный JSON объект с ключом "suggestions" (массив строк).'
+          },
+          { role: 'user', content: input.query }
+        ],
+        response_format: { type: 'json_object' }
       });
 
-      if (!response.ok) return { suggestions: [] };
+      const content = completion.choices[0]?.message?.content;
+      if (!content) return { suggestions: [] };
 
-      const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
+      const result = JSON.parse(content);
       return { suggestions: result.suggestions || [] };
     } catch (error) {
+      console.warn("Groq Search Error:", error);
       return { suggestions: [] };
     }
   }

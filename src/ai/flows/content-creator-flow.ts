@@ -1,18 +1,20 @@
 
 'use server';
 /**
- * @fileOverview Генерация контента через Groq API.
+ * @fileOverview Генерация контента через Groq SDK.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
+const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const ContentCreatorInputSchema = z.object({
-  prompt: z.string().describe("The user's high-level prompt."),
-  tone: z.enum(['formal', 'casual']).describe('Tone.'),
-  length: z.enum(['short', 'medium', 'long']).describe('Length.'),
+  prompt: z.string().describe("Высокоуровневый запрос пользователя."),
+  tone: z.enum(['formal', 'casual']).describe('Тон текста.'),
+  length: z.enum(['short', 'medium', 'long']).describe('Длина текста.'),
 });
 export type ContentCreatorInput = z.infer<typeof ContentCreatorInputSchema>;
 
@@ -45,34 +47,28 @@ const contentCreatorFlow = ai.defineFlow(
   },
   async input => {
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            {
-              role: 'system',
-              content: `You are an expert content creator. Generate a complete article in Russian based on the user's request.
-Return ONLY a valid JSON object with keys: "markdown" (string) and "meta" (object).
-The markdown should include # Title, ## Sections, and a ## Photos section at the end.
-Tone: ${input.tone}, Length: ${input.length}.`
-            },
-            { role: 'user', content: input.prompt }
-          ],
-          response_format: { type: 'json_object' }
-        }),
+      const completion = await groq.chat.completions.create({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `Вы — эксперт по созданию контента. Создайте статью на РУССКОМ языке на основе запроса пользователя.
+Верните ТОЛЬКО валидный JSON объект с ключами: "markdown" (строка) и "meta" (объект).
+Markdown должен включать # Заголовок, ## Разделы и секцию ## Фото в конце.
+Тон: ${input.tone}, Длина: ${input.length}.`
+          },
+          { role: 'user', content: input.prompt }
+        ],
+        response_format: { type: 'json_object' }
       });
 
-      if (!response.ok) throw new Error('Groq Error');
+      const content = completion.choices[0]?.message?.content;
+      if (!content) throw new Error("Empty response from Groq");
 
-      const data = await response.json();
-      return JSON.parse(data.choices[0].message.content);
+      return JSON.parse(content);
     } catch (error) {
-      throw new Error("Failed to generate content via Groq");
+      console.error("Groq Content Error:", error);
+      throw new Error("Не удалось сгенерировать контент через Groq");
     }
   }
 );

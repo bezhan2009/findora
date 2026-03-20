@@ -1,13 +1,15 @@
 
 'use server';
 /**
- * @fileOverview Поток AI чата Findora, работающий через Groq API.
+ * @fileOverview Поток AI чата Findora, работающий через Groq SDK.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
+const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const ServiceSchema = z.object({
   id: z.string(),
@@ -62,18 +64,19 @@ const findoraChatFlow = ai.defineFlow(
         {
           role: 'system',
           content: `Вы — дружелюбный ИИ-ассистент платформы Findora (маркетплейс в Таджикистане).
-Отвечайте на РУССКОМ языке. Лаконично и полезно.
+Отвечайте на РУССКОМ языке. Будьте лаконичны, но полезны.
 
-Для рекомендации товара используйте: SERVICE_CARD[id]
+Если пользователь ищет конкретную услугу, рекомендуйте её из списка ниже.
+Для рекомендации товара ОБЯЗАТЕЛЬНО используйте формат: SERVICE_CARD[id]
 Для рекомендации исполнителя: PROVIDER_CARD[username]
 
 ДОСТУПНЫЕ УСЛУГИ:
-${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, ${s.category}`).join('\n')}
+${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, Категория: ${s.category}, Рейтинг: ${s.rating}`).join('\n')}
 `
         }
       ];
 
-      // Добавляем историю
+      // Ограничиваем историю для экономии токенов и стабильности
       input.history.slice(-6).forEach(msg => {
         messages.push({
           role: msg.role === 'model' ? 'assistant' : 'user',
@@ -81,7 +84,7 @@ ${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, ${s.catego
         });
       });
 
-      // Добавляем текущее сообщение
+      // Формируем текущее сообщение с поддержкой зрения (vision)
       const currentContent: any[] = [{ type: 'text', text: input.message }];
       
       if (input.photoDataUri) {
@@ -93,31 +96,18 @@ ${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, ${s.catego
 
       messages.push({ role: 'user', content: currentContent });
 
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'llama-3.2-11b-vision-preview',
-          messages,
-          temperature: 0.7,
-          max_tokens: 1024,
-        }),
+      const completion = await groq.chat.completions.create({
+        model: 'llama-3.2-11b-vision-preview',
+        messages,
+        temperature: 0.7,
+        max_tokens: 1024,
       });
 
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error?.message || 'Groq API Error');
-      }
-
-      const data = await response.json();
-      return { response: data.choices[0].message.content };
+      return { response: completion.choices[0]?.message?.content || "Извините, я не смог сформулировать ответ." };
 
     } catch (error: any) {
-      console.error("Groq Flow Error:", error);
-      return { response: "Извините, возникла техническая проблема. Пожалуйста, попробуйте еще раз." };
+      console.error("Groq SDK Error:", error);
+      return { response: `Ошибка ИИ: ${error.message || "Неизвестная ошибка"}. Пожалуйста, попробуйте позже.` };
     }
   }
 );
