@@ -1,24 +1,24 @@
 
 'use server';
 /**
- * @fileOverview Перевод текста через Groq SDK.
+ * @fileOverview Мгновенный перевод через Groq SDK.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
 const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const TranslatorInputSchema = z.object({
-  text: z.string().describe('Текст для перевода.'),
-  targetLanguage: z.enum(['English', 'Russian', 'Tajik']).describe('Целевой язык.'),
+  text: z.string(),
+  targetLanguage: z.enum(['English', 'Russian', 'Tajik']),
 });
 export type TranslatorInput = z.infer<typeof TranslatorInputSchema>;
 
 const TranslatorOutputSchema = z.object({
-  translatedText: z.string().describe('Переведенный текст.'),
+  translatedText: z.string(),
 });
 export type TranslatorOutput = z.infer<typeof TranslatorOutputSchema>;
 
@@ -39,7 +39,7 @@ const translatorFlow = ai.defineFlow(
         messages: [
           {
             role: 'system',
-            content: `Переведите следующий текст на ${input.targetLanguage}. Верните ТОЛЬКО переведенный текст без каких-либо объяснений.`
+            content: `Вы — профессиональный переводчик. Переведите текст на ${input.targetLanguage}. ВЕРНИТЕ ТОЛЬКО ПЕРЕВОД БЕЗ КОММЕНТАРИЕВ.`
           },
           { role: 'user', content: input.text }
         ],
@@ -47,7 +47,7 @@ const translatorFlow = ai.defineFlow(
 
       return { translatedText: completion.choices[0]?.message?.content || "Ошибка перевода" };
     } catch (error) {
-      return { translatedText: "Произошла ошибка при обращении к серверу перевода." };
+      return { translatedText: "Сервис перевода временно недоступен. Попробуйте через минуту." };
     }
   }
 );

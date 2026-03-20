@@ -1,11 +1,12 @@
 
 'use server';
 /**
- * @fileOverview Поток AI чата Findora, работающий через Groq SDK.
+ * @fileOverview Поток ИИ-чата Findora через Groq SDK.
+ * Поддерживает текст (Llama 3.3 70B) и зрение (Llama 3.2 11B Vision).
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
@@ -21,11 +22,11 @@ const ServiceSchema = z.object({
 });
 
 const ProviderSchema = z.object({
-    username: z.string(),
-    name: z.string(),
-    bio: z.string(),
-    role: z.string(),
-    rating: z.number(),
+  username: z.string(),
+  name: z.string(),
+  bio: z.string(),
+  role: z.string(),
+  rating: z.number(),
 });
 
 const ChatMessageSchema = z.object({
@@ -36,15 +37,15 @@ const ChatMessageSchema = z.object({
 
 const AIChatInputSchema = z.object({
   history: z.array(ChatMessageSchema),
-  message: z.string().describe('Последнее сообщение пользователя.'),
-  services: z.array(ServiceSchema).describe('Список доступных услуг/товаров.'),
-  providers: z.array(ProviderSchema).describe('Список доступных исполнителей.'),
-  photoDataUri: z.string().optional().describe("Опциональное фото от пользователя."),
+  message: z.string(),
+  services: z.array(ServiceSchema),
+  providers: z.array(ProviderSchema),
+  photoDataUri: z.string().optional(),
 });
 export type AIChatInput = z.infer<typeof AIChatInputSchema>;
 
 const AIChatOutputSchema = z.object({
-  response: z.string().describe('Ответ ИИ.'),
+  response: z.string(),
 });
 export type AIChatOutput = z.infer<typeof AIChatOutputSchema>;
 
@@ -60,23 +61,28 @@ const findoraChatFlow = ai.defineFlow(
   },
   async (input) => {
     try {
+      // Выбираем модель: 70B для текста (умнее), 11B Vision для фото
+      const modelId = input.photoDataUri ? 'llama-3.2-11b-vision-preview' : 'llama-3.3-70b-versatile';
+
       const messages: any[] = [
         {
           role: 'system',
-          content: `Вы — дружелюбный ИИ-ассистент платформы Findora (маркетплейс в Таджикистане).
-Отвечайте на РУССКОМ языке. Будьте лаконичны, но полезны.
+          content: `Вы — экспертный ИИ-ассистент маркетплейса Findora (Таджикистан).
+Отвечайте на РУССКОМ языке. Будьте дружелюбны и лаконичны.
 
-Если пользователь ищет конкретную услугу, рекомендуйте её из списка ниже.
-Для рекомендации товара ОБЯЗАТЕЛЬНО используйте формат: SERVICE_CARD[id]
-Для рекомендации исполнителя: PROVIDER_CARD[username]
+ПРАВИЛА:
+1. Рекомендуйте товары/услуги только из списка ниже.
+2. Для товара используйте: SERVICE_CARD[id]
+3. Для исполнителя: PROVIDER_CARD[username]
+4. Если пользователь прислал фото — проанализируйте его и подберите похожие услуги.
 
 ДОСТУПНЫЕ УСЛУГИ:
-${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, Категория: ${s.category}, Рейтинг: ${s.rating}`).join('\n')}
+${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, Категория: ${s.category}`).join('\n')}
 `
         }
       ];
 
-      // Ограничиваем историю для экономии токенов и стабильности
+      // Добавляем историю (последние 6 сообщений для экономии контекста)
       input.history.slice(-6).forEach(msg => {
         messages.push({
           role: msg.role === 'model' ? 'assistant' : 'user',
@@ -84,30 +90,39 @@ ${input.services.map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, Катег
         });
       });
 
-      // Формируем текущее сообщение с поддержкой зрения (vision)
-      const currentContent: any[] = [{ type: 'text', text: input.message }];
-      
+      // Формируем текущее сообщение
       if (input.photoDataUri) {
-        currentContent.push({
-          type: 'image_url',
-          image_url: { url: input.photoDataUri }
+        messages.push({
+          role: 'user',
+          content: [
+            { type: 'text', text: input.message || 'Что на этом фото?' },
+            { type: 'image_url', image_url: { url: input.photoDataUri } }
+          ]
         });
+      } else {
+        messages.push({ role: 'user', content: input.message });
       }
 
-      messages.push({ role: 'user', content: currentContent });
-
       const completion = await groq.chat.completions.create({
-        model: 'llama-3.2-11b-vision-preview',
+        model: modelId,
         messages,
-        temperature: 0.7,
+        temperature: 0.6,
         max_tokens: 1024,
       });
 
-      return { response: completion.choices[0]?.message?.content || "Извините, я не смог сформулировать ответ." };
+      const responseText = completion.choices[0]?.message?.content;
+
+      if (!responseText) {
+        throw new Error("Пустой ответ от Groq");
+      }
+
+      return { response: responseText };
 
     } catch (error: any) {
-      console.error("Groq SDK Error:", error);
-      return { response: `Ошибка ИИ: ${error.message || "Неизвестная ошибка"}. Пожалуйста, попробуйте позже.` };
+      console.error("Groq Chat Error:", error);
+      return { 
+        response: `Извините, возникла заминка при обращении к мозгу ИИ. Ошибка: ${error.message || '429/500'}. Пожалуйста, попробуйте отправить сообщение снова через 10-15 секунд.` 
+      };
     }
   }
 );

@@ -1,46 +1,30 @@
-'use server';
 
+'use server';
 /**
- * @fileOverview A natural language search AI agent.
- *
- * - naturalLanguageSearch - A function that handles the natural language search process.
- * - NaturalLanguageSearchInput - The input type for the naturalLanguageSearch function.
- * - NaturalLanguageSearchOutput - The return type for the naturalLanguageSearch function.
+ * @fileOverview Умный поиск через Groq.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import { Groq } from 'groq-sdk';
+
+const GROQ_API_KEY = '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';
+const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const NaturalLanguageSearchInputSchema = z.object({
-  query: z.string().describe('The natural language search query.'),
+  query: z.string(),
 });
 export type NaturalLanguageSearchInput = z.infer<typeof NaturalLanguageSearchInputSchema>;
 
 const NaturalLanguageSearchOutputSchema = z.object({
-  refinedQuery: z.string().describe('The refined search query.'),
-  categorySuggestions: z.array(z.string()).describe('Suggested categories for the search.'),
+  refinedQuery: z.string(),
+  categorySuggestions: z.array(z.string()),
 });
 export type NaturalLanguageSearchOutput = z.infer<typeof NaturalLanguageSearchOutputSchema>;
 
 export async function naturalLanguageSearch(input: NaturalLanguageSearchInput): Promise<NaturalLanguageSearchOutput> {
   return naturalLanguageSearchFlow(input);
 }
-
-const prompt = ai.definePrompt({
-  name: 'naturalLanguageSearchPrompt',
-  input: {schema: NaturalLanguageSearchInputSchema},
-  output: {schema: NaturalLanguageSearchOutputSchema},
-  prompt: `You are a search assistant that helps users find services.
-
-The user will provide a natural language query, and you will refine it into a search query and suggest categories to search in.
-
-Query: {{{query}}}
-
-Refined Query:  Based on the user's query, refine it to be a better query that can be used to search for the service.
-
-Category Suggestions: Suggest a few categories that the user can search in.
-`,
-});
 
 const naturalLanguageSearchFlow = ai.defineFlow(
   {
@@ -49,7 +33,26 @@ const naturalLanguageSearchFlow = ai.defineFlow(
     outputSchema: NaturalLanguageSearchOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+        const completion = await groq.chat.completions.create({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Вы — ассистент поиска. Улучшите запрос пользователя для маркетплейса и предложите подходящие категории. Верните JSON: { "refinedQuery": "текст", "categorySuggestions": [] }'
+                },
+                { role: 'user', content: input.query }
+            ],
+            response_format: { type: 'json_object' }
+        });
+
+        const result = JSON.parse(completion.choices[0]?.message?.content || '{}');
+        return {
+            refinedQuery: result.refinedQuery || input.query,
+            categorySuggestions: result.categorySuggestions || []
+        };
+    } catch (e) {
+        return { refinedQuery: input.query, categorySuggestions: [] };
+    }
   }
 );

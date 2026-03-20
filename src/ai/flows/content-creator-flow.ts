@@ -1,20 +1,20 @@
 
 'use server';
 /**
- * @fileOverview Генерация контента через Groq SDK.
+ * @fileOverview Генерация контента через Groq SDK (Llama 3.3 70B).
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 import { Groq } from 'groq-sdk';
 
 const GROQ_API_KEY = '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';
 const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 const ContentCreatorInputSchema = z.object({
-  prompt: z.string().describe("Высокоуровневый запрос пользователя."),
-  tone: z.enum(['formal', 'casual']).describe('Тон текста.'),
-  length: z.enum(['short', 'medium', 'long']).describe('Длина текста.'),
+  prompt: z.string(),
+  tone: z.enum(['formal', 'casual']),
+  length: z.enum(['short', 'medium', 'long']),
 });
 export type ContentCreatorInput = z.infer<typeof ContentCreatorInputSchema>;
 
@@ -52,23 +52,22 @@ const contentCreatorFlow = ai.defineFlow(
         messages: [
           {
             role: 'system',
-            content: `Вы — эксперт по созданию контента. Создайте статью на РУССКОМ языке на основе запроса пользователя.
-Верните ТОЛЬКО валидный JSON объект с ключами: "markdown" (строка) и "meta" (объект).
-Markdown должен включать # Заголовок, ## Разделы и секцию ## Фото в конце.
-Тон: ${input.tone}, Длина: ${input.length}.`
+            content: `Вы — эксперт по контенту Findora. Создайте профессиональное описание товара/услуги на РУССКОМ языке.
+ВЕРНИТЕ ТОЛЬКО ВАЛИДНЫЙ JSON без лишнего текста.
+Формат: { "markdown": "текст", "meta": { "title": "название", "summary": "кратко", "tags": [], "images": [], "publish_ready": true, "created_at": "дата" } }`
           },
-          { role: 'user', content: input.prompt }
+          { role: 'user', content: `Запрос: ${input.prompt}. Тон: ${input.tone}, Длина: ${input.length}.` }
         ],
         response_format: { type: 'json_object' }
       });
 
       const content = completion.choices[0]?.message?.content;
-      if (!content) throw new Error("Empty response from Groq");
+      if (!content) throw new Error("Empty response");
 
       return JSON.parse(content);
     } catch (error) {
       console.error("Groq Content Error:", error);
-      throw new Error("Не удалось сгенерировать контент через Groq");
+      throw new Error("Не удалось сгенерировать контент. Попробуйте другой запрос.");
     }
   }
 );
