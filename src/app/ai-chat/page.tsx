@@ -101,21 +101,21 @@ const ImagePreview = ({ src, alt }: { src: string; alt: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="relative group cursor-zoom-in mt-4 mb-2 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl hover:ring-4 hover:ring-primary/10">
-                    <div className="relative w-full max-w-2xl aspect-[16/10]">
-                        <Image src={src} alt={alt} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                    </div>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <div className="bg-background/80 backdrop-blur-md p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100">
-                            <Maximize2 className="h-6 w-6 text-primary" />
+                <div className="relative group cursor-zoom-in mt-4 mb-4 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl hover:ring-4 hover:ring-primary/10 bg-muted/20">
+                    <img 
+                        src={src} 
+                        alt={alt} 
+                        className="max-w-full h-auto max-h-[400px] object-contain rounded-2xl mx-auto transition-transform duration-500 group-hover:scale-[1.02]" 
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <div className="bg-background/80 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100 shadow-lg">
+                            <Maximize2 className="h-5 w-5 text-primary" />
                         </div>
                     </div>
                 </div>
             </DialogTrigger>
-            <DialogContent className="max-w-5xl border-none bg-transparent shadow-none p-0 flex items-center justify-center">
-                <div className="relative w-full h-[85vh]">
-                    <Image src={src} alt={alt} fill className="object-contain" />
-                </div>
+            <DialogContent className="max-w-[95vw] md:max-w-5xl border-none bg-black/95 shadow-none p-0 flex items-center justify-center rounded-none sm:rounded-none">
+                <img src={src} alt={alt} className="max-w-full max-h-[90vh] object-contain" />
             </DialogContent>
         </Dialog>
     );
@@ -213,7 +213,7 @@ export default function AIChatPage() {
         reader.onload = (e) => {
             const uri = e.target?.result as string;
             setImageDataUri(uri);
-            setImagePreview(URL.createObjectURL(file));
+            setImagePreview(uri);
         };
         reader.readAsDataURL(file);
     }
@@ -224,10 +224,12 @@ export default function AIChatPage() {
     if ((!input.trim() && !imageDataUri) || isLoading) return;
 
     const fullMessage = quotedText ? `> ${quotedText}\n\n${input}` : input;
+    const currentPhoto = imageDataUri; // Сохраняем локально для сообщения
+    
     const userMessage: Message = { 
         role: 'user', 
         content: fullMessage, 
-        photoDataUri: imageDataUri || undefined,
+        photoDataUri: currentPhoto || undefined,
         quote: quotedText || undefined
     };
 
@@ -263,12 +265,12 @@ export default function AIChatPage() {
             rating: s.rating,
         })),
         providers,
-        photoDataUri: imageDataUri || undefined,
+        photoDataUri: currentPhoto || undefined,
       });
       
       setMessages(prev => [...prev, { role: 'model', content: result.response }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', content: "Произошла ошибка. Попробуйте еще раз." }]);
+      setMessages(prev => [...prev, { role: 'model', content: "Произошла ошибка при получении ответа от ИИ. Попробуйте еще раз." }]);
     } finally {
       setIsLoading(false);
     }
@@ -386,7 +388,7 @@ export default function AIChatPage() {
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                         <Button 
                             type="button" variant="ghost" size="icon" 
-                            className="absolute left-3 h-11 w-11 text-white z-20 hover:bg-white/10"
+                            className="absolute left-3 h-11 w-11 text-muted-foreground z-20 hover:bg-primary/10"
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <Paperclip className="h-6 w-6" />

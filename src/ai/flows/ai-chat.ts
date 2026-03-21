@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview Поток ИИ-чата Findora через Groq SDK.
- * Поддерживает текст (Llama 3.3 70B) и зрение (Llava v1.5).
+ * Использует модель Vision для анализа фото и Llama 3.3 для текста.
  */
 
 import { ai } from '@/ai/genkit';
@@ -60,10 +60,13 @@ const findoraChatFlow = ai.defineFlow(
     outputSchema: AIChatOutputSchema,
   },
   async (input) => {
+    // Выбираем самую стабильную Vision модель. 
+    // Groq часто обновляет превью, поэтому используем текущую актуальную.
+    const VISION_MODEL = 'llama-3.2-11b-vision-preview';
+    const TEXT_MODEL = 'llama-3.3-70b-versatile';
+    
     try {
-      // Используем Llava v1.5 для Vision, так как она наиболее стабильна в Groq
-      // Для текста используем самую мощную Llama 3.3 70B
-      const modelId = input.photoDataUri ? 'llava-v1.5-7b-4096-preview' : 'llama-3.3-70b-versatile';
+      const modelId = input.photoDataUri ? VISION_MODEL : TEXT_MODEL;
 
       const messages: any[] = [
         {
@@ -83,7 +86,7 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
         }
       ];
 
-      // Добавляем историю (последние 6 сообщений)
+      // Добавляем историю (последние 6 сообщений для экономии токенов)
       input.history.slice(-6).forEach(msg => {
         messages.push({
           role: msg.role === 'model' ? 'assistant' : 'user',
@@ -96,7 +99,7 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
         messages.push({
           role: 'user',
           content: [
-            { type: 'text', text: input.message || 'Что на этом фото?' },
+            { type: 'text', text: input.message || 'Что на этом фото? Подбери подходящие услуги Findora.' },
             { 
               type: 'image_url', 
               image_url: { 
@@ -127,17 +130,28 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
     } catch (error: any) {
       console.error("Groq Chat Error:", error);
       
+      // Попытка использовать резервную модель Vision при ошибке 400
+      if (input.photoDataUri && (error?.status === 400 || error?.status === 404)) {
+          try {
+              const fallbackCompletion = await groq.chat.completions.create({
+                model: 'llama-3.2-90b-vision-preview',
+                messages: [
+                    { role: 'user', content: [{ type: 'text', text: input.message || 'Что здесь?' }, { type: 'image_url', image_url: { url: input.photoDataUri! } }] }
+                ],
+                max_tokens: 512,
+              });
+              return { response: fallbackCompletion.choices[0]?.message?.content || "Не удалось проанализировать фото." };
+          } catch (innerError) {
+              return { response: "К сожалению, сейчас есть временные трудности с анализом изображений. Пожалуйста, опишите ваш запрос текстом." };
+          }
+      }
+      
       if (error?.status === 429) {
           return { response: "Извините, сейчас слишком много запросов. Пожалуйста, подождите минуту и попробуйте снова." };
       }
-      
-      // Если Vision модель выдала 400 (например, формат фото не подошел), пробуем объяснить
-      if (input.photoDataUri && error?.status === 400) {
-          return { response: "К сожалению, мне не удалось распознать это изображение. Попробуйте отправить его в другом формате (JPG/PNG) или опишите текстом." };
-      }
 
       return { 
-        response: `Извините, возникла заминка при обработке вашего сообщения. Попробуйте отправить его снова через несколько секунд.` 
+        response: `Извините, возникла заминка при обработке вашего сообщения. Пожалуйста, попробуйте отправить его снова через несколько секунд.` 
       };
     }
   }
