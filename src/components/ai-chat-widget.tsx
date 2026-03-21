@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect, memo } from 'react';
@@ -10,11 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowUp, Sparkles, User, X, Star, Paperclip, ChevronDown, Maximize2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ArrowUp, Sparkles, User, X, Star, Paperclip, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat } from '@/ai/flows/ai-chat';
-import type { AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
 import type { Service, User as ProviderUser } from '@/lib/types';
 
@@ -83,16 +81,19 @@ const ImagePreviewSmall = ({ src }: { src: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden my-3 border shadow-sm cursor-zoom-in group">
-                    <Image src={src} alt="Message image" fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden my-3 border shadow-sm cursor-zoom-in group min-h-[80px] bg-muted/10">
+                    <img src={src} alt="Message image" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <Maximize2 className="h-5 w-5 text-white" />
                     </div>
                 </div>
             </DialogTrigger>
             <DialogContent className="max-w-4xl border-none bg-transparent shadow-none p-0">
+                <DialogHeader className="sr-only">
+                    <DialogTitle>Просмотр изображения</DialogTitle>
+                </DialogHeader>
                 <div className="relative w-full h-[70vh]">
-                    <Image src={src} alt="Preview" fill className="object-contain" />
+                    <img src={src} alt="Preview" className="w-full h-full object-contain" />
                 </div>
             </DialogContent>
         </Dialog>
@@ -159,7 +160,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
         reader.onload = (e) => {
             const uri = e.target?.result as string;
             setImageDataUri(uri);
-            setImagePreview(URL.createObjectURL(file));
+            setImagePreview(uri);
         };
         reader.readAsDataURL(file);
     }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect, memo, useCallback } from 'react';
@@ -9,13 +8,12 @@ import remarkGfm from 'remark-gfm';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowUp, Sparkles, User, Star, Paperclip, X, Quote, MessageSquare, Search, Maximize2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ArrowUp, Sparkles, User, Star, Paperclip, X, Quote, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
 import type { Service, User as ProviderUser } from '@/lib/types';
-import Logo from '@/components/logo';
 import ScrollToBottomButton from '@/components/scroll-to-bottom-button';
 
 interface Message {
@@ -101,7 +99,7 @@ const ImagePreview = ({ src, alt }: { src: string; alt: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="relative group cursor-zoom-in mt-4 mb-4 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl hover:ring-4 hover:ring-primary/10 bg-muted/20">
+                <div className="relative group cursor-zoom-in mt-2 mb-4 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl hover:ring-4 hover:ring-primary/10 bg-muted/20 min-h-[100px] flex items-center justify-center">
                     <img 
                         src={src} 
                         alt={alt} 
@@ -115,6 +113,9 @@ const ImagePreview = ({ src, alt }: { src: string; alt: string }) => {
                 </div>
             </DialogTrigger>
             <DialogContent className="max-w-[95vw] md:max-w-5xl border-none bg-black/95 shadow-none p-0 flex items-center justify-center rounded-none sm:rounded-none">
+                <DialogHeader className="sr-only">
+                    <DialogTitle>Просмотр изображения</DialogTitle>
+                </DialogHeader>
                 <img src={src} alt={alt} className="max-w-full max-h-[90vh] object-contain" />
             </DialogContent>
         </Dialog>
@@ -209,6 +210,10 @@ export default function AIChatPage() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+        if (file.size > 10 * 1024 * 1024) {
+            alert("Файл слишком большой. Максимальный размер 10МБ.");
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => {
             const uri = e.target?.result as string;
@@ -224,7 +229,7 @@ export default function AIChatPage() {
     if ((!input.trim() && !imageDataUri) || isLoading) return;
 
     const fullMessage = quotedText ? `> ${quotedText}\n\n${input}` : input;
-    const currentPhoto = imageDataUri; // Сохраняем локально для сообщения
+    const currentPhoto = imageDataUri; 
     
     const userMessage: Message = { 
         role: 'user', 

@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Поток ИИ-чата Findora через Groq SDK.
@@ -60,9 +59,8 @@ const findoraChatFlow = ai.defineFlow(
     outputSchema: AIChatOutputSchema,
   },
   async (input) => {
-    // Выбираем самую стабильную Vision модель. 
-    // Groq часто обновляет превью, поэтому используем текущую актуальную.
-    const VISION_MODEL = 'llama-3.2-11b-vision-preview';
+    // Используем флагманские модели Groq
+    const VISION_MODEL = 'llama-3.2-90b-vision-preview';
     const TEXT_MODEL = 'llama-3.3-70b-versatile';
     
     try {
@@ -71,14 +69,14 @@ const findoraChatFlow = ai.defineFlow(
       const messages: any[] = [
         {
           role: 'system',
-          content: `Вы — экспертный ИИ-ассистент маркетплейса Findora (Таджикистан).
+          content: `Вы — экспертный ИИ-ассистент маркетплейса Findora (Таджикистан). 
 Отвечайте на РУССКОМ языке. Будьте дружелюбны и лаконичны.
 
 ПРАВИЛА:
 1. Рекомендуйте товары/услуги только из списка ниже.
 2. Для товара используйте: SERVICE_CARD[id]
 3. Для исполнителя: PROVIDER_CARD[username]
-4. Если пользователь прислал фото — проанализируйте его и подберите подходящие услуги.
+4. Если пользователь прислал фото — проанализируйте его и подберите подходящие услуги Findora.
 
 ДОСТУПНЫЕ УСЛУГИ:
 ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, Категория: ${s.category}`).join('\n')}
@@ -103,7 +101,7 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
             { 
               type: 'image_url', 
               image_url: { 
-                url: input.photoDataUri // URI уже содержит base64 и MIME тип
+                url: input.photoDataUri 
               } 
             }
           ]
@@ -130,11 +128,15 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
     } catch (error: any) {
       console.error("Groq Chat Error:", error);
       
-      // Попытка использовать резервную модель Vision при ошибке 400
-      if (input.photoDataUri && (error?.status === 400 || error?.status === 404)) {
+      if (error?.status === 429) {
+          return { response: "Извините, сейчас слишком много запросов. Пожалуйста, подождите минуту и попробуйте снова." };
+      }
+
+      // Резервная попытка с другой моделью Vision при ошибке 400
+      if (input.photoDataUri && error?.status === 400) {
           try {
               const fallbackCompletion = await groq.chat.completions.create({
-                model: 'llama-3.2-90b-vision-preview',
+                model: 'llama-3.2-11b-vision-preview',
                 messages: [
                     { role: 'user', content: [{ type: 'text', text: input.message || 'Что здесь?' }, { type: 'image_url', image_url: { url: input.photoDataUri! } }] }
                 ],
@@ -142,16 +144,12 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
               });
               return { response: fallbackCompletion.choices[0]?.message?.content || "Не удалось проанализировать фото." };
           } catch (innerError) {
-              return { response: "К сожалению, сейчас есть временные трудности с анализом изображений. Пожалуйста, опишите ваш запрос текстом." };
+              return { response: "К сожалению, возникла проблема при анализе изображения. Пожалуйста, опишите ваш запрос текстом." };
           }
-      }
-      
-      if (error?.status === 429) {
-          return { response: "Извините, сейчас слишком много запросов. Пожалуйста, подождите минуту и попробуйте снова." };
       }
 
       return { 
-        response: `Извините, возникла заминка при обработке вашего сообщения. Пожалуйста, попробуйте отправить его снова через несколько секунд.` 
+        response: `Извините, возникла заминка при обработке вашего сообщения. Попробуйте отправить его снова через 10 секунд. (Ошибка: ${error?.status || 'неизвестна'})` 
       };
     }
   }
