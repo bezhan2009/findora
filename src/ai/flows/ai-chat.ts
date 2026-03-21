@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview Поток ИИ-чата Findora через Groq SDK.
- * Поддерживает текст (Llama 3.3 70B) и зрение (Llama 3.2 11B Vision).
+ * Поддерживает текст (Llama 3.3 70B) и зрение (Llama 3.2 90B Vision).
  */
 
 import { ai } from '@/ai/genkit';
@@ -61,8 +61,8 @@ const findoraChatFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      // Выбираем модель: 70B для текста (умнее), 11B Vision для фото
-      const modelId = input.photoDataUri ? 'llama-3.2-11b-vision-preview' : 'llama-3.3-70b-versatile';
+      // llama-3.2-11b была отключена, используем актуальную 90b для Vision
+      const modelId = input.photoDataUri ? 'llama-3.2-90b-vision-preview' : 'llama-3.3-70b-versatile';
 
       const messages: any[] = [
         {
@@ -74,7 +74,7 @@ const findoraChatFlow = ai.defineFlow(
 1. Рекомендуйте товары/услуги только из списка ниже.
 2. Для товара используйте: SERVICE_CARD[id]
 3. Для исполнителя: PROVIDER_CARD[username]
-4. Если пользователь прислал фото — проанализируйте его и подберите похожие услуги.
+4. Если пользователь прислал фото — проанализируйте его и подберите подходящие услуги.
 
 ДОСТУПНЫЕ УСЛУГИ:
 ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJS, Категория: ${s.category}`).join('\n')}
@@ -120,8 +120,14 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
 
     } catch (error: any) {
       console.error("Groq Chat Error:", error);
+      
+      // Обработка типичных ошибок API
+      if (error?.status === 429) {
+          return { response: "Извините, сейчас слишком много запросов. Пожалуйста, подождите минуту и попробуйте снова." };
+      }
+      
       return { 
-        response: `Извините, возникла заминка при обращении к мозгу ИИ. Ошибка: ${error.message || '429/500'}. Пожалуйста, попробуйте отправить сообщение снова через 10-15 секунд.` 
+        response: `Извините, возникла заминка при обработке вашего сообщения. Попробуйте отправить его снова через 10 секунд. (Ошибка: ${error.message?.substring(0, 50)}...)` 
       };
     }
   }
