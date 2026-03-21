@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview Поток ИИ-чата Findora через Groq SDK.
- * Поддерживает текст (Llama 3.3 70B) и зрение (Llama 3.2 90B Vision).
+ * Поддерживает текст (Llama 3.3 70B) и зрение (Llava v1.5).
  */
 
 import { ai } from '@/ai/genkit';
@@ -61,8 +61,9 @@ const findoraChatFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      // llama-3.2-11b была отключена, используем актуальную 90b для Vision
-      const modelId = input.photoDataUri ? 'llama-3.2-90b-vision-preview' : 'llama-3.3-70b-versatile';
+      // Используем Llava v1.5 для Vision, так как она наиболее стабильна в Groq
+      // Для текста используем самую мощную Llama 3.3 70B
+      const modelId = input.photoDataUri ? 'llava-v1.5-7b-4096-preview' : 'llama-3.3-70b-versatile';
 
       const messages: any[] = [
         {
@@ -82,7 +83,7 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
         }
       ];
 
-      // Добавляем историю (последние 6 сообщений для экономии контекста)
+      // Добавляем историю (последние 6 сообщений)
       input.history.slice(-6).forEach(msg => {
         messages.push({
           role: msg.role === 'model' ? 'assistant' : 'user',
@@ -96,7 +97,12 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
           role: 'user',
           content: [
             { type: 'text', text: input.message || 'Что на этом фото?' },
-            { type: 'image_url', image_url: { url: input.photoDataUri } }
+            { 
+              type: 'image_url', 
+              image_url: { 
+                url: input.photoDataUri // URI уже содержит base64 и MIME тип
+              } 
+            }
           ]
         });
       } else {
@@ -106,7 +112,7 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
       const completion = await groq.chat.completions.create({
         model: modelId,
         messages,
-        temperature: 0.6,
+        temperature: 0.5,
         max_tokens: 1024,
       });
 
@@ -121,13 +127,17 @@ ${input.services.slice(0, 20).map(s => `- ID: ${s.id}, ${s.title}, ${s.price} TJ
     } catch (error: any) {
       console.error("Groq Chat Error:", error);
       
-      // Обработка типичных ошибок API
       if (error?.status === 429) {
           return { response: "Извините, сейчас слишком много запросов. Пожалуйста, подождите минуту и попробуйте снова." };
       }
       
+      // Если Vision модель выдала 400 (например, формат фото не подошел), пробуем объяснить
+      if (input.photoDataUri && error?.status === 400) {
+          return { response: "К сожалению, мне не удалось распознать это изображение. Попробуйте отправить его в другом формате (JPG/PNG) или опишите текстом." };
+      }
+
       return { 
-        response: `Извините, возникла заминка при обработке вашего сообщения. Попробуйте отправить его снова через 10 секунд. (Ошибка: ${error.message?.substring(0, 50)}...)` 
+        response: `Извините, возникла заминка при обработке вашего сообщения. Попробуйте отправить его снова через несколько секунд.` 
       };
     }
   }
