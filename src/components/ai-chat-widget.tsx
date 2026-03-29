@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, Sparkles, User, X, Star, Paperclip, Maximize2 } from 'lucide-react';
+import { ArrowUp, Sparkles, User, X, Star, Paperclip, Maximize2, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -34,23 +34,26 @@ const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
 
 const ServiceCard = memo(({ service }: { service: Service }) => (
     <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 border shadow-sm my-3">
-        <div className="relative h-36 w-full overflow-hidden">
-            <Image 
-                src={service.images[0]} 
-                alt={service.title} 
-                fill 
-                className="object-cover transition-transform duration-500 group-hover:scale-110" 
-            />
-        </div>
-        <div className="p-3">
-            <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{service.title}</h4>
-            <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center gap-1 text-[10px] font-bold">
-                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                    <span>{service.rating.toFixed(1)}</span>
-                </div>
-                <p className="text-xs font-black text-primary">{service.price} TJS</p>
+        <div className="flex items-center p-2.5 gap-3">
+            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md">
+                <Image 
+                    src={service.images[0]} 
+                    alt={service.title} 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                />
             </div>
+            <div className="flex-grow min-w-0">
+                <h4 className="font-bold text-xs truncate group-hover:text-primary transition-colors">{service.title}</h4>
+                <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-1 text-[10px] font-bold">
+                        <Star className="h-2.5 w-2.5 text-yellow-400 fill-current" />
+                        <span>{service.rating.toFixed(1)}</span>
+                    </div>
+                    <p className="text-[11px] font-black text-primary">{service.price} TJS</p>
+                </div>
+            </div>
+            <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
     </Link>
 ));
@@ -58,19 +61,20 @@ ServiceCard.displayName = 'ServiceCard';
 
 const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
     return (
-        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-2xl overflow-hidden transition-all duration-300 my-3 border shadow-sm">
-            <div className="p-3 flex items-center gap-3">
-                 <Avatar className="h-12 w-12 border-2 border-primary/10">
+        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-xl overflow-hidden transition-all duration-300 my-3 border shadow-sm">
+            <div className="p-2.5 flex items-center gap-3">
+                 <Avatar className="h-10 w-10 border-2 border-primary/10">
                     <AvatarImage src={provider.avatar} alt={provider.name} className="object-cover" />
                     <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div className="flex-grow">
-                    <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{provider.name}</h4>
-                    <div className="flex items-center gap-1 text-[10px] mt-1 text-primary font-bold">
-                        <Sparkles className="h-2.5 w-2.5" />
+                <div className="flex-grow min-w-0">
+                    <h4 className="font-bold text-xs truncate group-hover:text-primary transition-colors">{provider.name}</h4>
+                    <div className="flex items-center gap-1 text-[9px] mt-0.5 text-primary font-bold">
+                        <Sparkles className="h-2 w-2" />
                         <span>Топ исполнитель</span>
                     </div>
                 </div>
+                <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
         </Link>
     )
@@ -103,6 +107,7 @@ const ImagePreviewSmall = ({ src }: { src: string }) => {
 const MessageContent = ({ content }: { content: string }) => {
     const { services, users } = useData();
 
+    // Регулярное выражение для поиска карточек
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
     return (
@@ -118,9 +123,16 @@ const MessageContent = ({ content }: { content: string }) => {
                     const provider = users.find(u => u.username === username);
                     return provider ? <AnimatedCard key={index}><ProviderCard provider={provider} /></AnimatedCard> : null;
                 }
+
+                // Очистка текста от лишних символов (пунктуации), которые ИИ мог оставить после тега
+                let cleanedPart = part;
+                if (index > 0 && parts[index-1].match(/(SERVICE_CARD|PROVIDER_CARD)/)) {
+                    cleanedPart = cleanedPart.replace(/^[\s.,;:)\]!]+/, '');
+                }
+
                 return (
-                    <div key={index} className="prose prose-sm dark:prose-invert max-w-full text-sm leading-relaxed">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{part}</ReactMarkdown>
+                    <div key={index} className="prose prose-sm dark:prose-invert max-w-full text-xs md:text-sm leading-relaxed mb-1">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{cleanedPart}</ReactMarkdown>
                     </div>
                 );
             })}
@@ -209,7 +221,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
 
     } catch (error) {
       console.error("Ошибка AI чата:", error);
-      setMessages(prev => [...prev, { role: 'model', content: "Извините, что-то пошло не так. Попробуйте еще раз." }]);
+      setMessages(prev => [...prev, { role: 'model', content: "Извините, возникла ошибка. Попробуйте еще раз." }]);
     } finally {
       setIsLoading(false);
       setImagePreview(null);
@@ -220,36 +232,36 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   };
 
   return (
-    <Card className="fixed bottom-24 right-5 w-[400px] h-[75vh] max-h-[750px] flex flex-col shadow-2xl rounded-3xl z-[100] overflow-hidden border-2 border-primary/10 animate-in slide-in-from-bottom-10 duration-500">
-        <CardHeader className="flex flex-row items-center justify-between p-5 border-b shrink-0 bg-background/50 backdrop-blur-md">
+    <Card className="fixed bottom-24 right-5 w-[380px] h-[70vh] max-h-[650px] flex flex-col shadow-2xl rounded-3xl z-[100] overflow-hidden border-2 border-primary/10 animate-in slide-in-from-bottom-10 duration-500">
+        <CardHeader className="flex flex-row items-center justify-between p-4 border-b shrink-0 bg-background/50 backdrop-blur-md">
             <div className="flex items-center gap-3">
                 <div className="bg-primary/10 p-2 rounded-xl">
-                    <Sparkles className="h-5 w-5 text-primary"/>
+                    <Sparkles className="h-4 w-4 text-primary"/>
                 </div>
-                <CardTitle className="text-lg font-bold tracking-tight">Findora AI</CardTitle>
+                <CardTitle className="text-base font-bold tracking-tight">Findora AI</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-muted">
-                <X className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full hover:bg-muted">
+                <X className="h-4 w-4" />
             </Button>
         </CardHeader>
-        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-5 custom-scrollbar bg-muted/5">
-            <div className="space-y-6">
+        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-muted/5">
+            <div className="space-y-5">
                 {messages.map((msg, index) => (
                     <div
                     key={index}
                     className={cn(
-                        "flex items-start gap-3",
+                        "flex items-start gap-2.5",
                         msg.role === 'user' && 'justify-end'
                     )}
                     >
                     {msg.role === 'model' && (
-                        <Avatar className="h-8 w-8 border-2 border-primary/20 shadow-sm">
+                        <Avatar className="h-7 w-7 border-2 border-primary/20 shadow-sm">
                             <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-4 w-4"/></AvatarFallback>
                         </Avatar>
                     )}
                     <div
                         className={cn(
-                        "max-w-[85%] rounded-2xl px-4 py-3 shadow-sm",
+                        "max-w-[88%] rounded-2xl px-3.5 py-2.5 shadow-sm",
                          msg.role === 'model'
                             ? "bg-card border rounded-tl-none"
                             : "bg-primary text-primary-foreground rounded-tr-none shadow-md"
@@ -259,7 +271,7 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                        <MessageContent content={msg.content} />
                     </div>
                     {msg.role === 'user' && (
-                        <Avatar className="h-8 w-8 border shadow-sm">
+                        <Avatar className="h-7 w-7 border shadow-sm">
                             <AvatarImage src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=50&h=50&fit=crop" />
                             <AvatarFallback><User className="h-4 w-4"/></AvatarFallback>
                         </Avatar>
@@ -267,11 +279,11 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex items-start gap-3">
-                        <Avatar className="h-8 w-8 border-2 border-primary/20">
+                    <div className="flex items-start gap-2.5">
+                        <Avatar className="h-7 w-7 border-2 border-primary/20">
                             <AvatarFallback className="bg-primary/5"><Sparkles className="h-4 w-4 text-primary animate-pulse"/></AvatarFallback>
                         </Avatar>
-                        <div className="max-w-[100px] rounded-2xl px-4 py-3 bg-muted border rounded-tl-none">
+                        <div className="max-w-[100px] rounded-2xl px-3.5 py-2.5 bg-muted border rounded-tl-none">
                             <div className="flex gap-1">
                                 <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
                                 <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
@@ -282,21 +294,21 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                 )}
             </div>
         </div>
-        <div className="p-4 border-t bg-background shrink-0">
+        <div className="p-3 border-t bg-background shrink-0">
              {imagePreview && (
-                <div className="relative w-24 h-24 mb-3 rounded-2xl overflow-hidden border-2 border-primary shadow-xl animate-in zoom-in">
+                <div className="relative w-20 h-20 mb-2 rounded-xl overflow-hidden border-2 border-primary shadow-lg animate-in zoom-in">
                     <Image src={imagePreview} alt="Preview" fill className="object-cover" />
                     <Button
                         variant="destructive"
                         size="icon"
-                        className="absolute top-1 right-1 h-6 w-6 rounded-full shadow-lg"
+                        className="absolute top-0.5 right-0.5 h-5 w-5 rounded-full shadow-lg"
                         onClick={() => {
                             setImagePreview(null);
                             setImageDataUri(null);
                             if (fileInputRef.current) fileInputRef.current.value = '';
                         }}
                     >
-                        <X className="h-3 w-3" />
+                        <X className="h-2.5 w-2.5" />
                     </Button>
                 </div>
             )}
@@ -313,21 +325,21 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                         type="button" 
                         variant="ghost" 
                         size="icon" 
-                        className="absolute left-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl z-20 text-white"
+                        className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg z-20 text-muted-foreground"
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        <Paperclip className="h-5 w-5" />
+                        <Paperclip className="h-4 w-4" />
                     </Button>
                     <Input
                         ref={inputRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Спросите Findora..."
-                        className="w-full h-12 pl-12 pr-12 rounded-2xl border-none shadow-none text-sm focus-visible:ring-0 bg-transparent text-foreground relative z-10"
+                        className="w-full h-10 pl-10 pr-10 rounded-xl border-none shadow-none text-xs focus-visible:ring-0 bg-transparent text-foreground relative z-10"
                         disabled={isLoading}
                     />
-                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full shadow-lg z-20">
-                        <ArrowUp className="h-4 w-4" />
+                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full shadow-lg z-20 bg-primary hover:bg-primary/90">
+                        <ArrowUp className="h-4 w-4 text-white" />
                     </Button>
                 </div>
             </form>

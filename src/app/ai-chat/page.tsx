@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, Sparkles, User, Star, Paperclip, X, Quote, Maximize2 } from 'lucide-react';
+import { ArrowUp, Sparkles, User, Star, Paperclip, X, Quote, Maximize2, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { aiChat, type AIChatInput } from '@/ai/flows/ai-chat';
 import { useData } from '@/hooks/use-data';
@@ -29,81 +29,74 @@ const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
     </div>
 );
 
-const ServiceCardComponent = memo(({ service }: { service: Service }) => (
-    <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/30 rounded-2xl overflow-hidden transition-all duration-300 my-6 border shadow-lg hover:shadow-xl hover:-translate-y-1">
-        <div className="relative h-56 w-full overflow-hidden">
-            <Image 
-                src={service.images[0]} 
-                alt={service.title} 
-                fill 
-                className="object-cover transition-transform duration-500 group-hover:scale-110" 
-            />
-            <div className="absolute top-3 right-3 bg-background/80 backdrop-blur-md px-2 py-1 rounded-lg text-sm font-bold text-primary shadow-sm">
-                {service.price} TJS
+const CompactServiceCard = memo(({ service }: { service: Service }) => (
+    <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/40 rounded-xl overflow-hidden transition-all duration-300 my-4 border shadow-sm hover:shadow-md">
+        <div className="flex items-center p-3 gap-4">
+            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
+                <Image 
+                    src={service.images[0]} 
+                    alt={service.title} 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                />
             </div>
-        </div>
-        <div className="p-5">
-            <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{service.category}</span>
-            </div>
-            <h4 className="font-bold text-xl truncate group-hover:text-primary transition-colors">{service.title}</h4>
-            <p className="text-sm text-muted-foreground line-clamp-2 mt-2 leading-relaxed">{service.description}</p>
-            <div className="flex items-center justify-between mt-5 pt-4 border-t border-border/50">
-                <div className="flex items-center gap-1.5">
-                    <div className="flex items-center text-yellow-400">
-                        <Star className="h-4 w-4 fill-current" />
-                    </div>
-                    <span className="font-bold">{service.rating.toFixed(1)}</span>
-                    <span className="text-xs text-muted-foreground font-medium">({service.reviewsCount} отзывов)</span>
+            <div className="flex-grow min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-sm">{service.category}</span>
                 </div>
-                <Button variant="ghost" size="sm" className="rounded-full text-primary font-bold group-hover:bg-primary/10">
-                    Подробнее
-                </Button>
+                <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{service.title}</h4>
+                <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-1">
+                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
+                        <span className="text-xs font-bold">{service.rating.toFixed(1)}</span>
+                    </div>
+                    <p className="text-sm font-black text-primary">{service.price} TJS</p>
+                </div>
+            </div>
+            <div className="p-2 text-muted-foreground group-hover:text-primary transition-colors">
+                <ExternalLink className="h-4 w-4" />
             </div>
         </div>
     </Link>
 ));
-ServiceCardComponent.displayName = 'ServiceCardComponent';
+CompactServiceCard.displayName = 'CompactServiceCard';
 
-const ProviderCardComponent = memo(({ provider }: { provider: ProviderUser }) => {
+const CompactProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
     return (
-        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-2xl overflow-hidden transition-all duration-300 my-6 border shadow-lg hover:shadow-xl">
-            <div className="p-6 flex items-center gap-5">
-                 <div className="relative">
-                    <Avatar className="h-20 w-20 border-2 border-primary/20 p-1 bg-background transition-transform duration-300 group-hover:scale-105">
-                        <AvatarImage src={provider.avatar} alt={provider.name} className="rounded-full object-cover" />
-                        <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full border-2 border-background">
-                        <Sparkles className="h-3 w-3" />
-                    </div>
-                 </div>
-                <div className="flex-grow">
-                    <h4 className="font-bold text-xl truncate group-hover:text-primary transition-colors">{provider.name}</h4>
-                    <p className="text-sm text-muted-foreground">@{provider.username}</p>
-                    <div className="flex items-center gap-4 mt-3">
-                        <div className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/5 px-2 py-1 rounded-md">
-                            <Star className="h-3 w-3 fill-current" />
-                            <span>Проверен</span>
+        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/40 rounded-xl overflow-hidden transition-all duration-300 my-4 border shadow-sm hover:shadow-md">
+            <div className="p-3 flex items-center gap-4">
+                <Avatar className="h-14 w-14 border-2 border-primary/10 p-0.5 bg-background">
+                    <AvatarImage src={provider.avatar} alt={provider.name} className="rounded-full object-cover" />
+                    <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-grow min-w-0">
+                    <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{provider.name}</h4>
+                    <p className="text-xs text-muted-foreground truncate">@{provider.username}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                        <div className="flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/5 px-1.5 py-0.5 rounded-sm">
+                            <Star className="h-2.5 w-2.5 fill-current" />
+                            <span>Топ исполнитель</span>
                         </div>
-                        <span className="text-xs text-muted-foreground font-medium">Топ исполнитель</span>
                     </div>
+                </div>
+                <div className="p-2 text-muted-foreground group-hover:text-primary transition-colors">
+                    <ExternalLink className="h-4 w-4" />
                 </div>
             </div>
         </Link>
     )
 });
-ProviderCardComponent.displayName = 'ProviderCardComponent';
+CompactProviderCard.displayName = 'CompactProviderCard';
 
 const ImagePreview = ({ src, alt }: { src: string; alt: string }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="relative group cursor-zoom-in mt-2 mb-4 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl hover:ring-4 hover:ring-primary/10 bg-muted/20 min-h-[100px] flex items-center justify-center">
+                <div className="relative group cursor-zoom-in mt-2 mb-4 overflow-hidden rounded-2xl border shadow-md transition-all hover:shadow-xl bg-muted/20 min-h-[100px] flex items-center justify-center">
                     <img 
                         src={src} 
                         alt={alt} 
-                        className="max-w-full h-auto max-h-[400px] object-contain rounded-2xl mx-auto transition-transform duration-500 group-hover:scale-[1.02]" 
+                        className="max-w-full h-auto max-h-[300px] object-contain rounded-2xl mx-auto transition-transform duration-500 group-hover:scale-[1.02]" 
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
                         <div className="bg-background/80 backdrop-blur-md p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100 shadow-lg">
@@ -125,6 +118,7 @@ const ImagePreview = ({ src, alt }: { src: string; alt: string }) => {
 const MessageContent = ({ content }: { content: string }) => {
     const { services, users } = useData();
 
+    // Более надежный парсинг: ищем теги и очищаем текст вокруг них от знаков препинания
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
     return (
@@ -133,20 +127,28 @@ const MessageContent = ({ content }: { content: string }) => {
                 if (part.startsWith('SERVICE_CARD')) {
                     const id = part.match(/\[(.*?)\]/)?.[1];
                     const service = services.find(s => s.id === id);
-                    return service ? <AnimatedCard key={index}><ServiceCardComponent service={service} /></AnimatedCard> : null;
+                    return service ? <AnimatedCard key={index}><CompactServiceCard service={service} /></AnimatedCard> : null;
                 }
                 if (part.startsWith('PROVIDER_CARD')) {
                     const username = part.match(/\[(.*?)\]/)?.[1];
                     const provider = users.find(u => u.username === username);
-                    return provider ? <AnimatedCard key={index}><ProviderCardComponent provider={provider} /></AnimatedCard> : null;
+                    return provider ? <AnimatedCard key={index}><CompactProviderCard provider={provider} /></AnimatedCard> : null;
                 }
+                
+                // Очистка текста от лишних символов, которые ИИ мог оставить после тега
+                // (например, точка или скобка в начале текстового блока сразу после карточки)
+                let cleanedPart = part;
+                if (index > 0 && parts[index-1].match(/(SERVICE_CARD|PROVIDER_CARD)/)) {
+                    cleanedPart = cleanedPart.replace(/^[\s.,;:)\]!]+/, '');
+                }
+
                 return (
                     <div key={index} className="relative select-text">
                         <ReactMarkdown 
-                            className="prose prose-sm dark:prose-invert max-w-none leading-relaxed text-base" 
+                            className="prose prose-sm dark:prose-invert max-w-none leading-relaxed text-sm md:text-base" 
                             remarkPlugins={[remarkGfm]}
                         >
-                            {part}
+                            {cleanedPart}
                         </ReactMarkdown>
                     </div>
                 );
@@ -300,7 +302,7 @@ export default function AIChatPage() {
         )}
 
         <div ref={scrollAreaRef} className="flex-1 overflow-y-auto custom-scrollbar relative" onMouseUp={handleMouseUp}>
-            <div className={cn("max-w-3xl mx-auto px-4 pt-12 pb-20", messages.length > 1 ? "w-full" : "flex flex-col justify-center h-full")}>
+            <div className={cn("max-w-2xl mx-auto px-4 pt-12 pb-20", messages.length > 1 ? "w-full" : "flex flex-col justify-center h-full")}>
               {messages.length <= 1 && (
                   <div className="text-center mb-12 animate-in fade-in zoom-in duration-700">
                       <div className="flex justify-center mb-6">
@@ -308,21 +310,21 @@ export default function AIChatPage() {
                             <Sparkles className="h-12 w-12 text-primary" />
                         </div>
                       </div>
-                      <h1 className="text-4xl font-bold font-headline mb-4 tracking-tight">Как я могу помочь?</h1>
-                      <p className="text-muted-foreground text-lg max-w-md mx-auto">Найду исполнителя, подскажу цену или подберу товар по фото.</p>
+                      <h1 className="text-4xl font-bold font-headline mb-4 tracking-tight">Чем могу помочь?</h1>
+                      <p className="text-muted-foreground text-lg max-w-md mx-auto">Подберу специалиста, сравню цены или распознаю товар по фото.</p>
                   </div>
               )}
-                <div className="space-y-12">
+                <div className="space-y-8">
                 {messages.map((msg, index) => (
-                    <div key={index} className={cn("flex items-start gap-5", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+                    <div key={index} className={cn("flex items-start gap-4", msg.role === 'user' ? 'justify-end' : 'justify-start')}>
                         {msg.role === 'model' && (
-                            <Avatar className="h-10 w-10 border-2 border-primary/20 shrink-0 shadow-sm">
-                                <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-6 w-6"/></AvatarFallback>
+                            <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0 shadow-sm">
+                                <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-5 w-5"/></AvatarFallback>
                             </Avatar>
                         )}
                         <div className={cn(
                             "max-w-[85%] group",
-                            msg.role === 'user' ? 'flex flex-col items-end' : 'bg-muted/30 rounded-3xl p-6 border border-border/50 shadow-sm'
+                            msg.role === 'user' ? 'flex flex-col items-end' : 'bg-muted/20 rounded-3xl p-5 border border-border/40 shadow-sm'
                         )}>
                             {msg.photoDataUri && (
                                 <ImagePreview src={msg.photoDataUri} alt="User upload" />
@@ -333,7 +335,7 @@ export default function AIChatPage() {
                                 </div>
                             )}
                             <div className={cn(
-                                msg.role === 'user' ? 'bg-primary text-primary-foreground px-5 py-3.5 rounded-3xl rounded-tr-none shadow-lg' : ''
+                                msg.role === 'user' ? 'bg-primary text-primary-foreground px-5 py-3 rounded-2xl rounded-tr-none shadow-md' : ''
                             )}>
                                 <MessageContent 
                                     content={msg.content} 
@@ -341,23 +343,23 @@ export default function AIChatPage() {
                             </div>
                         </div>
                         {msg.role === 'user' && (
-                            <Avatar className="h-10 w-10 border shrink-0 shadow-sm">
+                            <Avatar className="h-9 w-9 border shrink-0 shadow-sm">
                                 <AvatarImage src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100&h=100&fit=crop" />
-                                <AvatarFallback><User className="h-6 w-6 text-muted-foreground"/></AvatarFallback>
+                                <AvatarFallback><User className="h-5 w-5 text-muted-foreground"/></AvatarFallback>
                             </Avatar>
                         )}
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex items-start gap-5">
-                        <Avatar className="h-10 w-10 border-2 border-primary/20 shrink-0">
-                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-6 w-6 text-primary animate-pulse"/></AvatarFallback>
+                    <div className="flex items-start gap-4">
+                        <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0">
+                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-5 w-5 text-primary animate-pulse"/></AvatarFallback>
                         </Avatar>
-                        <div className="bg-muted/30 rounded-3xl px-6 py-4 border border-border/50">
+                        <div className="bg-muted/20 rounded-3xl px-5 py-3 border border-border/40">
                             <div className="flex gap-1.5">
-                                <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                             </div>
                         </div>
                     </div>
@@ -370,48 +372,48 @@ export default function AIChatPage() {
         <div className="px-4 pb-8 w-full shrink-0 border-t bg-background/80 backdrop-blur-md z-50">
             <div className="max-w-3xl mx-auto pt-6">
                 {quotedText && (
-                    <div className="flex items-center justify-between bg-primary/5 border-l-4 border-primary p-4 rounded-r-2xl mb-4 animate-in slide-in-from-bottom-2 shadow-sm">
+                    <div className="flex items-center justify-between bg-primary/5 border-l-4 border-primary p-3 rounded-r-xl mb-4 animate-in slide-in-from-bottom-2 shadow-sm">
                         <div className="flex items-center gap-3 overflow-hidden">
-                            <Quote className="h-5 w-5 text-primary shrink-0 opacity-50" />
-                            <p className="text-sm truncate text-muted-foreground italic">"{quotedText}"</p>
+                            <Quote className="h-4 w-4 text-primary shrink-0 opacity-50" />
+                            <p className="text-xs truncate text-muted-foreground italic">"{quotedText}"</p>
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-primary/10" onClick={() => setQuotedText(null)}>
-                            <X className="h-5 w-5" />
-                        </Button>
-                    </div>
-                )}
-                {imagePreview && (
-                    <div className="relative w-32 h-32 mb-4 rounded-2xl overflow-hidden shadow-2xl border-2 border-primary ring-4 ring-primary/10 animate-in zoom-in">
-                        <Image src={imagePreview} alt="Preview" fill className="object-cover" />
-                        <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-7 w-7 rounded-full shadow-lg" onClick={() => { setImagePreview(null); setImageDataUri(null); }}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-primary/10" onClick={() => setQuotedText(null)}>
                             <X className="h-4 w-4" />
                         </Button>
                     </div>
                 )}
+                {imagePreview && (
+                    <div className="relative w-24 h-24 mb-4 rounded-xl overflow-hidden shadow-xl border-2 border-primary animate-in zoom-in">
+                        <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                        <Button variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6 rounded-full shadow-lg" onClick={() => { setImagePreview(null); setImageDataUri(null); }}>
+                            <X className="h-3 w-3" />
+                        </Button>
+                    </div>
+                )}
                 <form onSubmit={handleSendMessage} className="relative">
-                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-all bg-muted/20 relative h-auto min-h-[4rem] flex items-center overflow-hidden rounded-[1.25rem] shadow-sm">
+                    <div className="input-wrapper border-2 border-border/50 hover:border-primary/30 transition-all bg-muted/10 relative h-auto min-h-[3.5rem] flex items-center overflow-hidden rounded-2xl shadow-sm">
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
                         <Button 
                             type="button" variant="ghost" size="icon" 
-                            className="absolute left-3 h-11 w-11 text-muted-foreground z-20 hover:bg-primary/10"
+                            className="absolute left-2 h-10 w-10 text-muted-foreground z-20 hover:bg-primary/10"
                             onClick={() => fileInputRef.current?.click()}
                         >
-                            <Paperclip className="h-6 w-6" />
+                            <Paperclip className="h-5 w-5" />
                         </Button>
                         <Input
                             ref={inputRef}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Спросите Findora о чем угодно..."
-                            className="w-full h-16 pl-14 pr-16 rounded-[1.25rem] border-none shadow-none bg-transparent text-lg focus-visible:ring-0 relative z-10 text-foreground"
+                            placeholder="Спросите Findora..."
+                            className="w-full h-14 pl-12 pr-14 rounded-2xl border-none shadow-none bg-transparent text-base focus-visible:ring-0 relative z-10 text-foreground"
                             disabled={isLoading}
                         />
-                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-3 h-11 w-11 rounded-full shadow-xl z-20 transition-transform active:scale-90">
-                            <ArrowUp className="h-6 w-6" />
+                        <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-2 h-10 w-10 rounded-full shadow-lg z-20 transition-transform active:scale-90 bg-primary hover:bg-primary/90">
+                            <ArrowUp className="h-5 w-5 text-white" />
                         </Button>
                     </div>
                 </form>
-                <p className="text-[10px] text-center text-muted-foreground mt-4 uppercase tracking-[0.2em] font-black opacity-40">Findora Intelligence Engine</p>
+                <p className="text-[9px] text-center text-muted-foreground mt-3 uppercase tracking-widest font-black opacity-30">Powered by Findora Intelligence</p>
             </div>
         </div>
     </div>
