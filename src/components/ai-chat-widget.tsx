@@ -107,7 +107,6 @@ const ImagePreviewSmall = ({ src }: { src: string }) => {
 const MessageContent = ({ content }: { content: string }) => {
     const { services, users } = useData();
 
-    // Регулярное выражение для поиска карточек
     const parts = content.split(/(SERVICE_CARD\[.*?\]|PROVIDER_CARD\[.*?\])/g).filter(Boolean);
 
     return (
@@ -124,7 +123,6 @@ const MessageContent = ({ content }: { content: string }) => {
                     return provider ? <AnimatedCard key={index}><ProviderCard provider={provider} /></AnimatedCard> : null;
                 }
 
-                // Очистка текста от лишних символов (пунктуации), которые ИИ мог оставить после тега
                 let cleanedPart = part;
                 if (index > 0 && parts[index-1].match(/(SERVICE_CARD|PROVIDER_CARD)/)) {
                     cleanedPart = cleanedPart.replace(/^[\s.,;:)\]!]+/, '');
