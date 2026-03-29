@@ -1,8 +1,8 @@
 {
   "/page": "app/page.js",
-  "/ai-chat/page": "app/ai-chat/page.js",
-  "/profile/[username]/page": "app/profile/[username]/page.js",
   "/chat/page": "app/chat/page.js",
   "/promotions/page": "app/promotions/page.js",
-  "/bonus-program/page": "app/bonus-program/page.js"
+  "/bonus-program/page": "app/bonus-program/page.js",
+  "/help-center/page": "app/help-center/page.js",
+  "/services/[id]/page": "app/services/[id]/page.js"
 }
