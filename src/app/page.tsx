@@ -1,291 +1,176 @@
 
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
-import Image from 'next/image';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Award, Star, Zap, Search as SearchIcon } from 'lucide-react';
+import React, { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Star, Truck, Percent, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ServiceCard from '@/components/service-card';
-import HorizontalServiceCard from '@/components/horizontal-service-card';
 import PromoCard from '@/components/promo-card';
-import type { Service } from '@/lib/types';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import Link from 'next/link';
-import PageSearchInput from '@/components/page-search-input';
-import FilterSidebar, { type FilterState } from '@/components/filter-sidebar';
-import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useData } from '@/hooks/use-data';
+import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
-function SearchResults({ services, query }: { services: Service[], query: string }) {
-  if (services.length === 0) {
+function SearchResults({ query }: { query: string }) {
+  const { services } = useData();
+  const lowercasedQuery = query.toLowerCase();
+  const filtered = services.filter(s => 
+    s.title.toLowerCase().includes(lowercasedQuery) || 
+    s.category.toLowerCase().includes(lowercasedQuery)
+  );
+
+  if (filtered.length === 0) {
     return (
-        <div className="text-center py-20 bg-card rounded-xl">
-            <SearchIcon className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-2xl font-semibold mb-2 font-headline">По запросу "{query}" ничего не найдено</h3>
-            <p className="text-muted-foreground">Попробуйте другой поисковый запрос или измените фильтры.</p>
-        </div>
+      <div className="text-center py-20 bg-card rounded-xl border border-dashed">
+        <h3 className="text-2xl font-semibold mb-2 font-headline">Ничего не найдено</h3>
+        <p className="text-muted-foreground">Попробуйте изменить запрос "{query}"</p>
+      </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        {services.map(service => (
-            <ServiceCard key={service.id} service={service} />
-        ))}
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      {filtered.map(service => (
+        <ServiceCard key={service.id} service={service} />
+      ))}
     </div>
   );
 }
 
 function HomePageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const { services: allServices, categories } = useData();
+  const { services } = useData();
   const searchQuery = searchParams.get('q');
-  const categoryQuery = searchParams.get('category');
-  
-  const [filteredServices, setFilteredServices] = useState<Service[]>(allServices);
-  const [activeFilters, setActiveFilters] = useState<FilterState>({
-    category: categoryQuery || 'all',
-    priceRange: [0, 500],
-    rating: 0,
-    featured: false,
-    topRated: false,
-  });
 
-  useEffect(() => {
-    let results = allServices;
+  // Разделяем данные на товары и услуги для демонстрации (в реальном приложении это поле в БД)
+  // Для примера: категории с "дизайн", "маркетинг", "написание" — услуги, остальные — товары
+  const popularProducts = services.filter(s => !['Графический дизайн', 'Маркетинг', 'Написание текстов'].includes(s.category)).slice(0, 6);
+  const popularServices = services.filter(s => ['Графический дизайн', 'Маркетинг', 'Написание текстов'].includes(s.category)).slice(0, 6);
 
-    if (searchQuery) {
-      const lowercasedQuery = searchQuery.toLowerCase();
-      results = results.filter(service =>
-        service.title.toLowerCase().includes(lowercasedQuery) ||
-        service.description.toLowerCase().includes(lowercasedQuery) ||
-        service.category.toLowerCase().includes(lowercasedQuery)
-      );
-    }
-    
-    // Apply filters
-    const currentCategory = categoryQuery || activeFilters.category;
-    if (currentCategory !== 'all') {
-      results = results.filter(service => service.category === currentCategory);
-    }
-
-    results = results.filter(service => service.price >= activeFilters.priceRange[0] && service.price <= activeFilters.priceRange[1]);
-
-    if (activeFilters.rating > 0) {
-        results = results.filter(service => service.rating >= activeFilters.rating);
-    }
-
-    if(activeFilters.featured) {
-        results = results.filter(service => service.featured);
-    }
-
-    if(activeFilters.topRated) {
-        results = results.filter(service => service.rating >= 4.8);
-    }
-
-    setFilteredServices(results);
-  }, [searchQuery, categoryQuery, allServices, activeFilters]);
-
-  const featuredServices = allServices.filter(s => s.featured);
-  const trendingServices = allServices.slice(0, 4);
-  const newArrivals = allServices.slice(2, 6);
-
-  const handleApplyFilters = (filters: FilterState) => {
-    setActiveFilters(filters);
-    const params = new URLSearchParams(window.location.search);
-    if (filters.category && filters.category !== 'all') {
-      params.set('category', filters.category);
-    } else {
-      params.delete('category');
-    }
-    router.push(`?${params.toString()}`);
-  };
-
-  const handleCategoryClick = (categoryName: string) => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('category', categoryName);
-    params.delete('q'); // Clear search query when a category is clicked
-    router.push(`?${params.toString()}`);
-    setActiveFilters(prev => ({...prev, category: categoryName}));
-  };
-
-  const isFiltering = searchQuery || (categoryQuery && categoryQuery !== 'all');
+  if (searchQuery) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold font-headline mb-6">Результаты поиска: {searchQuery}</h2>
+        <SearchResults query={searchQuery} />
+      </main>
+    );
+  }
 
   return (
-    <>
-      <section className="relative h-[60vh] w-full flex items-center justify-center text-white -mt-16">
-        <Image
-          src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d"
-          alt="Hero background"
-          layout="fill"
-          objectFit="cover"
-          className="z-0"
-          priority
-          data-ai-hint="team working"
-        />
-        <div className="absolute inset-0 bg-black/60 z-10" />
-        <div className="relative z-20 flex flex-col items-center text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight mb-4">
-            Найдите идеальные товары и услуги. Мгновенно.
-          </h1>
-          <p className="text-lg md:text-xl text-white/80 max-w-3xl mb-8">
-            Findora - ваша главная площадка для поиска и заказа качественных товаров и услуг от проверенных профессионалов.
-          </p>
-          <div className="w-full max-w-2xl">
-            <PageSearchInput />
+    <main className="container mx-auto px-4 py-8 space-y-12">
+      {/* Секция баннеров */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-indigo-600 to-violet-700 p-8 text-white group h-64 flex flex-col justify-between">
+          <div className="relative z-10">
+            <div className="bg-white/20 backdrop-blur-md w-fit p-2 rounded-xl mb-4">
+              <Percent className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-3xl font-bold font-headline mb-2 leading-tight">Скидка 20% <br/> на все услуги</h3>
+            <p className="text-white/80">Только до конца недели</p>
           </div>
+          <Button variant="secondary" className="w-fit relative z-10 rounded-full font-bold px-8" asChild>
+            <Link href="/?category=Услуги">Купить</Link>
+          </Button>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl" />
+        </div>
+
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-emerald-500 to-teal-600 p-8 text-white group h-64 flex flex-col justify-between">
+          <div className="relative z-10">
+            <div className="bg-white/20 backdrop-blur-md w-fit p-2 rounded-xl mb-4">
+              <Truck className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-3xl font-bold font-headline mb-2 leading-tight">Бесплатная доставка <br/> при заказе от 3000 TJS</h3>
+            <p className="text-white/80">По всему Таджикистану</p>
+          </div>
+          <Button variant="secondary" className="w-fit relative z-10 rounded-full font-bold px-8" asChild>
+            <Link href="/?category=Товары">Заказать</Link>
+          </Button>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-16 -mb-16 blur-3xl" />
         </div>
       </section>
 
-      <main className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-          <div className="lg:col-span-3">
-             {isFiltering ? (
-                <div>
-                    <h2 className="text-3xl font-bold font-headline mb-6">
-                        Результаты {searchQuery && `по запросу "${searchQuery}"`} {categoryQuery && `в категории ${categoryQuery}`}
-                    </h2>
-                    <SearchResults services={filteredServices} query={searchQuery || categoryQuery || ""} />
-                </div>
-            ) : (
-              <>
-                <section className="mb-16">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
-                        <Zap className="h-7 w-7 text-primary" />
-                        Рекомендуемые товары и услуги
-                    </h2>
-                    <Button variant="outline" asChild>
-                        <Link href="#">Смотреть все</Link>
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {featuredServices.map(service => (
-                      <ServiceCard key={service.id} service={service} />
-                    ))}
-                  </div>
-                </section>
-
-                <section className="mb-16">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <PromoCard
-                            image="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
-                            title="Развивайте свой бизнес"
-                            description="Найдите лучших экспертов по маркетингу и SEO для продвижения вашего бренда."
-                            ctaText="Изучить маркетинг"
-                            ctaLink="#"
-                            data-ai-hint="marketing team"
-                        />
-                         <PromoCard
-                            image="https://images.unsplash.com/photo-1626785774573-4b799315345d"
-                            title="Креативные дизайн-решения"
-                            description="От логотипов до полного брендинга — найдите подходящего дизайнера."
-                            ctaText="Найти дизайнеров"
-                            ctaLink="#"
-                            data-ai-hint="graphic design"
-                        />
-                    </div>
-                </section>
-                
-                <section className="mb-16">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
-                            <Star className="h-7 w-7 text-primary" />
-                            Популярные товары
-                        </h2>
-                         <Button variant="outline" asChild>
-                            <Link href="#">Смотреть все</Link>
-                        </Button>
-                    </div>
-                    <Carousel opts={{ align: "start", loop: true }} className="w-full">
-                        <CarouselContent>
-                            {trendingServices.map(service => (
-                            <CarouselItem key={service.id} className="md:basis-1/2 lg:basis-1/2 xl:basis-1/3">
-                               <div className="p-1">
-                                 <ServiceCard service={service} />
-                               </div>
-                            </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="ml-12" />
-                        <CarouselNext className="mr-12" />
-                    </Carousel>
-                </section>
-
-                <section className="mb-16">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-3xl font-bold font-headline flex items-center gap-2">
-                            <Award className="h-7 w-7 text-primary" />
-                           Популярные категории
-                        </h2>
-                    </div>
-                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        {categories.map(category => (
-                            <button
-                                key={category.id}
-                                onClick={() => handleCategoryClick(category.name)}
-                                className={cn(
-                                    "p-6 bg-card rounded-xl text-center font-semibold hover:bg-accent hover:text-accent-foreground transition-colors",
-                                    categoryQuery === category.name && "bg-primary text-primary-foreground"
-                                )}
-                            >
-                                {category.name}
-                            </button>
-                        ))}
-                    </div>
-                </section>
-
-                <section>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-1">
-                             <h2 className="text-3xl font-bold font-headline mb-4">Новые поступления</h2>
-                             <p className="text-muted-foreground mb-6">Ознакомьтесь с последними товарами и услугами, добавленными нашими талантливыми исполнителями.</p>
-                             <Button>Просмотреть все новинки</Button>
-                        </div>
-                        <div className="lg:col-span-2">
-                            <div className="space-y-4">
-                                {newArrivals.map(service => (
-                                    <HorizontalServiceCard key={service.id} service={service} />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-              </>
-            )}
+      {/* Популярные товары */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4 flex-grow">
+            <div className="h-px bg-border flex-grow hidden sm:block" />
+            <h2 className="text-2xl font-bold font-headline whitespace-nowrap px-4">Популярные товары</h2>
+            <div className="h-px bg-border flex-grow hidden sm:block" />
           </div>
-          <aside className="lg:col-span-1">
-              <FilterSidebar categories={categories} onApplyFilters={handleApplyFilters} />
-          </aside>
         </div>
-      </main>
-    </>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+          {popularProducts.map(service => (
+            <ServiceCard key={service.id} service={service} />
+          ))}
+        </div>
+      </section>
+
+      {/* Популярные услуги */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4 flex-grow">
+            <div className="h-px bg-border flex-grow hidden sm:block" />
+            <h2 className="text-2xl font-bold font-headline whitespace-nowrap px-4">Популярные услуги</h2>
+            <div className="h-px bg-border flex-grow hidden sm:block" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+          {popularServices.map(service => (
+            <ServiceCard key={service.id} service={service} />
+          ))}
+        </div>
+      </section>
+
+      {/* Спецпредложения */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4 flex-grow">
+            <div className="h-px bg-border flex-grow hidden sm:block" />
+            <h2 className="text-2xl font-bold font-headline whitespace-nowrap px-4">Спецпредложения</h2>
+            <div className="h-px bg-border flex-grow hidden sm:block" />
+          </div>
+        </div>
+        <div className="bg-primary/5 border border-primary/20 rounded-[2rem] p-8 md:p-12 relative overflow-hidden group">
+          <div className="relative z-10 max-w-2xl">
+            <div className="flex items-center gap-3 text-primary font-bold mb-4">
+              <Gift className="h-6 w-6" />
+              <span>БОНУСНАЯ ПРОГРАММА</span>
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold font-headline mb-4">Закажи товар и получи скидку 30% на первую услугу</h3>
+            <p className="text-muted-foreground text-lg mb-8">Используйте возможности Findora по максимуму. Мы объединяем качественные товары и лучших специалистов на одной платформе.</p>
+            <Button size="lg" className="rounded-full px-8 shadow-xl shadow-primary/20 group">
+              Подробнее
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
+          <div className="absolute -right-24 -bottom-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
+        </div>
+      </section>
+    </main>
   );
 }
 
 function PageFallback() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-        <div className="lg:col-span-3 space-y-12">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-96 w-full" />
+    <div className="container mx-auto px-4 py-8 space-y-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Skeleton className="h-64 w-full rounded-[2rem]" />
+        <Skeleton className="h-64 w-full rounded-[2rem]" />
+      </div>
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64 mx-auto" />
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-xl" />)}
         </div>
-        <aside className="lg:col-span-1">
-            <Skeleton className="h-screen w-full" />
-        </aside>
       </div>
     </div>
-  )
+  );
 }
 
 export default function Home() {
-    return (
-        <Suspense fallback={<PageFallback />}>
-            <HomePageContent />
-        </Suspense>
-    )
+  return (
+    <Suspense fallback={<PageFallback />}>
+      <HomePageContent />
+    </Suspense>
+  );
 }
