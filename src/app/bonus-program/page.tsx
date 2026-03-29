@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -6,8 +5,10 @@ import { Gift, Coins, TrendingUp, ShoppingBag, MessageSquare, UserPlus, CheckCir
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function BonusProgramPage() {
   const { user } = useAuth();
@@ -28,7 +29,7 @@ export default function BonusProgramPage() {
           </p>
           {!user && (
             <Button size="lg" className="rounded-full px-12 text-lg h-14" asChild>
-              <a href="/register">Присоединиться бесплатно</a>
+              <Link href="/register">Присоединиться бесплатно</Link>
             </Button>
           )}
         </div>
