@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, memo } from 'react';
+import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -27,15 +27,15 @@ interface AIChatWidgetProps {
 }
 
 const AnimatedCard = ({ children }: { children: React.ReactNode }) => (
-    <div className="animate-card-in opacity-0" style={{ animationFillMode: 'forwards' }}>
+    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-forwards">
         {children}
     </div>
 );
 
 const ServiceCard = memo(({ service }: { service: Service }) => (
-    <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 border shadow-sm my-3">
-        <div className="flex items-center p-2.5 gap-3">
-            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md">
+    <Link href={`/services/${service.id}`} className="group block bg-card hover:bg-muted/50 rounded-xl overflow-hidden transition-all duration-300 border shadow-sm my-3 border-border/50">
+        <div className="flex items-center p-3 gap-3">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
                 <Image 
                     src={service.images[0]} 
                     alt={service.title} 
@@ -44,16 +44,16 @@ const ServiceCard = memo(({ service }: { service: Service }) => (
                 />
             </div>
             <div className="flex-grow min-w-0">
-                <h4 className="font-bold text-xs truncate group-hover:text-primary transition-colors">{service.title}</h4>
-                <div className="flex items-center justify-between mt-1">
+                <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{service.title}</h4>
+                <div className="flex items-center justify-between mt-1.5">
                     <div className="flex items-center gap-1 text-[10px] font-bold">
-                        <Star className="h-2.5 w-2.5 text-yellow-400 fill-current" />
+                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
                         <span>{service.rating.toFixed(1)}</span>
                     </div>
-                    <p className="text-[11px] font-black text-primary">{service.price} TJS</p>
+                    <p className="text-[12px] font-black text-primary">{service.price} TJS</p>
                 </div>
             </div>
-            <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+            <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
     </Link>
 ));
@@ -61,20 +61,20 @@ ServiceCard.displayName = 'ServiceCard';
 
 const ProviderCard = memo(({ provider }: { provider: ProviderUser }) => {
     return (
-        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-xl overflow-hidden transition-all duration-300 my-3 border shadow-sm">
-            <div className="p-2.5 flex items-center gap-3">
-                 <Avatar className="h-10 w-10 border-2 border-primary/10">
+        <Link href={`/profile/${provider.username}`} className="group block bg-card hover:bg-muted/30 rounded-xl overflow-hidden transition-all duration-300 my-3 border shadow-sm border-border/50">
+            <div className="p-3 flex items-center gap-3">
+                 <Avatar className="h-12 w-12 border-2 border-primary/10">
                     <AvatarImage src={provider.avatar} alt={provider.name} className="object-cover" />
                     <AvatarFallback>{provider.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow min-w-0">
-                    <h4 className="font-bold text-xs truncate group-hover:text-primary transition-colors">{provider.name}</h4>
-                    <div className="flex items-center gap-1 text-[9px] mt-0.5 text-primary font-bold">
-                        <Sparkles className="h-2 w-2" />
+                    <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{provider.name}</h4>
+                    <div className="flex items-center gap-1 text-[10px] mt-1 text-primary font-bold">
+                        <Sparkles className="h-2.5 w-2.5" />
                         <span>Топ исполнитель</span>
                     </div>
                 </div>
-                <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
         </Link>
     )
@@ -153,15 +153,18 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
 
   const { services, users } = useData();
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        scrollAreaRef.current.scrollTo({
+            top: scrollAreaRef.current.scrollHeight,
+            behavior: 'smooth'
+        });
     }
-  };
+  }, []);
 
    useEffect(() => {
-    setTimeout(scrollToBottom, 100);
-  }, [messages, isLoading]);
+    scrollToBottom();
+  }, [messages, isLoading, scrollToBottom]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -230,38 +233,38 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
   };
 
   return (
-    <Card className="fixed bottom-24 right-5 w-[380px] h-[70vh] max-h-[650px] flex flex-col shadow-2xl rounded-3xl z-[100] overflow-hidden border-2 border-primary/10 animate-in slide-in-from-bottom-10 duration-500">
-        <CardHeader className="flex flex-row items-center justify-between p-4 border-b shrink-0 bg-background/50 backdrop-blur-md">
+    <Card className="fixed bottom-24 right-5 w-[380px] h-[70vh] max-h-[650px] flex flex-col shadow-2xl rounded-[2rem] z-[100] overflow-hidden border-2 border-primary/10 animate-in slide-in-from-bottom-10 duration-500 bg-background/95 backdrop-blur-lg">
+        <CardHeader className="flex flex-row items-center justify-between p-5 border-b shrink-0 bg-background/50">
             <div className="flex items-center gap-3">
-                <div className="bg-primary/10 p-2 rounded-xl">
-                    <Sparkles className="h-4 w-4 text-primary"/>
+                <div className="bg-primary/10 p-2.5 rounded-2xl">
+                    <Sparkles className="h-5 w-5 text-primary"/>
                 </div>
-                <CardTitle className="text-base font-bold tracking-tight">Findora AI</CardTitle>
+                <CardTitle className="text-lg font-bold tracking-tight">Findora AI</CardTitle>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full hover:bg-muted">
-                <X className="h-4 w-4" />
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-9 w-9 rounded-full hover:bg-muted">
+                <X className="h-5 w-5" />
             </Button>
         </CardHeader>
-        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-muted/5">
-            <div className="space-y-5">
+        <div ref={scrollAreaRef} className="flex-1 overflow-y-auto p-5 custom-scrollbar bg-muted/5 scroll-smooth">
+            <div className="space-y-6">
                 {messages.map((msg, index) => (
                     <div
                     key={index}
                     className={cn(
-                        "flex items-start gap-2.5",
+                        "flex items-start gap-3",
                         msg.role === 'user' && 'justify-end'
                     )}
                     >
                     {msg.role === 'model' && (
-                        <Avatar className="h-7 w-7 border-2 border-primary/20 shadow-sm">
-                            <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-4 w-4"/></AvatarFallback>
+                        <Avatar className="h-8 w-8 border-2 border-primary/20 shadow-sm mt-0.5">
+                            <AvatarFallback className="bg-primary/5 text-primary"><Sparkles className="h-5 w-5"/></AvatarFallback>
                         </Avatar>
                     )}
                     <div
                         className={cn(
-                        "max-w-[88%] rounded-2xl px-3.5 py-2.5 shadow-sm",
+                        "max-w-[90%] rounded-2xl px-4 py-3 shadow-sm",
                          msg.role === 'model'
-                            ? "bg-card border rounded-tl-none"
+                            ? "bg-card border border-border/50 rounded-tl-none"
                             : "bg-primary text-primary-foreground rounded-tr-none shadow-md"
                         )}
                     >
@@ -269,20 +272,20 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                        <MessageContent content={msg.content} />
                     </div>
                     {msg.role === 'user' && (
-                        <Avatar className="h-7 w-7 border shadow-sm">
+                        <Avatar className="h-8 w-8 border shadow-sm mt-0.5">
                             <AvatarImage src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=50&h=50&fit=crop" />
-                            <AvatarFallback><User className="h-4 w-4"/></AvatarFallback>
+                            <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
                         </Avatar>
                     )}
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex items-start gap-2.5">
-                        <Avatar className="h-7 w-7 border-2 border-primary/20">
-                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-4 w-4 text-primary animate-pulse"/></AvatarFallback>
+                    <div className="flex items-start gap-3 animate-in fade-in duration-300">
+                        <Avatar className="h-8 w-8 border-2 border-primary/20">
+                            <AvatarFallback className="bg-primary/5"><Sparkles className="h-5 w-5 text-primary animate-pulse"/></AvatarFallback>
                         </Avatar>
-                        <div className="max-w-[100px] rounded-2xl px-3.5 py-2.5 bg-muted border rounded-tl-none">
-                            <div className="flex gap-1">
+                        <div className="max-w-[100px] rounded-2xl px-4 py-3 bg-muted border border-border/50 rounded-tl-none">
+                            <div className="flex gap-1.5">
                                 <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
                                 <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
                                 <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
@@ -292,21 +295,21 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                 )}
             </div>
         </div>
-        <div className="p-3 border-t bg-background shrink-0">
+        <div className="p-4 border-t bg-background shrink-0">
              {imagePreview && (
-                <div className="relative w-20 h-20 mb-2 rounded-xl overflow-hidden border-2 border-primary shadow-lg animate-in zoom-in">
+                <div className="relative w-24 h-24 mb-3 rounded-2xl overflow-hidden border-2 border-primary shadow-xl animate-in zoom-in">
                     <Image src={imagePreview} alt="Preview" fill className="object-cover" />
                     <Button
                         variant="destructive"
                         size="icon"
-                        className="absolute top-0.5 right-0.5 h-5 w-5 rounded-full shadow-lg"
+                        className="absolute top-1 right-1 h-6 w-6 rounded-full shadow-lg"
                         onClick={() => {
                             setImagePreview(null);
                             setImageDataUri(null);
                             if (fileInputRef.current) fileInputRef.current.value = '';
                         }}
                     >
-                        <X className="h-2.5 w-2.5" />
+                        <X className="h-3 w-3" />
                     </Button>
                 </div>
             )}
@@ -323,21 +326,21 @@ export default function AIChatWidget({ onClose }: AIChatWidgetProps) {
                         type="button" 
                         variant="ghost" 
                         size="icon" 
-                        className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-lg z-20 text-muted-foreground"
+                        className="absolute left-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl z-20 text-muted-foreground hover:bg-primary/5"
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        <Paperclip className="h-4 w-4" />
+                        <Paperclip className="h-5 w-5" />
                     </Button>
                     <Input
                         ref={inputRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Спросите Findora..."
-                        className="w-full h-10 pl-10 pr-10 rounded-xl border-none shadow-none text-xs focus-visible:ring-0 bg-transparent text-foreground relative z-10"
+                        className="w-full h-11 pl-11 pr-11 rounded-2xl border-none shadow-none text-sm focus-visible:ring-0 bg-transparent text-foreground relative z-10"
                         disabled={isLoading}
                     />
-                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full shadow-lg z-20 bg-primary hover:bg-primary/90">
-                        <ArrowUp className="h-4 w-4 text-white" />
+                    <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !imageDataUri)} className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full shadow-lg z-20 bg-primary hover:bg-primary/90">
+                        <ArrowUp className="h-5 w-5 text-white" />
                     </Button>
                 </div>
             </form>
