@@ -6,7 +6,6 @@ import { useSearchParams } from 'next/navigation';
 import { Star, Truck, Percent, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ServiceCard from '@/components/service-card';
-import PromoCard from '@/components/promo-card';
 import { useData } from '@/hooks/use-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
@@ -42,8 +41,6 @@ function HomePageContent() {
   const { services } = useData();
   const searchQuery = searchParams.get('q');
 
-  // Разделяем данные на товары и услуги для демонстрации (в реальном приложении это поле в БД)
-  // Для примера: категории с "дизайн", "маркетинг", "написание" — услуги, остальные — товары
   const popularProducts = services.filter(s => !['Графический дизайн', 'Маркетинг', 'Написание текстов'].includes(s.category)).slice(0, 6);
   const popularServices = services.filter(s => ['Графический дизайн', 'Маркетинг', 'Написание текстов'].includes(s.category)).slice(0, 6);
 
@@ -68,8 +65,8 @@ function HomePageContent() {
             <h3 className="text-3xl font-bold font-headline mb-2 leading-tight">Скидка 20% <br/> на все услуги</h3>
             <p className="text-white/80">Только до конца недели</p>
           </div>
-          <Button variant="secondary" className="w-fit relative z-10 rounded-full font-bold px-8" asChild>
-            <Link href="/?category=Услуги">Купить</Link>
+          <Button variant="secondary" className="w-fit relative z-10 rounded-full font-bold px-8 transition-transform hover:scale-105 active:scale-95" asChild>
+            <Link href="/promotions">Купить</Link>
           </Button>
           <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl" />
         </div>
@@ -82,8 +79,8 @@ function HomePageContent() {
             <h3 className="text-3xl font-bold font-headline mb-2 leading-tight">Бесплатная доставка <br/> при заказе от 3000 TJS</h3>
             <p className="text-white/80">По всему Таджикистану</p>
           </div>
-          <Button variant="secondary" className="w-fit relative z-10 rounded-full font-bold px-8" asChild>
-            <Link href="/?category=Товары">Заказать</Link>
+          <Button variant="secondary" className="w-fit relative z-10 rounded-full font-bold px-8 transition-transform hover:scale-105 active:scale-95" asChild>
+            <Link href="/promotions">Заказать</Link>
           </Button>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-16 -mb-16 blur-3xl" />
         </div>
@@ -138,9 +135,11 @@ function HomePageContent() {
             </div>
             <h3 className="text-3xl md:text-4xl font-bold font-headline mb-4">Закажи товар и получи скидку 30% на первую услугу</h3>
             <p className="text-muted-foreground text-lg mb-8">Используйте возможности Findora по максимуму. Мы объединяем качественные товары и лучших специалистов на одной платформе.</p>
-            <Button size="lg" className="rounded-full px-8 shadow-xl shadow-primary/20 group">
-              Подробнее
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <Button size="lg" className="rounded-full px-8 shadow-xl shadow-primary/20 group" asChild>
+              <Link href="/bonus-program">
+                Подробнее
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
             </Button>
           </div>
           <div className="absolute -right-24 -bottom-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors" />
